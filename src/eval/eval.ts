@@ -6,6 +6,8 @@
 
 import check from "../check";
 
+const __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
+
 export const BIN_PREC = {
   "0": "PREC0",
   "1": "PREC1",
@@ -131,6 +133,7 @@ export class Lexer {
         private src: string,
         private hist: string[] = [],
         private syntax: string = "(),",
+        public alreadyCrashed: boolean = false,
   ) { }
 
   lastToken(): string | undefined {
@@ -155,6 +158,17 @@ export class Lexer {
       );
     };
 
+    const isDouble = this.src.startsWith("\"");
+    const isSingle = this.src.startsWith("'");
+    const isSOFStr =  isDouble || isSingle;
+    const strEnd = this.src.indexOf(isDouble ? "\"" : "'", 1);
+    if (isSOFStr && strEnd > 0) {
+      const token = this.src.slice(0, strEnd + 1);
+      this.src = this.src.slice(strEnd + 1);
+      this.hist.push(token);
+      return token;
+    } 
+
     if (isTokenBreak(this.src[0])) {
       const token = this.src[0];
       this.src = this.src.slice(1);
@@ -162,7 +176,7 @@ export class Lexer {
       return token;
     }
     for (let i = 0; i < this.src.length; ++i) {
-      if (isTokenBreak(this.src[i]) || this.src[i] == " ") {
+      if ((isTokenBreak(this.src[i]) || this.src[i] == " ")) {
         const token = this.src.slice(0, i);
         this.src = this.src.slice(i);
         this.hist.push(token);
@@ -201,12 +215,21 @@ export const parsePrimary = (lexer: Lexer): Expression => {
     else if (token === "(") {
       const expr = parseExpr(lexer);
       token = lexer.next();
+      if (token === __SAVE) {
+        token = lexer.next();
+      }
       if (token !== ")") {
         throw new Error("Expected ')' but got '" + token + "'");
       }
       return expr;
     }
     else if (token === ")") {
+      if (!lexer.alreadyCrashed) {
+        lexer.alreadyCrashed = true;
+        lexer.unnext("," + __SAVE + ")");
+        return parsePrimary(lexer);
+      }
+
       throw new Error("No primary expression starts with ')'");
     }
     else {
@@ -229,8 +252,19 @@ export const parsePrimary = (lexer: Lexer): Expression => {
         lexer.unnext(nextToken);
         args.push(parseExpr(lexer));
         nextToken = lexer.next();
+
+        // Don't @me >-<
+        if (nextToken === __SAVE) {
+          nextToken = lexer.next();
+        }
         while (nextToken == ",") {
           args.push(parseExpr(lexer));
+          nextToken = lexer.next();
+          if (nextToken === __SAVE) {
+            nextToken = lexer.next();
+          }          
+        }
+        if (nextToken === __SAVE) {
           nextToken = lexer.next();
         }
         if (nextToken !== ")") {

@@ -84,7 +84,7 @@ ${examplesView(doc.examples)}
 <details>
 <summary>Implementation</summary>
 
-${blockCode(doc.implementation, 'ts')}
+\t${blockCode(doc.implementation, 'ts')}
 
 </details>
     `.trim() : '';

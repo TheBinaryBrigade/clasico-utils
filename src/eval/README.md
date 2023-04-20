@@ -43,7 +43,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => Math.abs(x)
 ```
 
@@ -84,7 +84,7 @@ Output: `true`
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (...args) => {
         return args.map($bool).every((x) => x === true);
     }
@@ -147,7 +147,7 @@ Output: `false`
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (...args) => {
         return args.map($bool).some((x) => x === true);
     }
@@ -266,12 +266,12 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         if (check_1.default.isValidBoolean(x)) {
             return check_1.default.isTrue(x);
         }
-        return !!x;
+        return !!x && $isset(x);
     }
 ```
 
@@ -348,7 +348,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => parseFloat(x)
 ```
 
@@ -443,7 +443,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         if (check_1.default.isObject(x)) {
             x = JSON.stringify(x, null, 0);
@@ -495,7 +495,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (fmt, ...args) => {
         if (!check_1.default.isString(fmt) || args.length === 0) {
             return fmt;
@@ -583,7 +583,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => parseInt(x)
 ```
 
@@ -681,7 +681,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x, ...types) => {
         const xType = $type(x);
         return types.map($str).some((t) => xType === t);
@@ -779,7 +779,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $str(x).length;
     }
@@ -874,7 +874,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (...args) => {
         return Math.max(...args
             .map($str)
@@ -972,7 +972,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (...args) => {
         return Math.min(...args
             .map($str)
@@ -1028,7 +1028,7 @@ Output: `4398046511104`
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (a, b) => Math.pow(a, b)
 ```
 
@@ -1089,7 +1089,7 @@ Output: `NaN`
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (a) => Math.round(a)
 ```
 
@@ -1182,7 +1182,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x, start, end) => {
         const str = $str(x);
         if (start === undefined || !check_1.default.isNumber(start) || start < 0) {
@@ -1302,7 +1302,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => typeof x
 ```
 
@@ -1395,7 +1395,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (key, ...args) => {
         try {
             const intrinsic = Math[key];
@@ -1422,10 +1422,10 @@ Get attribute of an oject
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$getattr($x, $lenAttr)`
+#### No.1 `$getattr($x, "length")`
 
 
-Input: `$getattr($x, $lenAttr)`<br />
+Input: `$getattr($x, "length")`<br />
 Output: `11`
 
 
@@ -1433,18 +1433,41 @@ Context:
 ```json
 {
     "vars": {
-        "$x": "some string",
-        "$lenAttr": "length"
+        "$x": "some string"
     }
 }
 ```
 
 ---
 
-#### No.2 `$getattr($x, $attr)`
+#### No.2 `$getattr($x, "some.deep.object")`
 
 
-Input: `$getattr($x, $attr)`<br />
+Input: `$getattr($x, "some.deep.object")`<br />
+Output: `42`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": {
+            "some": {
+                "deep": {
+                    "object": 42
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+#### No.3 `$getattr($x, 'some', "deep", $attrobject)`
+
+
+Input: `$getattr($x, 'some', "deep", $attrobject)`<br />
 Output: `42`
 
 
@@ -1459,33 +1482,6 @@ Context:
                 }
             }
         },
-        "$attr": "some.deep.object"
-    }
-}
-```
-
----
-
-#### No.3 `$getattr($x, $attrsome, $attrdeep, $attrobject)`
-
-
-Input: `$getattr($x, $attrsome, $attrdeep, $attrobject)`<br />
-Output: `42`
-
-
-Context: 
-```json
-{
-    "vars": {
-        "$x": {
-            "some": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        },
-        "$attrsome": "some",
-        "$attrdeep": "deep",
         "$attrobject": "object"
     }
 }
@@ -1493,10 +1489,10 @@ Context:
 
 ---
 
-#### No.4 `$getattr($x, $attrsome, $attrdeep, $attrdeep)`
+#### No.4 `$getattr($x, "some.tricky", 'deep.object')`
 
 
-Input: `$getattr($x, $attrsome, $attrdeep, $attrdeep)`<br />
+Input: `$getattr($x, "some.tricky", 'deep.object')`<br />
 Output: `42`
 
 
@@ -1510,9 +1506,7 @@ Context:
                     "object": 42
                 }
             }
-        },
-        "$attrsome": "some.tricky",
-        "$attrdeep": "deep.object"
+        }
     }
 }
 ```
@@ -1526,10 +1520,10 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (obj, ...path) => {
         let ptr = obj;
-        path.map($str).forEach((literalKey) => {
+        path.filter(check_1.default.isString).forEach((literalKey) => {
             // Split key into parts on '.'
             let keys = literalKey.split(".");
             // Check if first attr exists if not revert back 
@@ -1537,9 +1531,10 @@ Context:
             if (!ptr[keys[0]]) {
                 keys = [literalKey];
             }
-            keys.filter((x) => !!x)
+            keys
+                .filter((x) => !!x)
                 .forEach((key) => {
-                if (ptr && ptr[key]) {
+                if (ptr && key && ptr[key]) {
                     ptr = ptr[key];
                 }
             });
@@ -1655,7 +1650,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $isinstance(x, "string");
     }
@@ -1768,7 +1763,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $isinstance(x, "number", "bigint");
     }
@@ -1881,7 +1876,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $isinstance(x, "undefined");
     }
@@ -1994,7 +1989,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $isinstance(x, "object");
     }
@@ -2107,7 +2102,7 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return $isinstance(x, "boolean");
     }
@@ -2220,9 +2215,698 @@ Context:
 <details>
 <summary>Implementation</summary>
 
-```ts
+	```ts
 (x) => {
         return x === null || x === undefined;
+    }
+```
+
+</details>
+
+### `$if` 
+
+If statement like trenery operator
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$if(true, $whenTrue, $whenFalse)`
+
+
+Input: `$if(true, $whenTrue, $whenFalse)`<br />
+Output: `this is true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$whenTrue": "this is true",
+        "$whenFalse": "this is false"
+    }
+}
+```
+
+---
+
+#### No.2 `$if(false, $whenTrue, $whenFalse)`
+
+
+Input: `$if(false, $whenTrue, $whenFalse)`<br />
+Output: `this is false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$whenTrue": "this is true",
+        "$whenFalse": "this is false"
+    }
+}
+```
+
+---
+
+#### No.3 `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+
+
+Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi James, welcome to the app!`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$isLoggedIn": true,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!",
+        "$client": {
+            "user": {
+                "name": "James"
+            }
+        }
+    }
+}
+```
+
+---
+
+#### No.4 `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+
+
+Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi, welcome to the app!`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$isLoggedIn": false,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!"
+    }
+}
+```
+
+---
+
+#### No.5 `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+
+
+Input: `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi, welcome to the app!`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$isLoggedIn": true,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!"
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(condition, ifTrue, ifFalse) => {
+        return $bool(condition) ? ifTrue : ifFalse;
+    }
+```
+
+</details>
+
+### `$concat` 
+
+Concatenate values
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$concat($a, $b, $c, $d, $e)`
+
+
+Input: `$concat($a, $b, $c, $d, $e)`<br />
+Output: `true42HelloWorld!{}`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$a": true,
+        "$b": 42,
+        "$c": "Hello",
+        "$d": "World!",
+        "$e": {}
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(...args) => {
+        return args.map($str).join("");
+    }
+```
+
+</details>
+
+### `$hasattr` 
+
+Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at the start of the result
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$hasattr($x, 'some.attr')`
+
+
+Input: `$hasattr($x, 'some.attr')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}
+```
+
+---
+
+#### No.2 `$hasattr($x, 'other.attr')`
+
+
+Input: `$hasattr($x, 'other.attr')`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(obj, ...path) => {
+        let ptr = obj;
+        let result = true;
+        path.filter(check_1.default.isString).forEach((literalKey) => {
+            // Split key into parts on '.'
+            let keys = literalKey.split(".");
+            // Check if first attr exists if not revert back 
+            // to original key
+            if (!ptr[keys[0]]) {
+                keys = [literalKey];
+            }
+            keys
+                .filter((x) => !!x)
+                .forEach((key) => {
+                if (ptr && key && ptr[key]) {
+                    ptr = ptr[key];
+                }
+                else {
+                    result = false;
+                }
+            });
+        });
+        return result;
+    }
+```
+
+</details>
+
+### `$isset`
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$isset($y)`
+
+
+Input: `$isset($y)`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}
+```
+
+---
+
+#### No.2 `$isset($x)`
+
+
+Input: `$isset($x)`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(obj) => {
+        return !$str(obj).startsWith("$");
+    }
+```
+
+</details>
+
+### `$includes` 
+
+Checks to see if array-like variable contains a value
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$includes($arr, 'a')`
+
+
+Input: `$includes($arr, 'a')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$arr": [
+            "a",
+            "b"
+        ]
+    }
+}
+```
+
+---
+
+#### No.2 `$includes($arr, 'z')`
+
+
+Input: `$includes($arr, 'z')`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$arr": [
+            "a",
+            "b"
+        ]
+    }
+}
+```
+
+---
+
+#### No.3 `$includes($set, 'z')`
+
+
+Input: `$includes($set, 'z')`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$set": {}
+    }
+}
+```
+
+---
+
+#### No.4 `$includes($set, 'b')`
+
+
+Input: `$includes($set, 'b')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$set": {}
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(x, value) => {
+        if (x) {
+            if (x.includes && check_1.default.isFunction(x.includes)) {
+                return x.includes(value);
+            }
+            if (x.has && check_1.default.isFunction(x.has)) {
+                return x.has(value);
+            }
+        }
+        return false;
+    }
+```
+
+</details>
+
+### `$endsWith` 
+
+Checks to see if values ends with a value
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$endsWith($x, 'b')`
+
+
+Input: `$endsWith($x, 'b')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+#### No.2 `$endsWith($x, 'z')`
+
+
+Input: `$endsWith($x, 'z')`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+#### No.3 `$endsWith($x, ", b")`
+
+
+Input: `$endsWith($x, ", b")`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+#### No.4 `$endsWith($x, '')`
+
+
+Input: `$endsWith($x, '')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(x, searchString, endPos) => {
+        x = $str(x);
+        searchString = $str(searchString);
+        return x.endsWith(searchString);
+    }
+```
+
+</details>
+
+### `$startsWith` 
+
+Checks if value starts with value
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$startsWith($x, 'Hello')`
+
+
+Input: `$startsWith($x, 'Hello')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+#### No.2 `$startsWith($x, 'Hola')`
+
+
+Input: `$startsWith($x, 'Hola')`<br />
+Output: `false`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+#### No.3 `$startsWith($x, '')`
+
+
+Input: `$startsWith($x, '')`<br />
+Output: `true`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(x, searchString, pos) => {
+        return $str(x).startsWith(searchString, pos);
+    }
+```
+
+</details>
+
+### `$lower` 
+
+Lowercase value
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$lower($x)`
+
+
+Input: `$lower($x)`<br />
+Output: `hello, world!`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, World!"
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(x) => {
+        return $str(x).toLowerCase();
+    }
+```
+
+</details>
+
+### `$upper` 
+
+Uppercase value
+
+
+<details>
+<summary>Examples</summary>
+
+#### No.1 `$upper($x)`
+
+
+Input: `$upper($x)`<br />
+Output: `HELLO, WORLD!`
+
+
+Context: 
+```json
+{
+    "vars": {
+        "$x": "Hello, World!"
+    }
+}
+```
+
+---
+
+
+</details>
+        
+
+<details>
+<summary>Implementation</summary>
+
+	```ts
+(x) => {
+        return $str(x).toUpperCase();
     }
 ```
 

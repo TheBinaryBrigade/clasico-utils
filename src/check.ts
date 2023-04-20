@@ -37,6 +37,10 @@ const isObject = (x: any) => {
   );
 };
 
+const isArray = (x: any) => {
+  return Array.isArray(x);
+};
+
 const isNumeric = (x: any) => {
   if (isNumber(x)) {
     return true;

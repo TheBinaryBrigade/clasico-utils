@@ -7,6 +7,8 @@ const fixString = (x: string) => {
   if (check.isString(x)) {
     if (x.startsWith("\"") && x.endsWith("\"")) {
       x = x.substring(1, x.length - 1);
+    } else if (x.startsWith("'") && x.endsWith("'")) {
+      x = x.substring(1, x.length - 1);
     }
   }
 
@@ -46,7 +48,7 @@ const builtinFunctions = () => {
       return check.isTrue(x);
     }
 
-    return !!x;
+    return !!x && $isset(x);
   };
   const $float = (x: any): number => parseFloat(x);
   const $str = (x: any): string => {
@@ -86,6 +88,10 @@ const builtinFunctions = () => {
   //   return hash;
   // };
 
+  const $if = (condition: boolean, ifTrue: any, ifFalse: any) => {
+    return $bool(condition) ? ifTrue : ifFalse;
+  };
+
   const $int = (x: any): number => parseInt(x);
   const $isinstance = (x: any, ...types: TypeOf[]): boolean => {
     const xType = $type(x);
@@ -109,6 +115,22 @@ const builtinFunctions = () => {
   };
   const $isnil = (x: any) => {
     return x === null || x === undefined;
+  };
+
+  const $endsWith = (x: any, searchString: string, endPos?: number) => {
+    x = $str(x);
+    searchString = $str(searchString);
+    return x.endsWith(searchString);
+  };
+  const $startsWith = (x: any, searchString: string, pos?: number) => {
+    return $str(x).startsWith(searchString, pos);
+  };
+  const $lower = (x: any) => {
+    return $str(x).toLowerCase();
+
+  };
+  const $upper = (x: any) => {
+    return $str(x).toUpperCase();
   };
 
   const $len = (x: any): number => {
@@ -148,6 +170,9 @@ const builtinFunctions = () => {
     const argv = args.join(", ");
     return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
   };
+  const $concat = (...args: any[]) => {
+    return args.map($str).join("");
+  };
   const $substring = (x: string, start: number, end?: number) => {
     const str = $str(x);
     if (start === undefined || !check.isNumber(start) || start < 0) {
@@ -160,9 +185,9 @@ const builtinFunctions = () => {
 
   };
   const $type = (x: any) => typeof x;
-  const $getattr = (obj: any, ...path: any[]) => {
+  const $getattr = (obj: any, ...path: string[]) => {
     let ptr = obj;
-    path.map($str).forEach((literalKey) => {
+    path.filter(check.isString).forEach((literalKey) => {
       // Split key into parts on '.'
       let keys = literalKey.split(".");
 
@@ -172,17 +197,66 @@ const builtinFunctions = () => {
         keys = [literalKey];
       }
       
-      keys.filter((x) => !!x)
+      keys
+        .filter((x) => !!x)
         .forEach((key) => {
-          if (ptr && ptr[key]) {
+          if (ptr && key && ptr[key]) {
             ptr = ptr[key];
           }
         });
     });
 
+    
     return ptr;
   };
+
+  const $hasattr = (obj: any, ...path: string[]) => {
+    let ptr = obj;
+    let result = true;
+    path.filter(check.isString).forEach((literalKey) => {
+      // Split key into parts on '.'
+      let keys = literalKey.split(".");
+
+      // Check if first attr exists if not revert back 
+      // to original key
+      if (!ptr[keys[0]]) {
+        keys = [literalKey];
+      }
+      
+      keys
+        .filter((x) => !!x)
+        .forEach((key) => {
+          if (ptr && key && ptr[key]) {
+            ptr = ptr[key];
+          } else {
+            result = false;
+          }
+        });
+    });
+
+    
+    return result;
+  };
+  const $isset = (obj: any) => {
+    return !$str(obj).startsWith("$");
+  };
+
+  const $includes = (x: any, value: any) => {
+    if (x) {      
+      if (x.includes && check.isFunction(x.includes)) {
+        return x.includes(value);
+      }
+
+      if (x.has && check.isFunction(x.has)) {
+        return x.has(value);
+      }
+    }
+
+    return false;
+  };
+
   return {
+    $if,
     $abs,
     $all,
     $any,
@@ -207,6 +281,14 @@ const builtinFunctions = () => {
     $type,
     $math,
     $getattr,
+    $concat,
+    $hasattr,
+    $isset,
+    $includes,
+    $endsWith,
+    $startsWith,
+    $lower,
+    $upper,
   };
 };
 
@@ -217,19 +299,32 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
   const builder = [];
   while (lex.hasNext()) {
     const expr = parseExpr(lex);
-    const resolved = runExpr(expr, ctx);
-    builder.push(resolved);
-    
+    let word = expr.payload.value;
+    let cutCount = 0;
+    if (word && check.isString(word) && word.startsWith("$")) {
+      while (word && word.endsWith(".")) {
+        word = word.substring(0, word.length - 1);
+        cutCount += 1;
+      }
+      
+      if (cutCount !== 0) {
+        expr.payload.value = word;
+      }  
+    }
     const isFuncCall = expr.kind === "funcall";
     const isSymbol = expr.kind === "symbol";
+    const resolved = runExpr(expr, ctx);
+    builder.push(resolved + ".".repeat(cutCount));
+    
     const isVar = lex.lastToken()?.startsWith("$");
-    if (isFuncCall || (isSymbol && isVar)) {
-      builder.push("");
-    } else {
-      builder.push(" ");
+    const commaLoc = builder.lastIndexOf(",") - 1;
+    if (lex.lastToken() === "," && builder[commaLoc] === " ") {
+      builder.splice(commaLoc, 1);
     }
 
-    builder.push("");
+    if (!(isFuncCall || (isSymbol && isVar))) {
+      builder.push(" ");
+    }
   }
 
   return builder.join("").trim();
@@ -244,13 +339,3 @@ export default {
   builtinFunctions,
   parseSentence,
 };
-
-
-console.log(">>", parseSentence("$substring($hello, 1), $world, $pow(1+1, 2), $fakePow(1, 2), $cow", {
-  funcs: {
-    ...builtinFunctions(),
-  },
-  vars: {
-    $hello: " Hello"
-  }
-}));

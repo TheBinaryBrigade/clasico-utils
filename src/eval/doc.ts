@@ -26,7 +26,7 @@ const docs: BuiltinDocs = {
     description: "Return the absolute value of the argument.",
     examples: [
       {
-        input: { text: "$abs(idx + 142)" },
+        input: { text: "$abs(42)" },
         output: "42",
       },
       {
@@ -359,9 +359,9 @@ const docs: BuiltinDocs = {
       {
         input: {
           text: "$len($x)",
-          context: { vars: { $x: {hello: "world!"} } }
+          context: { vars: { $x: { hello: "world!" } } }
         },
-        output: JSON.stringify({hello: "world!"}, null, 0).length + "",
+        output: JSON.stringify({ hello: "world!" }, null, 0).length + "",
       },
     ],
     isDeprecated: false,
@@ -606,7 +606,7 @@ const docs: BuiltinDocs = {
             }
           }
         },
-        output: Math.cos(90) + "", 
+        output: Math.cos(90) + "",
       },
       {
         input: {
@@ -617,7 +617,7 @@ const docs: BuiltinDocs = {
             }
           }
         },
-        output: "Math.someUnknownFunction(90)", 
+        output: "Math.someUnknownFunction(90)",
       },
       {
         input: {
@@ -628,7 +628,7 @@ const docs: BuiltinDocs = {
             }
           }
         },
-        output: "Math.someUnknownVar", 
+        output: "Math.someUnknownVar",
       },
     ],
     isDeprecated: false,
@@ -638,19 +638,18 @@ const docs: BuiltinDocs = {
     examples: [
       {
         input: {
-          text: "$getattr($x, $lenAttr)",
+          text: "$getattr($x, \"length\")",
           context: {
             vars: {
               $x: "some string",
-              $lenAttr: "length"
             }
           }
         },
-        output: "some string".length + "", 
+        output: "some string".length + "",
       },
       {
         input: {
-          text: "$getattr($x, $attr)",
+          text: "$getattr($x, \"some.deep.object\")",
           context: {
             vars: {
               $x: {
@@ -660,15 +659,14 @@ const docs: BuiltinDocs = {
                   }
                 }
               },
-              $attr: "some.deep.object"
             }
           }
         },
-        output: "42", 
+        output: "42",
       },
       {
         input: {
-          text: "$getattr($x, $attrsome, $attrdeep, $attrobject)",
+          text: "$getattr($x, 'some', \"deep\", $attrobject)",
           context: {
             vars: {
               $x: {
@@ -678,17 +676,15 @@ const docs: BuiltinDocs = {
                   }
                 }
               },
-              $attrsome: "some",
-              $attrdeep: "deep",
               $attrobject: "object",
             }
           }
         },
-        output: "42", 
+        output: "42",
       },
       {
         input: {
-          text: "$getattr($x, $attrsome, $attrdeep, $attrdeep)",
+          text: "$getattr($x, \"some.tricky\", 'deep.object')",
           context: {
             vars: {
               $x: {
@@ -698,12 +694,10 @@ const docs: BuiltinDocs = {
                   }
                 }
               },
-              $attrsome: "some.tricky",
-              $attrdeep: "deep.object",
             }
           }
         },
-        output: "42", 
+        output: "42",
       },
     ],
     isDeprecated: false,
@@ -1071,10 +1065,372 @@ const docs: BuiltinDocs = {
         },
         output: "false",
       },
-
     ],
     isDeprecated: false,
   },
+  $if: {
+    description: "If statement like trenery operator",
+    examples: [
+      {
+        input: {
+          text: "$if(true, $whenTrue, $whenFalse)",
+          context: {
+            vars: {
+              $whenTrue: "this is true",
+              $whenFalse: "this is false",
+            }
+          }
+        },
+        output: "this is true",
+      },
+      {
+        input: {
+          text: "$if(false, $whenTrue, $whenFalse)",
+          context: {
+            vars: {
+              $whenTrue: "this is true",
+              $whenFalse: "this is false",
+            }
+          }
+        },
+        output: "this is false",
+      },
+
+      {
+        input: {
+          text: "$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)",
+          context: {
+            vars: {
+              $isLoggedIn: true,
+              $welcomeMessage: "Hi {0}, welcome to the app!",
+              $welcomeMessage2: "Hi, welcome to the app!",
+              $client: {
+                user: {
+                  name: "James",
+                },
+              },
+            }
+          }
+        },
+        output: "Hi James, welcome to the app!",
+      },
+
+      {
+        input: {
+          text: "$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)",
+          context: {
+            vars: {
+              $isLoggedIn: false,
+              $welcomeMessage: "Hi {0}, welcome to the app!",
+              $welcomeMessage2: "Hi, welcome to the app!",
+            }
+          }
+        },
+        output: "Hi, welcome to the app!",
+      },
+      {
+        input: {
+          text: "$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)",
+          context: {
+            vars: {
+              $isLoggedIn: true,
+              $welcomeMessage: "Hi {0}, welcome to the app!",
+              $welcomeMessage2: "Hi, welcome to the app!",
+            }
+          }
+        },
+        output: "Hi, welcome to the app!",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $concat: {
+    description: "Concatenate values",
+    examples: [
+      {
+        input: {
+          text: "$concat($a, $b, $c, $d, $e)",
+          context: {
+            vars: {
+              $a: true,
+              $b: 42,
+              $c: "Hello",
+              $d: "World!",
+              $e: {},
+            }
+          }
+        },
+        output: "true42HelloWorld!{}",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $hasattr: {
+    description: "Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at the start of the result",
+    examples: [
+      {
+        input: {
+          text: "$hasattr($x, 'some.attr')",
+          context: {
+            vars: {
+              $x: {
+                some: {
+                  attr: 42
+                }
+              },
+            }
+          }
+        },
+        output: "true",
+      },
+      {
+        input: {
+          text: "$hasattr($x, 'other.attr')",
+          context: {
+            vars: {
+              $x: {
+                some: {
+                  attr: 42
+                }
+              },
+            }
+          }
+        },
+        output: "false",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $isset: {
+    description: "",
+    examples: [
+      {
+        input: {
+          text: "$isset($y)",
+          context: {
+            vars: {
+              $x: {
+                some: {
+                  attr: 42
+                }
+              },
+            }
+          }
+        },
+        output: "false",
+      },
+      {
+        input: {
+          text: "$isset($x)",
+          context: {
+            vars: {
+              $x: {
+                some: {
+                  attr: 42
+                }
+              },
+            }
+          }
+        },
+        output: "true",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $includes: {
+    description: "Checks to see if array-like variable contains a value",
+    examples: [
+      {
+        input: {
+          text: "$includes($arr, 'a')",
+          context: {
+            vars: {
+              $arr: [
+                "a",
+                "b",
+              ],
+            }
+          }
+        },
+        output: "true",
+      },
+      {
+        input: {
+          text: "$includes($arr, 'z')",
+          context: {
+            vars: {
+              $arr: [
+                "a",
+                "b",
+              ],
+            }
+          }
+        },
+        output: "false",
+      },
+      {
+        input: {
+          text: "$includes($set, 'z')",
+          context: {
+            vars: {
+              $set: new Set([
+                "a",
+                "b",
+              ]),
+            }
+          }
+        },
+        output: "false",
+      },
+      {
+        input: {
+          text: "$includes($set, 'b')",
+          context: {
+            vars: {
+              $set: new Set([
+                "a",
+                "b",
+              ]),
+            }
+          }
+        },
+        output: "true",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $endsWith: {
+    description: "Checks to see if values ends with a value",
+    examples: [
+      {
+        input: {
+          text: "$endsWith($x, 'b')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "true",
+      },
+      {
+        input: {
+          text: "$endsWith($x, 'z')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "false",
+      },
+      {
+        input: {
+          text: "$endsWith($x, \", b\")",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "true",
+      },
+      {
+        input: {
+          text: "$endsWith($x, '')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "true",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $startsWith: {
+    description: "Checks if value starts with value",
+    examples: [
+      {
+        input: {
+          text: "$startsWith($x, 'Hello')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "true",
+      },
+      {
+        input: {
+          text: "$startsWith($x, 'Hola')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "false",
+      },
+      {
+        input: {
+          text: "$startsWith($x, '')",
+          context: {
+            vars: {
+              $x: "Hello, b",
+            }
+          }
+        },
+        output: "true",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $lower: {
+    description: "Lowercase value",
+    examples: [
+      {
+        input: {
+          text: "$lower($x)",
+          context: {
+            vars: {
+              $x: "Hello, World!",
+            }
+          }
+        },
+        output: "hello, world!",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  },
+  $upper: {
+    description: "Uppercase value",
+    examples: [
+      {
+        input: {
+          text: "$upper($x)",
+          context: {
+            vars: {
+              $x: "Hello, World!",
+            }
+          }
+        },
+        output: "HELLO, WORLD!",
+      },
+    ],
+    isDeprecated: false,
+    implementation: undefined
+  }
 };
 
 
