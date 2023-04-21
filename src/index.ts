@@ -1,4 +1,5 @@
 import _check from "./check";
+import _eval from "./eval";
 
 export const hashCode = (str: string): number => {
   let hash = 0;
@@ -11,3 +12,4 @@ export const hashCode = (str: string): number => {
 };
 
 export const check = _check;
+export const parser = _eval;
