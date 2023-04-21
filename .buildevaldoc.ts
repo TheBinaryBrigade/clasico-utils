@@ -30,7 +30,7 @@ const wrapCode: WrapCodeFn = ({content, lang = "", wrap = "```" }) => {
     if (!lang) {
         lang = "";
     }
-    return wrap + lang + nl + content + nl + wrap;
+    return wrap + lang + nl + nl + content + nl + nl + wrap;
 };
 
 const inlineCode = (content: string) => {
@@ -46,12 +46,12 @@ const examplesView = (examples: BuiltinExample[]) => {
     return examples
         .map(({ input: { text, context }, output, notes}, idx) => {
             return [
-                "#### No." + (idx + 1).toString() + " " + inlineCode(text),
-                "\n",
+                "#### No." + (idx + 1).toString(),
+                "\n\n",
                 "Input: " + inlineCode(text) + "<br />",
-                "Output: " + inlineCode(output),
-                notes ? "\nNotes: \n\n1. " + notes.join("\n1. ") : "",
-                context ? "\nContext: \n" + blockCode(JSON.stringify(context, null, 4), 'json') : "",
+                "Output: " + inlineCode(output) + "<br />" + "\n\n",
+                (context ? "\nContext: \n" + inlineCode(JSON.stringify(context, null, 4)) : ""),
+                // notes ? "\nNotes: \n\n1. " + notes.join("\n1. ") : "",
                 "\n---\n"
 
             ].join('\n');
@@ -80,22 +80,20 @@ ${examplesView(doc.examples)}
         ` : '';
 
     // IMPL ------------------------------------------------
-    const implementation = doc.implementation ? `
-<details>
-<summary>Implementation</summary>
+//     const implementation = doc.implementation ? `
+// <details>
+// <summary>Implementation</summary>
 
-\t${blockCode(doc.implementation, 'ts')}
+// \t${blockCode(doc.implementation, 'ts')}
 
-</details>
-    `.trim() : '';
+// </details>
+//     `.trim() : '';
 
     // END  ------------------------------------------------
     return `
 ${head}
 
 ${examples}
-
-${implementation}
     `.trim();
 };
 

@@ -5,34 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <style>
-        textarea {
-            resize: none;
-            overflow: hidden;
-            min-height: 50px;
-            max-height: 100px;
-        }
-    </style>
+    <title>Sentence Parser</title>
 </head>
 
 <body>
 
     <div id="root">
-
-        <pre>
-
-        </pre>
+        <p>See builtin functions: <a target="_blank" href="https://github.com/TheBinaryBrigade/common-js/tree/main/src/eval#readme">Documentaion</a></p>
 
         <label for="output">Output</label>
-        <textarea onchange="_autoGrow(this)" name="output" id="output" disabled></textarea>
+        <textarea name="output" id="output" disabled></textarea>
 
         <label for="input">Input Expression</label>
-        <textarea oninput="_autoGrow(this)" name="input" id="input">Hello, $myVar. I have 1 + 1 cats</textarea>
+        <textarea name="input" id="input">Hello, $myVar. I have 1 + 1 cats</textarea>
 
         <label for="context">Input Context</label>
-        <textarea oninput="_autoGrow(this)" name="context" id="context">{"$myVar": "world"}</textarea>
+        <textarea name="context" id="context">{"$myVar": "world"}</textarea>
 
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"
@@ -43,13 +31,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="eval.js"></script>
     <script>;
-
-
-        function _autoGrow(element) {
-            element.style.height = "5px";
-            element.style.height = (element.scrollHeight) + "px";
-        }
-
         ; (() => {
             const { parser } = CLASICO;
             const root = document.getElementById('root');
@@ -65,6 +46,7 @@
                 lineNumbers: true,
                 styleActiveLine: true,
                 matchBrackets: true,
+                mode: "javascript"
             });
             contextMirror.setValue(JSON.stringify(JSON.parse(contextMirror.getValue()), null, 4))
 
@@ -90,6 +72,20 @@
                 const result = parser.parseSentence(sentence, context);
                 outputMirror.setValue(result);
             });
+
+            contextMirror.on('change', (ev) => {
+                try {
+                    const sentence = inputMirror.getValue();
+                    const context = {
+                        vars: JSON.parse(contextMirror.getValue() || "{}"),
+                        funcs: parser.builtinFunctions(),
+                    };
+                    const result = parser.parseSentence(sentence, context);
+                    outputMirror.setValue(result);
+                } catch(ignore) {}
+            });
+
+            
         })();
     </script>
 </body>

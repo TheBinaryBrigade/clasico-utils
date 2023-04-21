@@ -8,44 +8,36 @@ Return the absolute value of the argument.
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$abs(42)`
+#### No.1
+
 
 
 Input: `$abs(42)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 
 ---
 
-#### No.2 `$abs($x)`
+#### No.2
+
 
 
 Input: `$abs($x)`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello, world!"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => Math.abs(x)
-```
 
 </details>
 
@@ -57,38 +49,30 @@ Return `true` if `$bool(x)` is `true` for all values x in the passed arguments
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$all(true, false, true)`
+#### No.1
+
 
 
 Input: `$all(true, false, true)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-#### No.2 `$all(true, true)`
+#### No.2
+
 
 
 Input: `$all(true, true)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(...args) => {
-        return args.map($bool).every((x) => x === true);
-    }
-```
 
 </details>
 
@@ -100,58 +84,54 @@ Return `true` if `$bool(x)` is `true` for any x in the passed arguments
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$any(true, false, true)`
+#### No.1
+
 
 
 Input: `$any(true, false, true)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-#### No.2 `$any(true, true)`
+#### No.2
+
 
 
 Input: `$any(true, true)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-#### No.3 `$any(false, false, false, false)`
+#### No.3
+
 
 
 Input: `$any(false, false, false, false)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-#### No.4 `$any(false)`
+#### No.4
+
 
 
 Input: `$any(false)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(...args) => {
-        return args.map($bool).some((x) => x === true);
-    }
-```
 
 </details>
 
@@ -163,117 +143,114 @@ Returns `true` when the argument x is `true`, False otherwise. If **not** a vali
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$bool(false)`
+#### No.1
+
 
 
 Input: `$bool(false)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-#### No.2 `$bool(0)`
+#### No.2
+
 
 
 Input: `$bool(0)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-#### No.3 `$bool(0.0)`
+#### No.3
+
 
 
 Input: `$bool(0.0)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 
 ---
 
-#### No.4 `$bool(true)`
+#### No.4
+
 
 
 Input: `$bool(true)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-#### No.5 `$bool(1)`
+#### No.5
+
 
 
 Input: `$bool(1)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-#### No.6 `$bool(1.0)`
+#### No.6
+
 
 
 Input: `$bool(1.0)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 
 ---
 
-#### No.7 `$bool($x)`
+#### No.7
+
 
 
 Input: `$bool($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": ""
     }
-}
-```
+}`
 
 ---
 
-#### No.8 `$bool($x)`
+#### No.8
+
 
 
 Input: `$bool($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, world!"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        if (check_1.default.isValidBoolean(x)) {
-            return check_1.default.isTrue(x);
-        }
-        return !!x && $isset(x);
-    }
-```
 
 </details>
 
@@ -285,72 +262,66 @@ Convert a string or number to a floating point number, if possible.
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$float()`
+#### No.1
+
 
 
 Input: `$float()`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 
 ---
 
-#### No.2 `$float(42)`
+#### No.2
+
 
 
 Input: `$float(42)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 
 ---
 
-#### No.3 `$float($x)`
+#### No.3
+
 
 
 Input: `$float($x)`<br />
-Output: `42.2`
+Output: `42.2`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "42.2"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$float($x)`
+#### No.4
+
 
 
 Input: `$float($x)`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => parseFloat(x)
-```
 
 </details>
 
@@ -362,98 +333,80 @@ Create a new string object from the given object.
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$str($x)`
+#### No.1
+
 
 
 Input: `$str($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": false
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$str($x)`
+#### No.2
+
 
 
 Input: `$str($x)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$str($x)`
+#### No.3
+
 
 
 Input: `$str($x)`<br />
-Output: `Hello, World!`
+Output: `Hello, World!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, World!"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$str($x)`
+#### No.4
+
 
 
 Input: `$str($x)`<br />
-Output: `{"hello":"world"}`
+Output: `{"hello":"world"}`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "world"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        if (check_1.default.isObject(x)) {
-            x = JSON.stringify(x, null, 0);
-        }
-        if (!check_1.default.isString(x)) {
-            x = x.toString ? x.toString() : `${x}`;
-        }
-        return x;
-    }
-```
 
 </details>
 
@@ -465,50 +418,26 @@ Pass values to a template string (see examples).
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$format($fmt, $name, $animal)`
+#### No.1
+
 
 
 Input: `$format($fmt, $name, $animal)`<br />
-Output: `This is Garfield a cat. Garfield likes lasagna.`
+Output: `This is Garfield a cat. Garfield likes lasagna.`<br />
 
-Notes: 
 
-1. The argument's (index) position will indicate the placeholder value (i.e., `{index}`)
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$fmt": "This is {0} a {1}. {0} likes lasagna.",
         "$name": "Garfield",
         "$animal": "cat"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(fmt, ...args) => {
-        if (!check_1.default.isString(fmt) || args.length === 0) {
-            return fmt;
-        }
-        args.map($str).forEach((variable, index) => {
-            const template = `{${index}}`;
-            while (fmt.includes(template)) {
-                fmt = fmt.replace(template, variable);
-            }
-        });
-        return fmt;
-    }
-```
 
 </details>
 
@@ -520,72 +449,66 @@ Convert a string or number to an integer, if possible.
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$int()`
+#### No.1
+
 
 
 Input: `$int()`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 
 ---
 
-#### No.2 `$int(42)`
+#### No.2
+
 
 
 Input: `$int(42)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 
 ---
 
-#### No.3 `$int($x)`
+#### No.3
+
 
 
 Input: `$int($x)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "42.2"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$int($x)`
+#### No.4
+
 
 
 Input: `$int($x)`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => parseInt(x)
-```
 
 </details>
 
@@ -595,98 +518,85 @@ Context:
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$isinstance($x, $strType, $numType)`
+#### No.1
+
 
 
 Input: `$isinstance($x, $strType, $numType)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello",
         "$strType": "string",
         "$numType": "number"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$isinstance($x, $strType, $numType)`
+#### No.2
+
 
 
 Input: `$isinstance($x, $strType, $numType)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42,
         "$strType": "string",
         "$numType": "number"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$isinstance($x, $strType, $numType)`
+#### No.3
+
 
 
 Input: `$isinstance($x, $strType, $numType)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true,
         "$strType": "string",
         "$numType": "number"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$isinstance($x, $boolType, $numType)`
+#### No.4
+
 
 
 Input: `$isinstance($x, $boolType, $numType)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true,
         "$boolType": "boolean"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x, ...types) => {
-        const xType = $type(x);
-        return types.map($str).some((t) => xType === t);
-    }
-```
 
 </details>
 
@@ -698,92 +608,80 @@ Will convert `x` into a string and calculate its `length`/`characters`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$len($x)`
+#### No.1
+
 
 
 Input: `$len($x)`<br />
-Output: `4`
+Output: `4`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$len($x)`
+#### No.2
+
 
 
 Input: `$len($x)`<br />
-Output: `2`
+Output: `2`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$len($x)`
+#### No.3
+
 
 
 Input: `$len($x)`<br />
-Output: `5`
+Output: `5`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$len($x)`
+#### No.4
+
 
 
 Input: `$len($x)`<br />
-Output: `18`
+Output: `18`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "world!"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $str(x).length;
-    }
-```
 
 </details>
 
@@ -795,93 +693,78 @@ Will return biggest item in arguments. It will convert all items into strins and
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$max(1, 2, 3, 4, $x)`
+#### No.1
+
 
 
 Input: `$max(1, 2, 3, 4, $x)`<br />
-Output: `4`
+Output: `4`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$max(1, 2, 3, 4, $x)`
+#### No.2
+
 
 
 Input: `$max(1, 2, 3, 4, $x)`<br />
-Output: `50`
+Output: `50`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 50
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$max(1, 2, 3, 4, $x)`
+#### No.3
+
 
 
 Input: `$max(1, 2, 3, 4, $x)`<br />
-Output: `4`
+Output: `4`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$max(1, 2, 3, 4, $x)`
+#### No.4
+
 
 
 Input: `$max(1, 2, 3, 4, $x)`<br />
-Output: `4`
+Output: `4`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": -1
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(...args) => {
-        return Math.max(...args
-            .map($str)
-            .map($float)
-            .filter((x) => !isNaN(x)));
-    }
-```
 
 </details>
 
@@ -893,93 +776,78 @@ Will return smallest item in arguments. It will convert all items into strins an
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$min(1, 2, 3, 4, $x)`
+#### No.1
+
 
 
 Input: `$min(1, 2, 3, 4, $x)`<br />
-Output: `1`
+Output: `1`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$min(1, 2, 3, 4, $x)`
+#### No.2
+
 
 
 Input: `$min(1, 2, 3, 4, $x)`<br />
-Output: `1`
+Output: `1`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 50
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$min(1, 3, 4, $x, 2)`
+#### No.3
+
 
 
 Input: `$min(1, 3, 4, $x, 2)`<br />
-Output: `1`
+Output: `1`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$min(1, 2, 3, $x)`
+#### No.4
+
 
 
 Input: `$min(1, 2, 3, $x)`<br />
-Output: `-1`
+Output: `-1`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": -1
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(...args) => {
-        return Math.min(...args
-            .map($str)
-            .map($float)
-            .filter((x) => !isNaN(x)));
-    }
-```
 
 </details>
 
@@ -991,46 +859,42 @@ Will take `x` to the power of `y` (`x ^ y`)
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$pow(1, 1)`
+#### No.1
+
 
 
 Input: `$pow(1, 1)`<br />
-Output: `1`
+Output: `1`<br />
+
 
 
 
 ---
 
-#### No.2 `$pow(2, 1)`
+#### No.2
+
 
 
 Input: `$pow(2, 1)`<br />
-Output: `2`
+Output: `2`<br />
+
 
 
 
 ---
 
-#### No.3 `$pow(2, 42)`
+#### No.3
+
 
 
 Input: `$pow(2, 42)`<br />
-Output: `4398046511104`
+Output: `4398046511104`<br />
+
 
 
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(a, b) => Math.pow(a, b)
-```
 
 </details>
 
@@ -1042,56 +906,54 @@ Returns a supplied numeric expression rounded to the nearest integer.
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$round(2.020)`
+#### No.1
+
 
 
 Input: `$round(2.020)`<br />
-Output: `2`
+Output: `2`<br />
+
 
 
 
 ---
 
-#### No.2 `$round(2)`
+#### No.2
+
 
 
 Input: `$round(2)`<br />
-Output: `2`
+Output: `2`<br />
+
 
 
 
 ---
 
-#### No.3 `$round(2.202)`
+#### No.3
+
 
 
 Input: `$round(2.202)`<br />
-Output: `2`
+Output: `2`<br />
+
 
 
 
 ---
 
-#### No.4 `$round(true)`
+#### No.4
+
 
 
 Input: `$round(true)`<br />
-Output: `NaN`
+Output: `NaN`<br />
+
 
 
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(a) => Math.round(a)
-```
 
 </details>
 
@@ -1103,97 +965,78 @@ Will coerce `x` into a string and slice it on `start` and `end`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$substring($x, 0, 4)`
+#### No.1
+
 
 
 Input: `$substring($x, 0, 4)`<br />
-Output: `hell`
+Output: `hell`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$substring($x, 1)`
+#### No.2
+
 
 
 Input: `$substring($x, 1)`<br />
-Output: `ello`
+Output: `ello`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$substring($x)`
+#### No.3
+
 
 
 Input: `$substring($x)`<br />
-Output: `hello`
+Output: `hello`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$substring($x, 0, $len($x) - 1)`
+#### No.4
+
 
 
 Input: `$substring($x, 0, $len($x) - 1)`<br />
-Output: `hell`
+Output: `hell`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x, start, end) => {
-        const str = $str(x);
-        if (start === undefined || !check_1.default.isNumber(start) || start < 0) {
-            start = 0;
-        }
-        if (end === undefined || !check_1.default.isNumber(start) || end > str.length) {
-            end = str.length;
-        }
-        return str.substring(start, end);
-    }
-```
 
 </details>
 
@@ -1205,106 +1048,96 @@ Returns `typeof x`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$type($x)`
+#### No.1
+
 
 
 Input: `$type($x)`<br />
-Output: `string`
+Output: `string`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$type($x)`
+#### No.2
+
 
 
 Input: `$type($x)`<br />
-Output: `number`
+Output: `number`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$type($x)`
+#### No.3
+
 
 
 Input: `$type($x)`<br />
-Output: `boolean`
+Output: `boolean`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$type($x)`
+#### No.4
+
 
 
 Input: `$type($x)`<br />
-Output: `undefined`
+Output: `undefined`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$type($x)`
+#### No.5
+
 
 
 Input: `$type($x)`<br />
-Output: `object`
+Output: `object`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => typeof x
-```
 
 </details>
 
@@ -1316,101 +1149,78 @@ An intrinsic function that provides basic mathematics functionality and constant
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$math($PI)`
+#### No.1
+
 
 
 Input: `$math($PI)`<br />
-Output: `3.141592653589793`
+Output: `3.141592653589793`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$PI": "PI"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$math($cos, 90)`
+#### No.2
+
 
 
 Input: `$math($cos, 90)`<br />
-Output: `-0.4480736161291702`
+Output: `-0.4480736161291702`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$cos": "cos"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$math($x, 90)`
+#### No.3
+
 
 
 Input: `$math($x, 90)`<br />
-Output: `Math.someUnknownFunction(90)`
+Output: `Math.someUnknownFunction(90)`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "someUnknownFunction"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$math($x)`
+#### No.4
+
 
 
 Input: `$math($x)`<br />
-Output: `Math.someUnknownVar`
+Output: `Math.someUnknownVar`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "someUnknownVar"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(key, ...args) => {
-        try {
-            const intrinsic = Math[key];
-            const result = check_1.default.isFunction(intrinsic) ? intrinsic(...args) : intrinsic;
-            if (result) {
-                return result;
-            }
-        }
-        catch (error) {
-            console.error(error);
-        }
-        const argv = args.join(", ");
-        return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
-    }
-```
 
 </details>
 
@@ -1422,34 +1232,35 @@ Get attribute of an oject
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$getattr($x, "length")`
+#### No.1
+
 
 
 Input: `$getattr($x, "length")`<br />
-Output: `11`
+Output: `11`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "some string"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$getattr($x, "some.deep.object")`
+#### No.2
+
 
 
 Input: `$getattr($x, "some.deep.object")`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -1459,21 +1270,21 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$getattr($x, 'some', "deep", $attrobject)`
+#### No.3
+
 
 
 Input: `$getattr($x, 'some', "deep", $attrobject)`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -1484,21 +1295,21 @@ Context:
         },
         "$attrobject": "object"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$getattr($x, "some.tricky", 'deep.object')`
+#### No.4
+
 
 
 Input: `$getattr($x, "some.tricky", 'deep.object')`<br />
-Output: `42`
+Output: `42`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some.tricky": {
@@ -1508,40 +1319,10 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(obj, ...path) => {
-        let ptr = obj;
-        path.filter(check_1.default.isString).forEach((literalKey) => {
-            // Split key into parts on '.'
-            let keys = literalKey.split(".");
-            // Check if first attr exists if not revert back 
-            // to original key
-            if (!ptr[keys[0]]) {
-                keys = [literalKey];
-            }
-            keys
-                .filter((x) => !!x)
-                .forEach((key) => {
-                if (ptr && key && ptr[key]) {
-                    ptr = ptr[key];
-                }
-            });
-        });
-        return ptr;
-    }
-```
 
 </details>
 
@@ -1553,108 +1334,96 @@ Wrapper for `$isinstance(x, 'string')`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$tisstring($x)`
+#### No.1
+
 
 
 Input: `$tisstring($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$tisstring($x)`
+#### No.2
+
 
 
 Input: `$tisstring($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$tisstring($x)`
+#### No.3
+
 
 
 Input: `$tisstring($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$tisstring($x)`
+#### No.4
+
 
 
 Input: `$tisstring($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$tisstring($x)`
+#### No.5
+
 
 
 Input: `$tisstring($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $isinstance(x, "string");
-    }
-```
 
 </details>
 
@@ -1666,108 +1435,96 @@ Wrapper for `$isinstance(x, 'number', 'bigint')`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$tisnumber($x)`
+#### No.1
+
 
 
 Input: `$tisnumber($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$tisnumber($x)`
+#### No.2
+
 
 
 Input: `$tisnumber($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$tisnumber($x)`
+#### No.3
+
 
 
 Input: `$tisnumber($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$tisnumber($x)`
+#### No.4
+
 
 
 Input: `$tisnumber($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$tisnumber($x)`
+#### No.5
+
 
 
 Input: `$tisnumber($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $isinstance(x, "number", "bigint");
-    }
-```
 
 </details>
 
@@ -1779,108 +1536,96 @@ Wrapper for `$isinstance(x, 'undefined')`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$tisundefined($x)`
+#### No.1
+
 
 
 Input: `$tisundefined($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$tisundefined($x)`
+#### No.2
+
 
 
 Input: `$tisundefined($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$tisundefined($x)`
+#### No.3
+
 
 
 Input: `$tisundefined($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$tisundefined($x)`
+#### No.4
+
 
 
 Input: `$tisundefined($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$tisundefined($x)`
+#### No.5
+
 
 
 Input: `$tisundefined($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $isinstance(x, "undefined");
-    }
-```
 
 </details>
 
@@ -1892,108 +1637,96 @@ Wrapper for `$isinstance(x, 'object')`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$tisobject($x)`
+#### No.1
+
 
 
 Input: `$tisobject($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$tisobject($x)`
+#### No.2
+
 
 
 Input: `$tisobject($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$tisobject($x)`
+#### No.3
+
 
 
 Input: `$tisobject($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$tisobject($x)`
+#### No.4
+
 
 
 Input: `$tisobject($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$tisobject($x)`
+#### No.5
+
 
 
 Input: `$tisobject($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $isinstance(x, "object");
-    }
-```
 
 </details>
 
@@ -2005,108 +1738,96 @@ Wrapper for `$isinstance(x, 'boolean')`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$tisboolean($x)`
+#### No.1
+
 
 
 Input: `$tisboolean($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "hello"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$tisboolean($x)`
+#### No.2
+
 
 
 Input: `$tisboolean($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 42
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$tisboolean($x)`
+#### No.3
+
 
 
 Input: `$tisboolean($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": true
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$tisboolean($x)`
+#### No.4
+
 
 
 Input: `$tisboolean($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.5 `$tisboolean($x)`
+#### No.5
+
 
 
 Input: `$tisboolean($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $isinstance(x, "boolean");
-    }
-```
 
 </details>
 
@@ -2118,108 +1839,96 @@ Returns `true` if `x` is `undefined` **or** `null`
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$isnil($x)`
+#### No.1
+
 
 
 Input: `$isnil($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": null
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$isnil($x)`
+#### No.2
+
 
 
 Input: `$isnil($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {}
-}
-```
+}`
 
 ---
 
-#### No.3 `$isnil($x)`
+#### No.3
+
 
 
 Input: `$isnil($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "hello": "42"
         }
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$isnil($x)`
+#### No.4
+
 
 
 Input: `$isnil($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": 0
     }
-}
-```
+}`
 
 ---
 
-#### No.5 `$isnil($x)`
+#### No.5
+
 
 
 Input: `$isnil($x)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": ""
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return x === null || x === undefined;
-    }
-```
 
 </details>
 
@@ -2231,54 +1940,55 @@ If statement like trenery operator
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$if(true, $whenTrue, $whenFalse)`
+#### No.1
+
 
 
 Input: `$if(true, $whenTrue, $whenFalse)`<br />
-Output: `this is true`
+Output: `this is true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$whenTrue": "this is true",
         "$whenFalse": "this is false"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$if(false, $whenTrue, $whenFalse)`
+#### No.2
+
 
 
 Input: `$if(false, $whenTrue, $whenFalse)`<br />
-Output: `this is false`
+Output: `this is false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$whenTrue": "this is true",
         "$whenFalse": "this is false"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+#### No.3
+
 
 
 Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi James, welcome to the app!`
+Output: `Hi James, welcome to the app!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$isLoggedIn": true,
         "$welcomeMessage": "Hi {0}, welcome to the app!",
@@ -2289,63 +1999,50 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+#### No.4
+
 
 
 Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi, welcome to the app!`
+Output: `Hi, welcome to the app!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$isLoggedIn": false,
         "$welcomeMessage": "Hi {0}, welcome to the app!",
         "$welcomeMessage2": "Hi, welcome to the app!"
     }
-}
-```
+}`
 
 ---
 
-#### No.5 `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`
+#### No.5
+
 
 
 Input: `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi, welcome to the app!`
+Output: `Hi, welcome to the app!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$isLoggedIn": true,
         "$welcomeMessage": "Hi {0}, welcome to the app!",
         "$welcomeMessage2": "Hi, welcome to the app!"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(condition, ifTrue, ifFalse) => {
-        return $bool(condition) ? ifTrue : ifFalse;
-    }
-```
 
 </details>
 
@@ -2357,16 +2054,17 @@ Concatenate values
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$concat($a, $b, $c, $d, $e)`
+#### No.1
+
 
 
 Input: `$concat($a, $b, $c, $d, $e)`<br />
-Output: `true42HelloWorld!{}`
+Output: `true42HelloWorld!{}`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$a": true,
         "$b": 42,
@@ -2374,23 +2072,10 @@ Context:
         "$d": "World!",
         "$e": {}
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(...args) => {
-        return args.map($str).join("");
-    }
-```
 
 </details>
 
@@ -2402,16 +2087,17 @@ Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at t
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$hasattr($x, 'some.attr')`
+#### No.1
+
 
 
 Input: `$hasattr($x, 'some.attr')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -2419,21 +2105,21 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$hasattr($x, 'other.attr')`
+#### No.2
+
 
 
 Input: `$hasattr($x, 'other.attr')`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -2441,44 +2127,10 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(obj, ...path) => {
-        let ptr = obj;
-        let result = true;
-        path.filter(check_1.default.isString).forEach((literalKey) => {
-            // Split key into parts on '.'
-            let keys = literalKey.split(".");
-            // Check if first attr exists if not revert back 
-            // to original key
-            if (!ptr[keys[0]]) {
-                keys = [literalKey];
-            }
-            keys
-                .filter((x) => !!x)
-                .forEach((key) => {
-                if (ptr && key && ptr[key]) {
-                    ptr = ptr[key];
-                }
-                else {
-                    result = false;
-                }
-            });
-        });
-        return result;
-    }
-```
 
 </details>
 
@@ -2488,16 +2140,17 @@ Context:
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$isset($y)`
+#### No.1
+
 
 
 Input: `$isset($y)`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -2505,21 +2158,21 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$isset($x)`
+#### No.2
+
 
 
 Input: `$isset($x)`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": {
             "some": {
@@ -2527,23 +2180,10 @@ Context:
             }
         }
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(obj) => {
-        return !$str(obj).startsWith("$");
-    }
-```
 
 </details>
 
@@ -2555,104 +2195,84 @@ Checks to see if array-like variable contains a value
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$includes($arr, 'a')`
+#### No.1
+
 
 
 Input: `$includes($arr, 'a')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$arr": [
             "a",
             "b"
         ]
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$includes($arr, 'z')`
+#### No.2
+
 
 
 Input: `$includes($arr, 'z')`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$arr": [
             "a",
             "b"
         ]
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$includes($set, 'z')`
+#### No.3
+
 
 
 Input: `$includes($set, 'z')`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$set": {}
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$includes($set, 'b')`
+#### No.4
+
 
 
 Input: `$includes($set, 'b')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$set": {}
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x, value) => {
-        if (x) {
-            if (x.includes && check_1.default.isFunction(x.includes)) {
-                return x.includes(value);
-            }
-            if (x.has && check_1.default.isFunction(x.has)) {
-                return x.has(value);
-            }
-        }
-        return false;
-    }
-```
 
 </details>
 
@@ -2664,92 +2284,78 @@ Checks to see if values ends with a value
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$endsWith($x, 'b')`
+#### No.1
+
 
 
 Input: `$endsWith($x, 'b')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$endsWith($x, 'z')`
+#### No.2
+
 
 
 Input: `$endsWith($x, 'z')`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$endsWith($x, ", b")`
+#### No.3
+
 
 
 Input: `$endsWith($x, ", b")`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-#### No.4 `$endsWith($x, '')`
+#### No.4
+
 
 
 Input: `$endsWith($x, '')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x, searchString, endPos) => {
-        x = $str(x);
-        searchString = $str(searchString);
-        return x.endsWith(searchString, endPos);
-    }
-```
 
 </details>
 
@@ -2761,72 +2367,60 @@ Checks if value starts with value
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$startsWith($x, 'Hello')`
+#### No.1
+
 
 
 Input: `$startsWith($x, 'Hello')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-#### No.2 `$startsWith($x, 'Hola')`
+#### No.2
+
 
 
 Input: `$startsWith($x, 'Hola')`<br />
-Output: `false`
+Output: `false`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-#### No.3 `$startsWith($x, '')`
+#### No.3
+
 
 
 Input: `$startsWith($x, '')`<br />
-Output: `true`
+Output: `true`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, b"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x, searchString, pos) => {
-        return $str(x).startsWith(searchString, pos);
-    }
-```
 
 </details>
 
@@ -2838,36 +2432,24 @@ Lowercase value
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$lower($x)`
+#### No.1
+
 
 
 Input: `$lower($x)`<br />
-Output: `hello, world!`
+Output: `hello, world!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, World!"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $str(x).toLowerCase();
-    }
-```
 
 </details>
 
@@ -2879,35 +2461,23 @@ Uppercase value
 <details>
 <summary>Examples</summary>
 
-#### No.1 `$upper($x)`
+#### No.1
+
 
 
 Input: `$upper($x)`<br />
-Output: `HELLO, WORLD!`
+Output: `HELLO, WORLD!`<br />
+
 
 
 Context: 
-```json
-{
+`{
     "vars": {
         "$x": "Hello, World!"
     }
-}
-```
+}`
 
 ---
 
-
-</details>
-        
-
-<details>
-<summary>Implementation</summary>
-
-	```ts
-(x) => {
-        return $str(x).toUpperCase();
-    }
-```
 
 </details>
