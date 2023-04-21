@@ -298,23 +298,36 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
 
   const builder = [];
   while (lex.hasNext()) {
+    const _restore = lex.spaceAfterToken();
+    let restoreSpace = "";
     const expr = parseExpr(lex);
     let word = expr.payload.value;
-    let cutCount = 0;
+    const cutHist = [];
     if (word && check.isString(word) && word.startsWith("$")) {
-      while (word && word.endsWith(".")) {
+      let isPeriod = word.endsWith(".");
+      let isExcla = word.endsWith("!");
+      while (word && (isPeriod || isExcla)) {
+        restoreSpace = _restore;
         word = word.substring(0, word.length - 1);
-        cutCount += 1;
+        
+        if (isPeriod) {
+          cutHist.push(".");
+        } else if (isExcla) {
+          cutHist.push("!");
+        }
+        isPeriod = word.endsWith(".");
+        isExcla = word.endsWith("!");
       }
-      
-      if (cutCount !== 0) {
+
+      if (cutHist.length !== 0) {
         expr.payload.value = word;
       }  
     }
     const isFuncCall = expr.kind === "funcall";
     const isSymbol = expr.kind === "symbol";
     const resolved = runExpr(expr, ctx);
-    builder.push(resolved + ".".repeat(cutCount));
+    const append = cutHist.join("");
+    builder.push(resolved + append + restoreSpace);
     
     const isVar = lex.lastToken()?.startsWith("$");
     const commaLoc = builder.lastIndexOf(",") - 1;

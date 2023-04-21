@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { beforeAll, describe, expect, jest, test } from "@jest/globals";
 import check from "../../check";
 import { TypeOf } from "../eval";
 
@@ -337,7 +337,6 @@ const tests: {
     returnType: "boolean",
   }
 };
-
 
 describe("check", () => {
   Object.entries(tests).forEach(([fnName, { examples, returnType }]) => {

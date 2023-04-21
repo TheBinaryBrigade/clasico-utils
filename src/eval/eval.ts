@@ -176,7 +176,7 @@ export class Lexer {
       return token;
     }
     for (let i = 0; i < this.src.length; ++i) {
-      if ((isTokenBreak(this.src[i]) || this.src[i] == " ")) {
+      if (isTokenBreak(this.src[i]) || this.src[i] == " ") {
         const token = this.src.slice(0, i);
         this.src = this.src.slice(i);
         this.hist.push(token);
@@ -196,6 +196,23 @@ export class Lexer {
       this.unnext(token);
     }
     return valid;
+  }
+
+  spaceAfterToken(): string {
+    const token = this.next();
+    const valid = token !== null;
+    
+    if (valid && this.src) {
+      const spaceCount = this.src.length - this.src.trimStart().length;
+      if (spaceCount > 0) {
+        this.unnext(token);
+        return " ".repeat(spaceCount);
+      }
+    }
+    if (valid) {
+      this.unnext(token);
+    }
+    return "";
   }
 }
 
