@@ -5,7 +5,7 @@ module.exports = {
     "node": true,
   },
   "ignorePatterns": [
-    "playground/*.js",
+    "docs/*.js",
     "**/vendor/*.js"
   ],
   "extends": [
