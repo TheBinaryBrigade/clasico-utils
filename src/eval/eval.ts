@@ -106,34 +106,34 @@ export type TypeOf = typeof ___TOF;
 export type AnyFn = (...args: any) => any;
 export type ContextVarsVarType = any;
 export type ContextFuncs = {
-    [key: string]: AnyFn,
+  [key: string]: AnyFn,
 };
 export type ContextVars = {
-    [key: string]: ContextVarsVarType,
+  [key: string]: ContextVarsVarType,
 };
 export type EvalContext = {
-    funcs?: ContextFuncs,
-    vars?: ContextVars,
+  funcs?: ContextFuncs,
+  vars?: ContextVars,
 };
 export type Expression = {
-    kind: "funcall" | "unary_op" | "symbol" | "binary_op",
-    payload: {
-        name?: string,
-        op?: string,
-        value?: string,
-        operand?: Expression,
-        rhs?: Expression,
-        lhs?: Expression,
-        args?: Expression[],
-    },
+  kind: "funcall" | "unary_op" | "symbol" | "binary_op",
+  payload: {
+    name?: string,
+    op?: string,
+    value?: string,
+    operand?: Expression,
+    rhs?: Expression,
+    lhs?: Expression,
+    args?: Expression[],
+  },
 };
 
 export class Lexer {
   constructor(
-        private src: string,
-        private hist: string[] = [],
-        private syntax: string = "(),",
-        public alreadyCrashed: boolean = false,
+    private src: string,
+    private hist: string[] = [],
+    private syntax: string = "(),",
+    public alreadyCrashed: boolean = false,
   ) { }
 
   lastToken(): string | undefined {
@@ -153,21 +153,21 @@ export class Lexer {
     const isTokenBreak = (c: string) => {
       return (
         c in BINARY_OPS
-                || c in UNARY_OPS
-                || this.syntax.includes(c)
+        || c in UNARY_OPS
+        || this.syntax.includes(c)
       );
     };
 
     const isDouble = this.src.startsWith("\"");
     const isSingle = this.src.startsWith("'");
-    const isSOFStr =  isDouble || isSingle;
+    const isSOFStr = isDouble || isSingle;
     const strEnd = this.src.indexOf(isDouble ? "\"" : "'", 1);
     if (isSOFStr && strEnd > 0) {
       const token = this.src.slice(0, strEnd + 1);
       this.src = this.src.slice(strEnd + 1);
       this.hist.push(token);
       return token;
-    } 
+    }
 
     if (isTokenBreak(this.src[0])) {
       const token = this.src[0];
@@ -262,7 +262,7 @@ export const parsePrimary = (lexer: Lexer): Expression => {
           nextToken = lexer.next();
           if (nextToken === __SAVE) {
             nextToken = lexer.next();
-          }          
+          }
         }
         if (nextToken === __SAVE) {
           nextToken = lexer.next();
@@ -319,17 +319,17 @@ export const parseExpr = (lexer: Lexer, prec: number = BIN_PREC.PREC0): Expressi
   return lhs;
 };
 
-export const compileExpr = (src: string) => {
-  const lexer = new Lexer(src);
-  const result = parseExpr(lexer);
-  const token = lexer.next();
-  if (token !== null) {
-    console.log(typeof (token));
-    console.log(token);
-    throw new Error("Unexpected token '" + token + "'");
-  }
-  return result;
-};
+// export const compileExpr = (src: string) => {
+//   const lexer = new Lexer(src);
+//   const result = parseExpr(lexer);
+//   const token = lexer.next();
+//   if (token !== null) {
+//     console.log(typeof (token));
+//     console.log(token);
+//     throw new Error("Unexpected token '" + token + "'");
+//   }
+//   return result;
+// };
 
 export const runExpr = (expr: Expression, ctx: EvalContext = {}): any => {
   console.assert(check.isObject(expr));

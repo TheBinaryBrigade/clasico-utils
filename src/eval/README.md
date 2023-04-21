@@ -2747,7 +2747,7 @@ Context:
 (x, searchString, endPos) => {
         x = $str(x);
         searchString = $str(searchString);
-        return x.endsWith(searchString);
+        return x.endsWith(searchString, endPos);
     }
 ```
 

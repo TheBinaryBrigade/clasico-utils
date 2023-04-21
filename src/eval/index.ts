@@ -120,7 +120,7 @@ const builtinFunctions = () => {
   const $endsWith = (x: any, searchString: string, endPos?: number) => {
     x = $str(x);
     searchString = $str(searchString);
-    return x.endsWith(searchString);
+    return x.endsWith(searchString, endPos);
   };
   const $startsWith = (x: any, searchString: string, pos?: number) => {
     return $str(x).startsWith(searchString, pos);

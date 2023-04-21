@@ -1,44 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+const TRUE = new Boolean(true);
+const FALSE = new Boolean(false);
+const BOOLEANS = [true, TRUE, false, FALSE];
+
 const isNumber = (x: any) => {
   return (
     typeof x === "number"
-        || typeof x === "bigint"
-        || x instanceof Number
-        || x instanceof BigInt
+    || x instanceof Number
+    || typeof x === "bigint"
+    || x instanceof BigInt
   );
 };
 
 const isString = (x: any) => {
   return (
     typeof x === "string"
-        || x instanceof String
+    || x instanceof String
   );
 };
 
 const isBoolean = (x: any) => {
   return (
     typeof x === "boolean"
-        || x instanceof Boolean
+    || x instanceof Boolean
+    || BOOLEANS.includes(x)
   );
 };
 
 const isFunction = (x: any) => {
   return (
     typeof x === "function"
-        || x instanceof Function
+    || x instanceof Function
   );
 };
 
 const isObject = (x: any) => {
-  return (
-    typeof x === "object"
-        || x instanceof Object
-  );
+  if (isNil(x)) {
+    return false;
+  }
+
+  return typeof x === "object";
+};
+
+const isNil = (x: any) => {
+  return x === null || x === undefined;
 };
 
 const isArray = (x: any) => {
-  return Array.isArray(x);
+  return (
+    Array.isArray(x)
+    || x instanceof Array
+    || Object.prototype.toString.call(x) === "[object Array]"
+  );
+};
+
+const isSet = (x: any) => {
+  return (
+    x instanceof Set
+    || Object.prototype.toString.call(x) === "[object Set]"
+  );
+};
+
+const isIterable = (x: any) => {
+  // checks for null and undefined
+  if (isNil(x)) {
+    return false;
+  }
+  return isFunction(x[Symbol.iterator]);
 };
 
 const isNumeric = (x: any) => {
@@ -50,8 +79,6 @@ const isNumeric = (x: any) => {
   }
   return !isNaN(x) && !isNaN(parseFloat(x));
 };
-
-// Boolean input
 
 const isValidBoolean = (x: any) => {
   if (isBoolean(x)) {
@@ -68,6 +95,10 @@ const isValidBoolean = (x: any) => {
       0,
       "1",
       "0",
+      TRUE,
+      FALSE,
+      true,
+      false,
     ];
 
     if (alts.includes(x)) {
@@ -75,6 +106,7 @@ const isValidBoolean = (x: any) => {
     }
 
     if (isStr) {
+      x = x.trim();
       const len = Math.max(...alts.map((x) => x.toString().length));
       if (x.length <= len && alts.includes(x.toLowerCase())) {
         return true;
@@ -86,12 +118,17 @@ const isValidBoolean = (x: any) => {
 };
 
 const isTrue = (x: any) => {
+  if (x && x.toString && x.toString() === "true") {
+    return true;
+  }
+
   if (isValidBoolean(x)) {
     const alts = [
       true,
       "true",
       "1",
       1,
+      TRUE,
     ];
 
     if (alts.includes(x)) {
@@ -99,6 +136,7 @@ const isTrue = (x: any) => {
     }
 
     if (isString(x)) {
+      x = x.trim();
       const len = Math.max(...alts.map((x) => x.toString().length));
       if (x.length <= len && alts.includes(x.toLowerCase())) {
         return true;
@@ -109,7 +147,17 @@ const isTrue = (x: any) => {
   return false;
 };
 
-const isFalse = (x: any) => !isTrue(x);
+const isFalse = (x: any) => {
+  if (x && x.toString && x.toString() === "false") {
+    return true;
+  }
+
+  if (isValidBoolean(x)) {
+    return !isTrue(x);
+  }
+
+  return false;
+};
 
 // @exports
 export default {
@@ -122,4 +170,7 @@ export default {
   isValidBoolean,
   isTrue,
   isFalse,
+  isArray,
+  isSet,
+  isIterable,
 };
