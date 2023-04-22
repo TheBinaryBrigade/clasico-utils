@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "jest .*.test.ts && npm run build:eval:doc",
+    "test": "jest .*.test.ts && npm run build:eval:doc && npm run build:eval:web",
     "build:eval:doc": "ts-node ./.buildevaldoc.ts",
-    "build:playground": "esbuild ./src/index.ts --global-name=CLASICO --outfile=./playground/eval.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16"
+    "build:eval:web": "esbuild ./src/index.ts --global-name=ClasicoUtils --outfile=./docs/eval.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16"
   },
   "author": "",
   "license": "MIT",

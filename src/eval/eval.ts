@@ -23,7 +23,7 @@ export const BINARY_OPS = {
   "+": {
     func: (lhs: any, rhs: any) => {
       if (![lhs, rhs].every(check.isNumber)) {
-        return `${lhs}*${rhs}`;
+        return `${lhs}+${rhs}`;
       }
       return lhs + rhs;
     },
@@ -32,7 +32,7 @@ export const BINARY_OPS = {
   "-": {
     func: (lhs: any, rhs: any) => {
       if (![lhs, rhs].every(check.isNumber)) {
-        return `${lhs}*${rhs}`;
+        return `${lhs}-${rhs}`;
       }
       return lhs - rhs;
     },
@@ -50,7 +50,7 @@ export const BINARY_OPS = {
   "/": {
     func: (lhs: any, rhs: any) => {
       if (![lhs, rhs].every(check.isNumber)) {
-        return `${lhs}*${rhs}`;
+        return `${lhs}/${rhs}`;
       }
       return lhs / rhs;
     },
@@ -59,36 +59,9 @@ export const BINARY_OPS = {
   "%": {
     func: (lhs: any, rhs: any) => {
       if (![lhs, rhs].every(check.isNumber)) {
-        return `${lhs}*${rhs}`;
+        return `${lhs}%${rhs}`;
       }
       return lhs % rhs;
-    },
-    prec: BIN_PREC.PREC1
-  },
-  "^": {
-    func: (lhs: any, rhs: any) => {
-      if (![lhs, rhs].every(check.isNumber)) {
-        return `${lhs}^${rhs}`;
-      }
-      return Math.pow(lhs, rhs);
-    },
-    prec: BIN_PREC.PREC1
-  },
-  "|": {
-    func: (lhs: any, rhs: any) => {
-      if (![lhs, rhs].every(check.isBoolean)) {
-        return `${lhs} | ${rhs}`;
-      }
-      return lhs || rhs;
-    },
-    prec: BIN_PREC.PREC1
-  },
-  "&": {
-    func: (lhs: any, rhs: any) => {
-      if (![lhs, rhs].every(check.isBoolean)) {
-        return `${lhs} & ${rhs}`;
-      }
-      return lhs && rhs;
     },
     prec: BIN_PREC.PREC1
   },
@@ -135,6 +108,14 @@ export class Lexer {
     private syntax: string = "(),",
     public alreadyCrashed: boolean = false,
   ) { }
+
+  nextToken(): string | null {
+    const token = this.next();
+    if (token !== null) {
+      this.unnext(token);
+    }
+    return token;
+  }
 
   lastToken(): string | undefined {
     return this.hist[this.hist.length - 1];
@@ -412,7 +393,11 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}): any => {
     if (name?.startsWith("$")) {
       console.warn("WARN: Unknown function '" + name + "'");
     }
-    return `${name}(...[${args?.length} args])`;
+    const params = args
+      ?.map((x) => x?.payload?.value)
+      .map((x) => check.isObject(x) ? JSON.stringify(x) : x)
+      .join(", ");
+    return `${name}(${params || ""})`;
   }
   default: {
     throw new Error("Unexpected AST node '" + expr.kind + "'");

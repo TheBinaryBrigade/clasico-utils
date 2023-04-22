@@ -47,7 +47,31 @@ const tests: {
   {
     input: "Hello, $myVar. I have 1 + 1 cats",
     output: "Hello, 42. I have 2 cats",
-  }
+  },
+  {
+    input: "Hello, $myVar I have 1 + 1 cats",
+    output: "Hello, 42 I have 2 cats",
+  },
+  {
+    input: "Hello, $myVar I have 1 + 1 cats\n\n$myVar.\n\nI have 1 + 1 cats",
+    output: "Hello, 42 I have 2 cats\n\n42.\n\nI have 2 cats",
+  },
+  {
+    input: "Hello, $myVar I have 1 + 1 cats\n\n$myVar I have 1 + 1 cats",
+    output: "Hello, 42 I have 2 cats\n\n42 I have 2 cats",
+  },
+  {
+    input: "$myVar brings all the $concat($myVar, \"s\") to the $myVar",
+    output: "42 brings all the 42s to the 42",
+  },
+  {
+    input: "$myVar brings all the $concat($myVar, \"s\"), to the $myVar",
+    output: "42 brings all the 42s, to the 42",
+  },
+  {
+    input: "$myVar brings all the $concat($myVar, \"s\")! to the $myVar",
+    output: "42 brings all the 42s! to the 42",
+  },
 ];
 
 describe("parse sentence edge cases", () => {

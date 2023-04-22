@@ -293,6 +293,13 @@ const builtinFunctions = () => {
 };
 
 const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
+  return sentence
+    .split("\n")
+    .map((line) => _parseSentence(line , _ctx))
+    .join("\n");
+};
+
+const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
   const ctx = wrapCtxFuncs({/*clone*/..._ctx });
   const lex = new Lexer(sentence);
 
@@ -304,10 +311,10 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     let word = expr.payload.value;
     const cutHist = [];
     if (word && check.isString(word) && word.startsWith("$")) {
+      restoreSpace = _restore;
       let isPeriod = word.endsWith(".");
       let isExcla = word.endsWith("!");
       while (word && (isPeriod || isExcla)) {
-        restoreSpace = _restore;
         word = word.substring(0, word.length - 1);
         
         if (isPeriod) {
@@ -333,6 +340,10 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     const commaLoc = builder.lastIndexOf(",") - 1;
     if (lex.lastToken() === "," && builder[commaLoc] === " ") {
       builder.splice(commaLoc, 1);
+    }
+
+    if (isFuncCall && lex.nextToken() !== "!") {
+      builder.push(" ");
     }
 
     if (!(isFuncCall || (isSymbol && isVar))) {

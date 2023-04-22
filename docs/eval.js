@@ -1,5 +1,5 @@
 "use strict";
-var CLASICO = (() => {
+var ClasicoUtils = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -183,7 +183,7 @@ var CLASICO = (() => {
     "+": {
       func: (lhs, rhs) => {
         if (![lhs, rhs].every(check_default.isNumber)) {
-          return `${lhs}*${rhs}`;
+          return `${lhs}+${rhs}`;
         }
         return lhs + rhs;
       },
@@ -192,7 +192,7 @@ var CLASICO = (() => {
     "-": {
       func: (lhs, rhs) => {
         if (![lhs, rhs].every(check_default.isNumber)) {
-          return `${lhs}*${rhs}`;
+          return `${lhs}-${rhs}`;
         }
         return lhs - rhs;
       },
@@ -210,7 +210,7 @@ var CLASICO = (() => {
     "/": {
       func: (lhs, rhs) => {
         if (![lhs, rhs].every(check_default.isNumber)) {
-          return `${lhs}*${rhs}`;
+          return `${lhs}/${rhs}`;
         }
         return lhs / rhs;
       },
@@ -219,36 +219,9 @@ var CLASICO = (() => {
     "%": {
       func: (lhs, rhs) => {
         if (![lhs, rhs].every(check_default.isNumber)) {
-          return `${lhs}*${rhs}`;
+          return `${lhs}%${rhs}`;
         }
         return lhs % rhs;
-      },
-      prec: BIN_PREC.PREC1
-    },
-    "^": {
-      func: (lhs, rhs) => {
-        if (![lhs, rhs].every(check_default.isNumber)) {
-          return `${lhs}^${rhs}`;
-        }
-        return Math.pow(lhs, rhs);
-      },
-      prec: BIN_PREC.PREC1
-    },
-    "|": {
-      func: (lhs, rhs) => {
-        if (![lhs, rhs].every(check_default.isBoolean)) {
-          return `${lhs} | ${rhs}`;
-        }
-        return lhs || rhs;
-      },
-      prec: BIN_PREC.PREC1
-    },
-    "&": {
-      func: (lhs, rhs) => {
-        if (![lhs, rhs].every(check_default.isBoolean)) {
-          return `${lhs} & ${rhs}`;
-        }
-        return lhs && rhs;
       },
       prec: BIN_PREC.PREC1
     }
@@ -262,6 +235,13 @@ var CLASICO = (() => {
       this.hist = hist;
       this.syntax = syntax;
       this.alreadyCrashed = alreadyCrashed;
+    }
+    nextToken() {
+      const token = this.next();
+      if (token !== null) {
+        this.unnext(token);
+      }
+      return token;
     }
     lastToken() {
       return this.hist[this.hist.length - 1];
@@ -503,7 +483,11 @@ var CLASICO = (() => {
         if (name == null ? void 0 : name.startsWith("$")) {
           console.warn("WARN: Unknown function '" + name + "'");
         }
-        return `${name}(...[${args == null ? void 0 : args.length} args])`;
+        const params = args == null ? void 0 : args.map((x) => {
+          var _a;
+          return (_a = x == null ? void 0 : x.payload) == null ? void 0 : _a.value;
+        }).map((x) => check_default.isObject(x) ? JSON.stringify(x) : x).join(", ");
+        return `${name}(${params || ""})`;
       }
       default: {
         throw new Error("Unexpected AST node '" + expr.kind + "'");
@@ -739,6 +723,9 @@ var CLASICO = (() => {
     };
   };
   var parseSentence = (sentence, _ctx = {}) => {
+    return sentence.split("\n").map((line) => _parseSentence(line, _ctx)).join("\n");
+  };
+  var _parseSentence = (sentence, _ctx = {}) => {
     var _a;
     const ctx = wrapCtxFuncs(__spreadValues({}, _ctx));
     const lex = new Lexer(sentence);
@@ -750,10 +737,10 @@ var CLASICO = (() => {
       let word = expr.payload.value;
       const cutHist = [];
       if (word && check_default.isString(word) && word.startsWith("$")) {
+        restoreSpace = _restore;
         let isPeriod = word.endsWith(".");
         let isExcla = word.endsWith("!");
         while (word && (isPeriod || isExcla)) {
-          restoreSpace = _restore;
           word = word.substring(0, word.length - 1);
           if (isPeriod) {
             cutHist.push(".");
@@ -776,6 +763,9 @@ var CLASICO = (() => {
       const commaLoc = builder.lastIndexOf(",") - 1;
       if (lex.lastToken() === "," && builder[commaLoc] === " ") {
         builder.splice(commaLoc, 1);
+      }
+      if (isFuncCall && lex.nextToken() !== "!") {
+        builder.push(" ");
       }
       if (!(isFuncCall || isSymbol && isVar)) {
         builder.push(" ");
