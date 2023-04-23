@@ -840,7 +840,7 @@ var utils_default = {
   capitalize
 };
 
-// src/inlfection/index.ts
+// src/inflection/index.ts
 var PLURALS = [
   [/(quiz)$/i, "$1zes"],
   [/^(oxen)$/i, "$1"],
@@ -1077,7 +1077,7 @@ _irregular("sex", "sexes");
 _irregular("move", "moves");
 _irregular("cow", "kine");
 _irregular("zombie", "zombies");
-var inlfection_default = {
+var inflection_default = {
   camelize,
   dasherize,
   humanize,
@@ -1095,6 +1095,174 @@ var inlfection_default = {
   SINGULARS
 };
 
+// src/date/index.ts
+var subtractSeconds = (date, seconds) => {
+  date.setSeconds(date.getSeconds() - seconds);
+  return date;
+};
+var date_default = {
+  subtractSeconds
+};
+
+// src/array/sorted.ts
+var sorted_exports = {};
+__export(sorted_exports, {
+  BisectArray: () => BisectArray,
+  ReverseCompareArray: () => ReverseCompareArray,
+  ReverseNumberArray: () => ReverseNumberArray,
+  ReverseSortedArray: () => ReverseSortedArray,
+  ReverseStringArray: () => ReverseStringArray,
+  SortedArray: () => SortedArray,
+  SortedCompareArray: () => SortedCompareArray,
+  SortedNumberArray: () => SortedNumberArray,
+  SortedStringArray: () => SortedStringArray
+});
+var BisectArray = class extends Array {
+  constructor(opts) {
+    const items = opts.items;
+    super(...items);
+    this.opts = opts;
+    if (this.isValidCmp()) {
+      this.sort(this.opts.cmp);
+    } else {
+      this.sort((a, b) => this.opts.key(a) - this.opts.key(b));
+    }
+    if (this.opts.asReversed) {
+      this.reverse();
+    }
+  }
+  pop() {
+    return this.isReversed() ? super.pop() : super.shift();
+  }
+  push(...items) {
+    for (const item of items) {
+      const index = this.binarySearch(item);
+      this.splice(index, 0, item);
+    }
+    return this.length;
+  }
+  binarySearch(item) {
+    let left = 0;
+    let right = this.length - 1;
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (this.shouldSwap(this[mid], item)) {
+        left = mid + 1;
+      } else if (this.shouldSwap(item, this[mid])) {
+        right = mid - 1;
+      } else {
+        return mid;
+      }
+    }
+    return left;
+  }
+  shouldSwap(a, b) {
+    if (this.opts.cmp && this.isValidCmp()) {
+      return this.isReversed() ? this.opts.cmp(b, a) <= 0 : this.opts.cmp(a, b) <= 0;
+    }
+    const keyA = this.opts.key(a);
+    const keyB = this.opts.key(b);
+    return this.isReversed() ? keyB - keyA <= 0 : keyA - keyB <= 0;
+  }
+  isValidCmp() {
+    return this.opts.cmp && check_default.isFunction(this.opts.cmp);
+  }
+  isReversed() {
+    return this.opts.asReversed;
+  }
+};
+var ReverseSortedArray = class extends BisectArray {
+  constructor(key, ...items) {
+    super({ key, asReversed: true, items });
+  }
+};
+var SortedArray = class extends BisectArray {
+  constructor(key, ...items) {
+    super({ key, asReversed: false, items });
+  }
+};
+var ReverseNumberArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: (a) => a, asReversed: true, items });
+  }
+};
+var SortedNumberArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: (a) => a, asReversed: false, items });
+  }
+};
+var ReverseStringArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
+  }
+};
+var SortedStringArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
+  }
+};
+var ReverseCompareArray = class extends BisectArray {
+  constructor(cmp, ...items) {
+    super({ key: () => 0, cmp, asReversed: true, items });
+  }
+};
+var SortedCompareArray = class extends BisectArray {
+  constructor(cmp, ...items) {
+    super({ key: () => 0, cmp, asReversed: true, items });
+  }
+};
+
+// src/array/index.ts
+var array_default = {
+  ...sorted_exports
+};
+
+// src/fuzzy/index.ts
+var similarity = (str1, str2, gramSize = 2) => {
+  const getNGrams = (s, len) => {
+    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
+    const v = new Array(s.length - len + 1);
+    for (let i = 0; i < v.length; i++) {
+      v[i] = s.slice(i, i + len);
+    }
+    return v;
+  };
+  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
+    return 0;
+  }
+  const s1 = str1.length < str2.length ? str1 : str2;
+  const s2 = str1.length < str2.length ? str2 : str1;
+  const pairs1 = getNGrams(s1, gramSize);
+  const pairs2 = getNGrams(s2, gramSize);
+  const set = new Set(pairs1);
+  const total = pairs2.length;
+  let hits = 0;
+  for (const item of pairs2) {
+    if (set.delete(item)) {
+      hits++;
+    }
+  }
+  return hits / total;
+};
+var topSimilar = (value, values, key, topK = 5, gramSize = 2) => {
+  const str1 = key(value);
+  if (topK <= 0) {
+    topK = 5;
+  }
+  const arr = new ReverseSortedArray((x) => similarity(str1, key(x), gramSize));
+  values.forEach((x) => {
+    arr.push(x);
+    if (arr.length > topK) {
+      arr.pop();
+    }
+  });
+  return [...arr];
+};
+var fuzzy_default = {
+  similarity,
+  topSimilar
+};
+
 // src/@types/index.ts
 var types_exports = {};
 
@@ -1102,8 +1270,11 @@ var types_exports = {};
 var src_default = {
   check: check_default,
   parser: eval_default,
-  inflection: inlfection_default,
+  inflection: inflection_default,
   utils: utils_default,
+  date: date_default,
+  fuzzy: fuzzy_default,
+  array: array_default,
   ...types_exports
 };
 //# sourceMappingURL=clasico-utils.js.map
