@@ -1,7 +1,12 @@
+
+// This code is a port of (i.e., based on) the inflection project (https://github.com/jpvanhal/inflection),
+// which is licensed under the MIT License.
+// Copyright (C) 2012-2020 Janne Vanhala
+
 import utils from "../utils";
 
 
-type RegexReplaceList = [RegExp, string][]
+export type RegexReplaceList = [RegExp, string][]
 
 const PLURALS: RegexReplaceList = [
   [/(quiz)$/i, "$1zes"],

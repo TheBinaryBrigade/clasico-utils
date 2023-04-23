@@ -5,9 +5,10 @@
   "main": "index.ts",
   "scripts": {
     "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts && tslint --fix -c tslint.json 'src/**/*.ts' -e \"**/__test__/**\"",
-    "test": "jest --silent .*.test.ts && npm run build:eval:doc && npm run build:eval:web",
+    "test": "jest --silent .*.test.ts && npm run build:eval:doc && npm run build:web && npm run build:node",
     "build:eval:doc": "ts-node ./.buildevaldoc.ts",
-    "build:eval:web": "esbuild ./src/index.ts --global-name=ClasicoUtils --outfile=./docs/eval.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16"
+    "build:web": "esbuild ./src/index.ts --global-name=ClasicoUtils --outfile=./dist/web/clasico-utils.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16 && cp ./dist/web/clasico-utils.js ./docs/clasico-utils.js && cp ./dist/web/clasico-utils.js.map ./docs/clasico-utils.js.map",
+    "build:node": "esbuild ./src/index.ts --outfile=./dist/node10.4/clasico-utils.js --bundle --sourcemap --platform=node --target=node10.4"
   },
   "author": "",
   "license": "MIT",

@@ -13,7 +13,7 @@ const hashCode = (str: any, coerceToString=true): number | null => {
         try {
           str = JSON.stringify(str);
           // eslint-disable-next-line no-empty
-        } catch(ignoerd) {}
+        } catch(ignored) {}
       }
 
       if (!check.isString(str) && str.toString) {
