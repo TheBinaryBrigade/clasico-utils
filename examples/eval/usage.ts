@@ -1,4 +1,4 @@
-import clasico from "../src/index";
+import clasico from "../../src/index";
 
 const parser = new clasico.parser.SentenceParser({
   includeBuiltIns: true,

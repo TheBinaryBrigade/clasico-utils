@@ -87,6 +87,7 @@ const SINGULAR_TO_PLURAL: TestParameters = [
   ["cow", "kine"],
   ["database", "databases"],
   ["human", "humans"],
+  ["<p>hello, world!</p>", "<p>hello, world!</p>"],
 ];
 
 const CAMEL_TO_UNDERSCORE: TestParameters = [

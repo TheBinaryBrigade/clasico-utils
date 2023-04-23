@@ -49,7 +49,7 @@ const examplesView = (examples: BuiltinExample[]) => {
                 "#### Example No." + (idx + 1).toString(),
                 "\n\n",
                 "Input: " + inlineCode(text) + "<br />",
-                "Output: " + inlineCode(output) + "<br />" + "\n\n",
+                (typeof output === "string" ? "Output: " + inlineCode(output) + "<br />" : "") + "\n\n",
                 (context ? "\nContext: \n" + inlineCode(JSON.stringify(context, null, 4)) : ""),
                 // notes ? "\nNotes: \n\n1. " + notes.join("\n1. ") : "",
                 "\n---\n"
@@ -114,6 +114,6 @@ writeFile(evalReadme, [
     helperDocs
 ].join(""));
 
-const usage = readFile("./examples/usage.ts")
+const usage = readFile("./examples/eval/usage.ts")
 const readmet = readFile(readmeTemplateFilename).replace(usageKey, blockCode(usage, "ts"));
 writeFile(targetReadme, readmeWarn + "\n\n" + readmet)

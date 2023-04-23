@@ -1,13 +1,14 @@
 
 
 import _eval, { BuiltInFunctionKey, Context } from "./index";
+import fuzzy from "../fuzzy";
 
 export type BuiltinExample = {
     input: {
         text: string,
         context?: Context,
     },
-    output: string,
+    output: string | (<T>(result: T) => boolean),
     notes?: string[],
 };
 export type BuiltinDoc = {
@@ -1430,6 +1431,19 @@ const docs: BuiltinDocs = {
     ],
     isDeprecated: false,
     implementation: undefined
+  },
+  $now: {
+    description: "Gets current datetime",
+    examples: [
+      {
+        input: { text: "$now()" },
+        output: <Date>(result: Date) => {
+          return fuzzy.similarity(`${result}`, `${new Date()}`) > 0.80;
+        },
+      }
+    ],
+    isDeprecated: false,
+    implementation: undefined
   }
 };
 
@@ -1438,17 +1452,22 @@ const docs: BuiltinDocs = {
   const builtins = _eval.builtinFunctions();
   const keys = Object.keys(builtins) as BuiltInFunctionKey[];
   keys.forEach((key) => {
-    docs[key].implementation = builtins[key].toString();
-
-    if (!docs[key].examples) {
+    if (!docs[key]) {
       console.warn(`WARN: ${key} in docs doesn't have any examples.`);
+    } else {
+      docs[key].implementation = builtins[key].toString();
+
+      if (!docs[key].examples) {
+        console.warn(`WARN: ${key} in docs doesn't have any examples.`);
+      }
+
+      docs[key].examples.forEach((example, index) => {
+        if (!example.input.text.includes(key)) {
+          console.warn(`WARN: Example in ${key} doesn't contains itself (mssing ${key} in example #${index})`);
+        }
+      });
     }
 
-    docs[key].examples.forEach((example, index) => {
-      if (!example.input.text.includes(key)) {
-        console.warn(`WARN: Example in ${key} doesn't contains itself (mssing ${key} in example #${index})`);
-      }
-    });
 
   });
 })();

@@ -670,6 +670,9 @@ var builtinFunctions = () => {
     }
     return false;
   };
+  const $now = () => {
+    return /* @__PURE__ */ new Date();
+  };
   return {
     $if,
     $abs,
@@ -703,7 +706,8 @@ var builtinFunctions = () => {
     $endsWith,
     $startsWith,
     $lower,
-    $upper
+    $upper,
+    $now
   };
 };
 var parseSentence = (sentence, _ctx = {}) => {
@@ -1017,19 +1021,19 @@ var parameterize = (string, separator = "-") => {
 };
 var pluralize = (word) => {
   const isUpper = /[A-Z]/.test(word.charAt(0));
-  if (!word || UNCOUNTABLES.has(word.toLowerCase())) {
-    return word;
-  } else {
-    for (const elem of PLURALS) {
-      const rule = elem[0];
-      const replacement = elem[1];
-      if (rule.test(word)) {
-        const result = word.replace(rule, replacement);
-        return isUpper ? utils_default.capitalize(result) : result;
-      }
-    }
+  const endsWithLetter = /[A-Za-z]$/.test(word);
+  if (!word || UNCOUNTABLES.has(word.toLowerCase()) || !endsWithLetter) {
     return word;
   }
+  for (const elem of PLURALS) {
+    const rule = elem[0];
+    const replacement = elem[1];
+    if (rule.test(word)) {
+      const result = word.replace(rule, replacement);
+      return isUpper ? utils_default.capitalize(result) : result;
+    }
+  }
+  return word;
 };
 var singularize = (word) => {
   const isUpper = /[A-Z]/.test(word.charAt(0));

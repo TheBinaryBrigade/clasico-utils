@@ -23,18 +23,19 @@
 19. [$math](#math)
 20. [$max](#max)
 21. [$min](#min)
-22. [$pow](#pow)
-23. [$round](#round)
-24. [$startsWith](#startsWith)
-25. [$str](#str)
-26. [$substring](#substring)
-27. [$tisboolean](#tisboolean)
-28. [$tisnumber](#tisnumber)
-29. [$tisobject](#tisobject)
-30. [$tisstring](#tisstring)
-31. [$tisundefined](#tisundefined)
-32. [$type](#type)
-33. [$upper](#upper)
+22. [$now](#now)
+23. [$pow](#pow)
+24. [$round](#round)
+25. [$startsWith](#startsWith)
+26. [$str](#str)
+27. [$substring](#substring)
+28. [$tisboolean](#tisboolean)
+29. [$tisnumber](#tisnumber)
+30. [$tisobject](#tisobject)
+31. [$tisstring](#tisstring)
+32. [$tisundefined](#tisundefined)
+33. [$type](#type)
+34. [$upper](#upper)
 
 ## Documentation
 
@@ -1540,6 +1541,29 @@ Context:
         "$x": -1
     }
 }`
+
+---
+
+
+</details>
+
+### `$now` 
+
+Gets current datetime
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$now()`<br />
+
+
+
+
 
 ---
 

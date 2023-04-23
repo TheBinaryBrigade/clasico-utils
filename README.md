@@ -10,7 +10,7 @@ Builtin Functions: [Documentation](./src/eval/README.md)
 
 ```ts
 
-import clasico from "../src/index";
+import clasico from "../../src/index";
 
 const parser = new clasico.parser.SentenceParser({
   includeBuiltIns: true,

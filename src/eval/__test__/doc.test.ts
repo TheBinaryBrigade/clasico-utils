@@ -17,7 +17,11 @@ Object.entries(doc).forEach(([$name, { examples }]) => {
       };
       test(`${text}; ctx=${JSON.stringify(input.context?.vars)}`, () => {
         const result = parser.parseSentence(text, ctx);
-        expect(result).toBe(output);
+        if (typeof output === "function") {
+          expect(output(result)).toBe(true);
+        } else {
+          expect(result).toBe(output);
+        }
       });
     });
   });

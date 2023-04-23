@@ -256,6 +256,10 @@ const builtinFunctions = () => {
     return false;
   };
 
+  const $now = () => {
+    return new Date();
+  };
+
   return {
     $if,
     $abs,
@@ -290,6 +294,7 @@ const builtinFunctions = () => {
     $startsWith,
     $lower,
     $upper,
+    $now,
   };
 };
 
