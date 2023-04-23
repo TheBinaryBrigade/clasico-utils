@@ -786,7 +786,7 @@ var ClasicoUtils = (() => {
         if (check_default.isObject(str)) {
           try {
             str = JSON.stringify(str);
-          } catch (ignoerd) {
+          } catch (ignored) {
           }
         }
         if (!check_default.isString(str) && str.toString) {
