@@ -6,7 +6,7 @@ module.exports = {
   },
   "ignorePatterns": [
     "docs/*.js",
-    "dist/*.js",
+    "dist/**/*.js",
     "**/vendor/*.js"
   ],
   "extends": [

@@ -11,16 +11,18 @@
 <body>
 
     <div id="root">
-        <p>See builtin functions: <a target="_blank" href="https://github.com/TheBinaryBrigade/common-js/tree/main/src/eval#readme">Documentaion</a></p>
+        <p>See builtin functions: <a target="_blank"
+                href="https://github.com/TheBinaryBrigade/common-js/tree/main/src/eval#readme">Documentaion</a></p>
 
         <label for="output">Output</label>
         <textarea name="output" id="output" disabled></textarea>
 
         <label for="input">Input Expression</label>
-        <textarea name="input" id="input">Hello, $myVar. I have 1 + 1 cats</textarea>
+        <textarea name="input"
+            id="input">Hello, the area of a cicle with a radius of $radius is $math("PI") * $math("pow", $radius, 2)</textarea>
 
         <label for="context">Input Context</label>
-        <textarea name="context" id="context">{"$myVar": "world"}</textarea>
+        <textarea name="context" id="context">{"$myVar": "world", "$radius": 2}</textarea>
 
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"
@@ -32,7 +34,7 @@
     <script src="clasico-utils.js"></script>
     <script>;
         ; (() => {
-            const { parser } = ClasicoUtils;
+            const { parser } = ClasicoUtils.default;
             const root = document.getElementById('root');
             const outputTextArea = document.getElementById('output');
             const inputTextArea = document.getElementById('input');
@@ -51,25 +53,19 @@
                     json: true,
                 }
             });
-            contextMirror.setValue(JSON.stringify(JSON.parse(contextMirror.getValue()), null, 4))
-
-            contextMirror.on('change', (ev) => {
-                try {
-                    const prev = contextMirror.getValue();
-                    const parsed = JSON.parse(contextMirror.getValue());
-                    const repl = JSON.stringify(parsed, null, 4);
-                    if (prev !== repl) {
-                        contextMirror.setValue(repl);
-                    }
-                } catch (ignored) {
-                    return;
-                }
-            })
 
             inputMirror.on('change', (ev) => {
+                let ctx;
+                try {
+                    ctx = JSON.parse(contextMirror.getValue() || "{}");
+                } catch (contextFormatError) {
+                    console.warn("problem with context format: ", contextFormatError);
+                    return;
+                }
+                // run parser
                 const sentence = inputMirror.getValue();
                 const context = {
-                    vars: JSON.parse(contextMirror.getValue() || "{}"),
+                    vars: ctx || {},
                     funcs: parser.builtinFunctions(),
                 };
                 const result = parser.parseSentence(sentence, context);
@@ -77,6 +73,20 @@
             });
 
             contextMirror.on('change', (ev) => {
+                // Format content
+                try {
+                    const prev = contextMirror.getValue();
+                    const parsed = JSON.parse(contextMirror.getValue());
+                    const repl = JSON.stringify(parsed, null, 4);
+                    if (prev !== repl) {
+                        contextMirror.setValue(repl);
+                    }
+                } catch (formatError) {
+                    console.warn("problem with context format: ", formatError);
+                    return;
+                }
+
+                // rerun parser
                 try {
                     const sentence = inputMirror.getValue();
                     const context = {
@@ -85,10 +95,13 @@
                     };
                     const result = parser.parseSentence(sentence, context);
                     outputMirror.setValue(result);
-                } catch(ignore) {}
+                } catch (parserError) {
+                    console.warn("parser exception: ", parserError);
+                }
             });
 
-            
+            // Trigger on change
+            contextMirror.setValue(JSON.stringify(JSON.parse(contextMirror.getValue()), null, 4));
         })();
     </script>
 </body>
