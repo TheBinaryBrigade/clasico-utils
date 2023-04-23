@@ -2,39 +2,39 @@
 
 ## Table of Contens
 
-[1. $abs](#abs)
-[2. $all](#all)
-[3. $any](#any)
-[4. $bool](#bool)
-[5. $float](#float)
-[6. $str](#str)
-[7. $format](#format)
-[8. $int](#int)
-[9. $isinstance](#isinstance)
-[10. $len](#len)
-[11. $max](#max)
-[12. $min](#min)
-[13. $pow](#pow)
-[14. $round](#round)
-[15. $substring](#substring)
-[16. $type](#type)
-[17. $math](#math)
-[18. $getattr](#getattr)
-[19. $tisstring](#tisstring)
-[20. $tisnumber](#tisnumber)
-[21. $tisundefined](#tisundefined)
-[22. $tisobject](#tisobject)
-[23. $tisboolean](#tisboolean)
-[24. $isnil](#isnil)
-[25. $if](#if)
-[26. $concat](#concat)
-[27. $hasattr](#hasattr)
-[28. $isset](#isset)
-[29. $includes](#includes)
-[30. $endsWith](#endsWith)
-[31. $startsWith](#startsWith)
-[32. $lower](#lower)
-[33. $upper](#upper)
+1. [$abs](#abs)
+2. [$all](#all)
+3. [$any](#any)
+4. [$bool](#bool)
+5. [$concat](#concat)
+6. [$endsWith](#endsWith)
+7. [$float](#float)
+8. [$format](#format)
+9. [$getattr](#getattr)
+10. [$hasattr](#hasattr)
+11. [$if](#if)
+12. [$includes](#includes)
+13. [$int](#int)
+14. [$isinstance](#isinstance)
+15. [$isnil](#isnil)
+16. [$isset](#isset)
+17. [$len](#len)
+18. [$lower](#lower)
+19. [$math](#math)
+20. [$max](#max)
+21. [$min](#min)
+22. [$pow](#pow)
+23. [$round](#round)
+24. [$startsWith](#startsWith)
+25. [$str](#str)
+26. [$substring](#substring)
+27. [$tisboolean](#tisboolean)
+28. [$tisnumber](#tisnumber)
+29. [$tisobject](#tisobject)
+30. [$tisstring](#tisstring)
+31. [$tisundefined](#tisundefined)
+32. [$type](#type)
+33. [$upper](#upper)
 
 ## Documentation
 
@@ -292,6 +292,122 @@ Context:
 
 </details>
 
+### `$concat` 
+
+Concatenate values
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$concat($a, $b, $c, $d, $e)`<br />
+Output: `true42HelloWorld!{}`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$a": true,
+        "$b": 42,
+        "$c": "Hello",
+        "$d": "World!",
+        "$e": {}
+    }
+}`
+
+---
+
+
+</details>
+
+### `$endsWith` 
+
+Checks to see if values ends with a value
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$endsWith($x, 'b')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$endsWith($x, 'z')`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$endsWith($x, ", b")`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$endsWith($x, '')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+
+</details>
+
 ### `$float` 
 
 Convert a string or number to a floating point number, if possible.
@@ -363,91 +479,6 @@ Context:
 
 </details>
 
-### `$str` 
-
-Create a new string object from the given object.
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$str($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": false
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$str($x)`<br />
-Output: `42`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$str($x)`<br />
-Output: `Hello, World!`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, World!"
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$str($x)`<br />
-Output: `{"hello":"world"}`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "world"
-        }
-    }
-}`
-
----
-
-
-</details>
-
 ### `$format` 
 
 Pass values to a template string (see examples).
@@ -471,6 +502,366 @@ Context:
         "$fmt": "This is {0} a {1}. {0} likes lasagna.",
         "$name": "Garfield",
         "$animal": "cat"
+    }
+}`
+
+---
+
+
+</details>
+
+### `$getattr` 
+
+Get attribute of an oject
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$getattr($x, "length")`<br />
+Output: `11`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "some string"
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$getattr($x, "some.deep.object")`<br />
+Output: `42`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "deep": {
+                    "object": 42
+                }
+            }
+        }
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$getattr($x, 'some', "deep", $attrobject)`<br />
+Output: `42`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "deep": {
+                    "object": 42
+                }
+            }
+        },
+        "$attrobject": "object"
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$getattr($x, "some.tricky", 'deep.object')`<br />
+Output: `42`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some.tricky": {
+                "deep": {
+                    "object": 42
+                }
+            }
+        }
+    }
+}`
+
+---
+
+
+</details>
+
+### `$hasattr` 
+
+Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at the start of the result
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$hasattr($x, 'some.attr')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$hasattr($x, 'other.attr')`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}`
+
+---
+
+
+</details>
+
+### `$if` 
+
+If statement like trenery operator
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$if(true, $whenTrue, $whenFalse)`<br />
+Output: `this is true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$whenTrue": "this is true",
+        "$whenFalse": "this is false"
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$if(false, $whenTrue, $whenFalse)`<br />
+Output: `this is false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$whenTrue": "this is true",
+        "$whenFalse": "this is false"
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi James, welcome to the app!`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$isLoggedIn": true,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!",
+        "$client": {
+            "user": {
+                "name": "James"
+            }
+        }
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi, welcome to the app!`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$isLoggedIn": false,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!"
+    }
+}`
+
+---
+
+#### Example No.5
+
+
+
+Input: `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
+Output: `Hi, welcome to the app!`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$isLoggedIn": true,
+        "$welcomeMessage": "Hi {0}, welcome to the app!",
+        "$welcomeMessage2": "Hi, welcome to the app!"
+    }
+}`
+
+---
+
+
+</details>
+
+### `$includes` 
+
+Checks to see if array-like variable contains a value
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$includes($arr, 'a')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$arr": [
+            "a",
+            "b"
+        ]
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$includes($arr, 'z')`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$arr": [
+            "a",
+            "b"
+        ]
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$includes($set, 'z')`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$set": {}
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$includes($set, 'b')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$set": {}
     }
 }`
 
@@ -638,6 +1029,160 @@ Context:
 
 </details>
 
+### `$isnil` 
+
+Returns `true` if `x` is `undefined` **or** `null`
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$isnil($x)`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": null
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$isnil($x)`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {}
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$isnil($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "hello": "42"
+        }
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$isnil($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": 0
+    }
+}`
+
+---
+
+#### Example No.5
+
+
+
+Input: `$isnil($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": ""
+    }
+}`
+
+---
+
+
+</details>
+
+### `$isset`
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$isset($y)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$isset($x)`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "some": {
+                "attr": 42
+            }
+        }
+    }
+}`
+
+---
+
+
+</details>
+
 ### `$len` 
 
 Will convert `x` into a string and calculate its `length`/`characters`
@@ -715,6 +1260,118 @@ Context:
         "$x": {
             "hello": "world!"
         }
+    }
+}`
+
+---
+
+
+</details>
+
+### `$lower` 
+
+Lowercase value
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$lower($x)`<br />
+Output: `hello, world!`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, World!"
+    }
+}`
+
+---
+
+
+</details>
+
+### `$math` 
+
+An intrinsic function that provides basic mathematics functionality and constants. It will call the `Math` object in the `js` impl.
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$math($PI)`<br />
+Output: `3.141592653589793`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$PI": "PI"
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$math($cos, 90)`<br />
+Output: `-0.4480736161291702`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$cos": "cos"
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$math($x, 90)`<br />
+Output: `Math.someUnknownFunction(90)`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "someUnknownFunction"
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$math($x)`<br />
+Output: `Math.someUnknownVar`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "someUnknownVar"
     }
 }`
 
@@ -995,6 +1652,156 @@ Output: `NaN`<br />
 
 </details>
 
+### `$startsWith` 
+
+Checks if value starts with value
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$startsWith($x, 'Hello')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$startsWith($x, 'Hola')`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$startsWith($x, '')`<br />
+Output: `true`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, b"
+    }
+}`
+
+---
+
+
+</details>
+
+### `$str` 
+
+Create a new string object from the given object.
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
+
+
+
+Input: `$str($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": false
+    }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$str($x)`<br />
+Output: `42`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": 42
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$str($x)`<br />
+Output: `Hello, World!`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": "Hello, World!"
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$str($x)`<br />
+Output: `{"hello":"world"}`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": {
+            "hello": "world"
+        }
+    }
+}`
+
+---
+
+
+</details>
+
 ### `$substring` 
 
 Will coerce `x` into a string and slice it on `start` and `end`
@@ -1078,9 +1885,9 @@ Context:
 
 </details>
 
-### `$type` 
+### `$tisboolean` 
 
-Returns `typeof x`
+Wrapper for `$isinstance(x, 'boolean')`
 
 
 <details>
@@ -1090,8 +1897,8 @@ Returns `typeof x`
 
 
 
-Input: `$type($x)`<br />
-Output: `string`<br />
+Input: `$tisboolean($x)`<br />
+Output: `false`<br />
 
 
 
@@ -1108,8 +1915,8 @@ Context:
 
 
 
-Input: `$type($x)`<br />
-Output: `number`<br />
+Input: `$tisboolean($x)`<br />
+Output: `false`<br />
 
 
 
@@ -1126,257 +1933,7 @@ Context:
 
 
 
-Input: `$type($x)`<br />
-Output: `boolean`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$type($x)`<br />
-Output: `undefined`<br />
-
-
-
-Context: 
-`{
-    "vars": {}
-}`
-
----
-
-#### Example No.5
-
-
-
-Input: `$type($x)`<br />
-Output: `object`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
-
----
-
-
-</details>
-
-### `$math` 
-
-An intrinsic function that provides basic mathematics functionality and constants. It will call the `Math` object in the `js` impl.
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$math($PI)`<br />
-Output: `3.141592653589793`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$PI": "PI"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$math($cos, 90)`<br />
-Output: `-0.4480736161291702`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$cos": "cos"
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$math($x, 90)`<br />
-Output: `Math.someUnknownFunction(90)`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "someUnknownFunction"
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$math($x)`<br />
-Output: `Math.someUnknownVar`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "someUnknownVar"
-    }
-}`
-
----
-
-
-</details>
-
-### `$getattr` 
-
-Get attribute of an oject
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$getattr($x, "length")`<br />
-Output: `11`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "some string"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$getattr($x, "some.deep.object")`<br />
-Output: `42`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        }
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$getattr($x, 'some', "deep", $attrobject)`<br />
-Output: `42`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        },
-        "$attrobject": "object"
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$getattr($x, "some.tricky", 'deep.object')`<br />
-Output: `42`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some.tricky": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        }
-    }
-}`
-
----
-
-
-</details>
-
-### `$tisstring` 
-
-Wrapper for `$isinstance(x, 'string')`
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$tisstring($x)`<br />
+Input: `$tisboolean($x)`<br />
 Output: `true`<br />
 
 
@@ -1384,42 +1941,6 @@ Output: `true`<br />
 Context: 
 `{
     "vars": {
-        "$x": "hello"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$tisstring($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$tisstring($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
         "$x": true
     }
 }`
@@ -1430,7 +1951,7 @@ Context:
 
 
 
-Input: `$tisstring($x)`<br />
+Input: `$tisboolean($x)`<br />
 Output: `false`<br />
 
 
@@ -1446,7 +1967,7 @@ Context:
 
 
 
-Input: `$tisstring($x)`<br />
+Input: `$tisboolean($x)`<br />
 Output: `false`<br />
 
 
@@ -1566,107 +2087,6 @@ Context:
 
 </details>
 
-### `$tisundefined` 
-
-Wrapper for `$isinstance(x, 'undefined')`
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$tisundefined($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$tisundefined($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$tisundefined($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$tisundefined($x)`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {}
-}`
-
----
-
-#### Example No.5
-
-
-
-Input: `$tisundefined($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
-
----
-
-
-</details>
-
 ### `$tisobject` 
 
 Wrapper for `$isinstance(x, 'object')`
@@ -1768,9 +2188,9 @@ Context:
 
 </details>
 
-### `$tisboolean` 
+### `$tisstring` 
 
-Wrapper for `$isinstance(x, 'boolean')`
+Wrapper for `$isinstance(x, 'string')`
 
 
 <details>
@@ -1780,8 +2200,8 @@ Wrapper for `$isinstance(x, 'boolean')`
 
 
 
-Input: `$tisboolean($x)`<br />
-Output: `false`<br />
+Input: `$tisstring($x)`<br />
+Output: `true`<br />
 
 
 
@@ -1798,7 +2218,7 @@ Context:
 
 
 
-Input: `$tisboolean($x)`<br />
+Input: `$tisstring($x)`<br />
 Output: `false`<br />
 
 
@@ -1816,8 +2236,8 @@ Context:
 
 
 
-Input: `$tisboolean($x)`<br />
-Output: `true`<br />
+Input: `$tisstring($x)`<br />
+Output: `false`<br />
 
 
 
@@ -1834,7 +2254,7 @@ Context:
 
 
 
-Input: `$tisboolean($x)`<br />
+Input: `$tisstring($x)`<br />
 Output: `false`<br />
 
 
@@ -1850,7 +2270,7 @@ Context:
 
 
 
-Input: `$tisboolean($x)`<br />
+Input: `$tisstring($x)`<br />
 Output: `false`<br />
 
 
@@ -1869,9 +2289,9 @@ Context:
 
 </details>
 
-### `$isnil` 
+### `$tisundefined` 
 
-Returns `true` if `x` is `undefined` **or** `null`
+Wrapper for `$isinstance(x, 'undefined')`
 
 
 <details>
@@ -1881,15 +2301,15 @@ Returns `true` if `x` is `undefined` **or** `null`
 
 
 
-Input: `$isnil($x)`<br />
-Output: `true`<br />
+Input: `$tisundefined($x)`<br />
+Output: `false`<br />
 
 
 
 Context: 
 `{
     "vars": {
-        "$x": null
+        "$x": "hello"
     }
 }`
 
@@ -1899,7 +2319,43 @@ Context:
 
 
 
-Input: `$isnil($x)`<br />
+Input: `$tisundefined($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": 42
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$tisundefined($x)`<br />
+Output: `false`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": true
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$tisundefined($x)`<br />
 Output: `true`<br />
 
 
@@ -1911,11 +2367,11 @@ Context:
 
 ---
 
-#### Example No.3
+#### Example No.5
 
 
 
-Input: `$isnil($x)`<br />
+Input: `$tisundefined($x)`<br />
 Output: `false`<br />
 
 
@@ -1931,20 +2387,83 @@ Context:
 
 ---
 
-#### Example No.4
+
+</details>
+
+### `$type` 
+
+Returns `typeof x`
+
+
+<details>
+<summary>Examples</summary>
+
+#### Example No.1
 
 
 
-Input: `$isnil($x)`<br />
-Output: `false`<br />
+Input: `$type($x)`<br />
+Output: `string`<br />
 
 
 
 Context: 
 `{
     "vars": {
-        "$x": 0
+        "$x": "hello"
     }
+}`
+
+---
+
+#### Example No.2
+
+
+
+Input: `$type($x)`<br />
+Output: `number`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": 42
+    }
+}`
+
+---
+
+#### Example No.3
+
+
+
+Input: `$type($x)`<br />
+Output: `boolean`<br />
+
+
+
+Context: 
+`{
+    "vars": {
+        "$x": true
+    }
+}`
+
+---
+
+#### Example No.4
+
+
+
+Input: `$type($x)`<br />
+Output: `undefined`<br />
+
+
+
+Context: 
+`{
+    "vars": {}
 }`
 
 ---
@@ -1953,184 +2472,8 @@ Context:
 
 
 
-Input: `$isnil($x)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": ""
-    }
-}`
-
----
-
-
-</details>
-
-### `$if` 
-
-If statement like trenery operator
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$if(true, $whenTrue, $whenFalse)`<br />
-Output: `this is true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$whenTrue": "this is true",
-        "$whenFalse": "this is false"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$if(false, $whenTrue, $whenFalse)`<br />
-Output: `this is false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$whenTrue": "this is true",
-        "$whenFalse": "this is false"
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi James, welcome to the app!`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$isLoggedIn": true,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!",
-        "$client": {
-            "user": {
-                "name": "James"
-            }
-        }
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$if($all($isLoggedIn, $bool($getattr($client, 'user.name'))), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi, welcome to the app!`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$isLoggedIn": false,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!"
-    }
-}`
-
----
-
-#### Example No.5
-
-
-
-Input: `$if($all($isLoggedIn, $hasattr($client, 'user.name')), $format($welcomeMessage, $getattr($client, 'user.name')), $welcomeMessage2)`<br />
-Output: `Hi, welcome to the app!`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$isLoggedIn": true,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!"
-    }
-}`
-
----
-
-
-</details>
-
-### `$concat` 
-
-Concatenate values
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$concat($a, $b, $c, $d, $e)`<br />
-Output: `true42HelloWorld!{}`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$a": true,
-        "$b": 42,
-        "$c": "Hello",
-        "$d": "World!",
-        "$e": {}
-    }
-}`
-
----
-
-
-</details>
-
-### `$hasattr` 
-
-Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at the start of the result
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$hasattr($x, 'some.attr')`<br />
-Output: `true`<br />
+Input: `$type($x)`<br />
+Output: `object`<br />
 
 
 
@@ -2138,351 +2481,8 @@ Context:
 `{
     "vars": {
         "$x": {
-            "some": {
-                "attr": 42
-            }
+            "hello": "42"
         }
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$hasattr($x, 'other.attr')`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
-
----
-
-
-</details>
-
-### `$isset`
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$isset($y)`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$isset($x)`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
-
----
-
-
-</details>
-
-### `$includes` 
-
-Checks to see if array-like variable contains a value
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$includes($arr, 'a')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$arr": [
-            "a",
-            "b"
-        ]
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$includes($arr, 'z')`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$arr": [
-            "a",
-            "b"
-        ]
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$includes($set, 'z')`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$set": {}
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$includes($set, 'b')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$set": {}
-    }
-}`
-
----
-
-
-</details>
-
-### `$endsWith` 
-
-Checks to see if values ends with a value
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$endsWith($x, 'b')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$endsWith($x, 'z')`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$endsWith($x, ", b")`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-#### Example No.4
-
-
-
-Input: `$endsWith($x, '')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-
-</details>
-
-### `$startsWith` 
-
-Checks if value starts with value
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$startsWith($x, 'Hello')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-#### Example No.2
-
-
-
-Input: `$startsWith($x, 'Hola')`<br />
-Output: `false`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-#### Example No.3
-
-
-
-Input: `$startsWith($x, '')`<br />
-Output: `true`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
-
----
-
-
-</details>
-
-### `$lower` 
-
-Lowercase value
-
-
-<details>
-<summary>Examples</summary>
-
-#### Example No.1
-
-
-
-Input: `$lower($x)`<br />
-Output: `hello, world!`<br />
-
-
-
-Context: 
-`{
-    "vars": {
-        "$x": "Hello, World!"
     }
 }`
 
