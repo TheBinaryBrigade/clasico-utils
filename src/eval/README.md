@@ -2,40 +2,42 @@
 
 ## Table of Contens
 
-1. $abs
-2. $all
-3. $any
-4. $bool
-5. $float
-6. $str
-7. $format
-8. $int
-9. $isinstance
-10. $len
-11. $max
-12. $min
-13. $pow
-14. $round
-15. $substring
-16. $type
-17. $math
-18. $getattr
-19. $tisstring
-20. $tisnumber
-21. $tisundefined
-22. $tisobject
-23. $tisboolean
-24. $isnil
-25. $if
-26. $concat
-27. $hasattr
-28. $isset
-29. $includes
-30. $endsWith
-31. $startsWith
-32. $lower
-33. $upper
+[1. $abs](#abs)
+[2. $all](#all)
+[3. $any](#any)
+[4. $bool](#bool)
+[5. $float](#float)
+[6. $str](#str)
+[7. $format](#format)
+[8. $int](#int)
+[9. $isinstance](#isinstance)
+[10. $len](#len)
+[11. $max](#max)
+[12. $min](#min)
+[13. $pow](#pow)
+[14. $round](#round)
+[15. $substring](#substring)
+[16. $type](#type)
+[17. $math](#math)
+[18. $getattr](#getattr)
+[19. $tisstring](#tisstring)
+[20. $tisnumber](#tisnumber)
+[21. $tisundefined](#tisundefined)
+[22. $tisobject](#tisobject)
+[23. $tisboolean](#tisboolean)
+[24. $isnil](#isnil)
+[25. $if](#if)
+[26. $concat](#concat)
+[27. $hasattr](#hasattr)
+[28. $isset](#isset)
+[29. $includes](#includes)
+[30. $endsWith](#endsWith)
+[31. $startsWith](#startsWith)
+[32. $lower](#lower)
+[33. $upper](#upper)
+
 ## Documentation
+
 ### `$abs` 
 
 Return the absolute value of the argument.
