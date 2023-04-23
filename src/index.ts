@@ -1,15 +1,14 @@
-import _check from "./check";
-import _eval from "./eval";
+import check from "./check";
+import eval from "./eval";
+import inflection from "./inlfection";
+import utils from "./utils";
+import * as types from "./@types"; 
 
-export const hashCode = (str: string): number => {
-  let hash = 0;
-  for (let i = 0; i < str.length; ++i) {
-    const code = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + code;
-    hash &= hash;
-  }
-  return hash;
+export default {
+  check,
+  eval,
+  inflection,
+  utils,
+
+  ...types,
 };
-
-export const check = _check;
-export const parser = _eval;

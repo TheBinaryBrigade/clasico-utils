@@ -35,9 +35,7 @@ var ClasicoUtils = (() => {
   // src/index.ts
   var src_exports = {};
   __export(src_exports, {
-    check: () => check,
-    hashCode: () => hashCode,
-    parser: () => parser
+    default: () => src_default
   });
 
   // src/check/index.ts
@@ -778,8 +776,27 @@ var ClasicoUtils = (() => {
     parseSentence
   };
 
-  // src/index.ts
-  var hashCode = (str) => {
+  // src/utils/index.ts
+  var hashCode = (str, coerceToString = true) => {
+    if (coerceToString) {
+      if (!check_default.isString(str)) {
+        if (check_default.isSet(str)) {
+          str = Array.from(str);
+        }
+        if (check_default.isObject(str)) {
+          try {
+            str = JSON.stringify(str);
+          } catch (ignoerd) {
+          }
+        }
+        if (!check_default.isString(str) && str.toString) {
+          str = str.toString();
+        }
+      }
+    }
+    if (!check_default.isString(str)) {
+      return null;
+    }
     let hash = 0;
     for (let i = 0; i < str.length; ++i) {
       const code = str.charCodeAt(i);
@@ -788,8 +805,282 @@ var ClasicoUtils = (() => {
     }
     return hash;
   };
-  var check = check_default;
-  var parser = eval_default;
+  var capitalize = (str) => {
+    if (!check_default.isString(str)) {
+      return "";
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+  var utils_default = {
+    hashCode,
+    capitalize
+  };
+
+  // src/inlfection/index.ts
+  var PLURALS = [
+    [/(quiz)$/i, "$1zes"],
+    [/^(oxen)$/i, "$1"],
+    [/^(ox)$/i, "$1en"],
+    [/(m|l)ice$/i, "$1ice"],
+    [/(m|l)ouse$/i, "$1ice"],
+    [/(passer)s?by$/i, "$1sby"],
+    [/(matr|vert|ind)(?:ix|ex)$/i, "$1ices"],
+    [/(x|ch|ss|sh)$/i, "$1es"],
+    [/([^aeiouy]|qu)y$/i, "$1ies"],
+    [/(hive)$/i, "$1s"],
+    [/([lr])f$/i, "$1ves"],
+    [/([^f])fe$/i, "$1ves"],
+    [/sis$/i, "ses"],
+    [/([ti])a$/i, "$1a"],
+    [/([ti])um$/i, "$1a"],
+    [/(buffal|potat|tomat)o$/i, "$1oes"],
+    [/(bu)s$/i, "$1ses"],
+    [/(alias|status)$/i, "$1es"],
+    [/(octop|vir)i$/i, "$1i"],
+    [/(octop|vir)us$/i, "$1i"],
+    [/^(ax|test)is$/i, "$1es"],
+    [/s$/i, "s"],
+    [/$/i, "s"]
+  ];
+  var SINGULARS = [
+    [/(database)s$/i, "$1"],
+    [/(quiz)zes$/i, "$1"],
+    [/(matr)ices$/i, "$1ix"],
+    [/(vert|ind)ices$/i, "$1ex"],
+    [/(passer)sby$/i, "$1by"],
+    [/^(ox)en/i, "$1"],
+    [/(alias|status)(es)?$/i, "$1"],
+    [/(octop|vir)(us|i)$/i, "$1us"],
+    [/^(a)x[ie]s$/i, "$1xis"],
+    [/(cris|test)(is|es)$/i, "$1is"],
+    [/(shoe)s$/i, "$1"],
+    [/(o)es$/i, "$1"],
+    [/(bus)(es)?$/i, "$1"],
+    [/(m|l)ice$/i, "$1ouse"],
+    [/(x|ch|ss|sh)es$/i, "$1"],
+    [/(m)ovies$/i, "$1ovie"],
+    [/(s)eries$/i, "$1eries"],
+    [/([^aeiouy]|qu)ies$/i, "$1y"],
+    [/([lr])ves$/i, "$1f"],
+    [/(tive)s$/i, "$1"],
+    [/(hive)s$/i, "$1"],
+    [/([^f])ves$/i, "$1fe"],
+    [/(t)he(sis|ses)$/i, "$1hesis"],
+    [/(s)ynop(sis|ses)$/i, "$1ynopsis"],
+    [/(p)rogno(sis|ses)$/i, "$1rognosis"],
+    [/(p)arenthe(sis|ses)$/i, "$1arenthesis"],
+    [/(d)iagno(sis|ses)$/i, "$1iagnosis"],
+    [/(b)a(sis|ses)$/i, "$1asis"],
+    [/(a)naly(sis|ses)$/i, "$1nalysis"],
+    [/([ti])a$/i, "$1um"],
+    [/(n)ews$/i, "$1ews"],
+    [/(ss)$/i, "$1"],
+    [/s$/i, ""]
+  ];
+  var UNCOUNTABLES = /* @__PURE__ */ new Set([
+    "equipment",
+    "fish",
+    "information",
+    "jeans",
+    "money",
+    "rice",
+    "series",
+    "sheep",
+    "species"
+  ]);
+  var _irregular = (singular, plural) => {
+    const caseinsensitive = (x) => {
+      return Array.from(x).map((char) => "[" + char + char.toUpperCase() + "]").join("");
+    };
+    const insert = (arr, index, elem) => {
+      arr.splice(index, 0, [new RegExp(elem[0], "i"), elem[1]]);
+    };
+    const pluralInsert = (index, elem) => {
+      insert(PLURALS, index, elem);
+    };
+    const singularInsert = (index, elem) => {
+      insert(SINGULARS, index, elem);
+    };
+    if (singular[0].toUpperCase() == plural[0].toUpperCase()) {
+      pluralInsert(0, [
+        `(${singular[0]})${singular.slice(1)}$`,
+        "$1" + plural.slice(1)
+      ]);
+      pluralInsert(0, [
+        `(${plural[0]})${plural.slice(1)}$`,
+        "$1" + plural.slice(1)
+      ]);
+      singularInsert(0, [
+        `(${plural[0]})${plural.slice(1)}$`,
+        "$1" + singular.slice(1)
+      ]);
+    } else {
+      pluralInsert(0, [
+        `${singular[0].toUpperCase()}${caseinsensitive(singular.slice(1))}$`,
+        plural[0].toUpperCase() + plural.slice(1)
+      ]);
+      pluralInsert(0, [
+        `${singular[0].toLowerCase()}${caseinsensitive(singular.slice(1))}$`,
+        plural[0].toLowerCase() + plural.slice(1)
+      ]);
+      pluralInsert(0, [
+        `${plural[0].toUpperCase()}${caseinsensitive(plural.slice(1))}$`,
+        plural[0].toUpperCase() + plural.slice(1)
+      ]);
+      pluralInsert(0, [
+        `${plural[0].toLowerCase()}${caseinsensitive(plural.slice(1))}$`,
+        plural[0].toLowerCase() + plural.slice(1)
+      ]);
+      singularInsert(0, [
+        `${plural[0].toUpperCase()}${caseinsensitive(plural.slice(1))}$`,
+        singular[0].toUpperCase() + singular.slice(1)
+      ]);
+      singularInsert(0, [
+        `${plural[0].toLowerCase()}${caseinsensitive(plural.slice(1))}$`,
+        singular[0].toLowerCase() + singular.slice(1)
+      ]);
+    }
+  };
+  var camelize = (string, uppercaseFirstLetter = true) => {
+    const camelCase = dasherize(string).replace(/-/, " ").replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/\s+/g, "");
+    const result = uppercaseFirstLetter ? camelCase.charAt(0).toUpperCase() + camelCase.slice(1) : camelCase;
+    return result;
+  };
+  function dasherize(word) {
+    return word.replace(/_/g, "-");
+  }
+  function humanize(word) {
+    word = word.replace(/_id$/i, "");
+    word = word.replace(/_/g, " ");
+    word = word.replace(/([a-z\d]*)/g, function(m) {
+      return m.toLowerCase();
+    });
+    word = word.replace(/^\w/, function(m) {
+      return m.toUpperCase();
+    });
+    return word;
+  }
+  function ordinal(number) {
+    const n = Math.abs(parseInt(number));
+    if ([11, 12, 13].includes(n % 100)) {
+      return "th";
+    } else {
+      switch (n % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    }
+  }
+  function ordinalize(number) {
+    return number + ordinal(number);
+  }
+  var parameterize = (string, separator = "-") => {
+    const cleaned = transliterate(string);
+    let param = cleaned.replace(/[^\d\w-]+/gmi, separator);
+    if (separator !== "") {
+      while (param.startsWith(separator)) {
+        param = param.slice(separator.length);
+      }
+      while (param.endsWith(separator)) {
+        param = param.slice(0, param.length - separator.length);
+      }
+    }
+    return param.toLowerCase();
+  };
+  var pluralize = (word) => {
+    const isUpper = /[A-Z]/.test(word.charAt(0));
+    if (!word || UNCOUNTABLES.has(word.toLowerCase())) {
+      return word;
+    } else {
+      for (const elem of PLURALS) {
+        const rule = elem[0];
+        const replacement = elem[1];
+        if (rule.test(word)) {
+          const result = word.replace(rule, replacement);
+          return isUpper ? utils_default.capitalize(result) : result;
+        }
+      }
+      return word;
+    }
+  };
+  var singularize = (word) => {
+    const isUpper = /[A-Z]/.test(word.charAt(0));
+    for (const u of UNCOUNTABLES) {
+      const regex = new RegExp(`\\b${u}\\b`, "i");
+      if (regex.test(word)) {
+        return word;
+      }
+    }
+    for (const elem of SINGULARS) {
+      const rule = elem[0];
+      const replacement = elem[1];
+      if (rule.test(word)) {
+        const result = word.replace(rule, replacement);
+        return isUpper ? utils_default.capitalize(result) : result;
+      }
+    }
+    return word;
+  };
+  var tableize = (word) => {
+    return pluralize(underscore(word));
+  };
+  function titleize(word) {
+    return humanize(underscore(word)).split(/\s+/).map((word2) => word2.charAt(0).toUpperCase() + word2.slice(1)).join(" ");
+  }
+  function transliterate(string) {
+    const normalized = string.normalize("NFKD");
+    return normalized.replace(/[\u0300-\u036f]/g, "").replace(/[^\x00-\x7F]/g, "").trim();
+  }
+  function underscore(word) {
+    let underscored = word.replace(/([a-z\d])([A-Z])/g, "$1_$2");
+    underscored = underscored.replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2");
+    underscored = underscored.replace(/-/g, "_");
+    return underscored.toLowerCase();
+  }
+  _irregular("person", "people");
+  _irregular("man", "men");
+  _irregular("human", "humans");
+  _irregular("child", "children");
+  _irregular("sex", "sexes");
+  _irregular("move", "moves");
+  _irregular("cow", "kine");
+  _irregular("zombie", "zombies");
+  var inlfection_default = {
+    camelize,
+    dasherize,
+    humanize,
+    ordinal,
+    ordinalize,
+    parameterize,
+    pluralize,
+    singularize,
+    tableize,
+    titleize,
+    transliterate,
+    underscore,
+    UNCOUNTABLES,
+    PLURALS,
+    SINGULARS
+  };
+
+  // src/@types/index.ts
+  var types_exports = {};
+
+  // src/index.ts
+  var src_default = __spreadValues({
+    check: check_default,
+    eval: eval_default,
+    inflection: inlfection_default,
+    utils: utils_default
+  }, types_exports);
   return __toCommonJS(src_exports);
 })();
 //# sourceMappingURL=eval.js.map

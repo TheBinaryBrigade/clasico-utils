@@ -1,6 +1,6 @@
 
 
-import { beforeAll, describe, expect, jest, test } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 import doc from "../doc";
 import parser, { Context } from "../index";
 

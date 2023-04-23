@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import check from "../check";
-import { type EvalContext, type ContextFuncs, type TypeOf, Lexer, parseExpr, runExpr } from "./eval";
+import { type EvalContext, type ContextFuncs, Lexer, parseExpr, runExpr } from "./eval";
+import { type TypeOf } from "../@types";
 
 const fixString = (x: string) => {
   if (check.isString(x)) {
@@ -191,12 +192,12 @@ const builtinFunctions = () => {
       // Split key into parts on '.'
       let keys = literalKey.split(".");
 
-      // Check if first attr exists if not revert back 
+      // Check if first attr exists if not revert back
       // to original key
       if (!ptr[keys[0]]) {
         keys = [literalKey];
       }
-      
+
       keys
         .filter((x) => !!x)
         .forEach((key) => {
@@ -206,7 +207,7 @@ const builtinFunctions = () => {
         });
     });
 
-    
+
     return ptr;
   };
 
@@ -217,12 +218,12 @@ const builtinFunctions = () => {
       // Split key into parts on '.'
       let keys = literalKey.split(".");
 
-      // Check if first attr exists if not revert back 
+      // Check if first attr exists if not revert back
       // to original key
       if (!ptr[keys[0]]) {
         keys = [literalKey];
       }
-      
+
       keys
         .filter((x) => !!x)
         .forEach((key) => {
@@ -234,7 +235,7 @@ const builtinFunctions = () => {
         });
     });
 
-    
+
     return result;
   };
   const $isset = (obj: any) => {
@@ -242,7 +243,7 @@ const builtinFunctions = () => {
   };
 
   const $includes = (x: any, value: any) => {
-    if (x) {      
+    if (x) {
       if (x.includes && check.isFunction(x.includes)) {
         return x.includes(value);
       }
@@ -316,7 +317,7 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
       let isExcla = word.endsWith("!");
       while (word && (isPeriod || isExcla)) {
         word = word.substring(0, word.length - 1);
-        
+
         if (isPeriod) {
           cutHist.push(".");
         } else if (isExcla) {
@@ -328,14 +329,14 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
 
       if (cutHist.length !== 0) {
         expr.payload.value = word;
-      }  
+      }
     }
     const isFuncCall = expr.kind === "funcall";
     const isSymbol = expr.kind === "symbol";
     const resolved = runExpr(expr, ctx);
     const append = cutHist.join("");
     builder.push(resolved + append + restoreSpace);
-    
+
     const isVar = lex.lastToken()?.startsWith("$");
     const commaLoc = builder.lastIndexOf(",") - 1;
     if (lex.lastToken() === "," && builder[commaLoc] === " ") {

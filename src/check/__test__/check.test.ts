@@ -1,6 +1,6 @@
-import { beforeAll, describe, expect, jest, test } from "@jest/globals";
-import check from "../../check";
-import { TypeOf } from "../eval";
+import { describe, expect, test } from "@jest/globals";
+import check from "..";
+import { TypeOf } from "../../@types";
 
 type CheckFn = keyof typeof check;
 const tests: {

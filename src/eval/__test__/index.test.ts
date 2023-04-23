@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, jest, test } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 
 import parser, { Context } from "../index";
 
 const ctx: Context = {
   funcs: {
-    // Note: builtins need to be added explicitly 
+    // Note: builtins need to be added explicitly
     ...parser.builtinFunctions(),
     // You can declare your own functions like this
     $myFunc: (a: number, b: number) => {
@@ -72,6 +72,10 @@ const tests: {
     input: "$myVar brings all the $concat($myVar, \"s\")! to the $myVar",
     output: "42 brings all the 42s! to the 42",
   },
+//   {
+//     input: "Hello, $myVar. I have 1 + 1 $format(\"{0}\", \"cats\").",
+//     output: "Hello, 42. I have 2 cats."
+//   }
 ];
 
 describe("parse sentence edge cases", () => {

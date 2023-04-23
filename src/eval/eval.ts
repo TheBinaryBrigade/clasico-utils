@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// This code is based on the emoteJAM project (https://github.com/tsoding/emoteJAM), 
-// which is licensed under the MIT License. 
+// This code is based on the emoteJAM project (https://github.com/tsoding/emoteJAM),
+// which is licensed under the MIT License.
 // Copyright 2021 Alexey Kutepov <reximkut@gmail.com>
 
+import { type AnyFn } from "../@types";
 import check from "../check";
 
 const __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
@@ -73,10 +74,6 @@ export const UNARY_OPS = {
 
 export type UnaryOpsKeys = keyof typeof UNARY_OPS;
 export type BinaryOpsKeys = keyof typeof BINARY_OPS;
-const ____IGNORE: unknown = 42;
-const ___TOF = typeof ____IGNORE;
-export type TypeOf = typeof ___TOF;
-export type AnyFn = (...args: any) => any;
 export type ContextVarsVarType = any;
 export type ContextFuncs = {
   [key: string]: AnyFn,
@@ -182,7 +179,7 @@ export class Lexer {
   spaceAfterToken(): string {
     const token = this.next();
     const valid = token !== null;
-    
+
     if (valid && this.src) {
       const spaceCount = this.src.length - this.src.trimStart().length;
       if (spaceCount > 0) {

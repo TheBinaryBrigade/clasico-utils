@@ -46,7 +46,10 @@
                 lineNumbers: true,
                 styleActiveLine: true,
                 matchBrackets: true,
-                mode: "javascript"
+                mode: {
+                    name: "json",
+                    json: true,
+                }
             });
             contextMirror.setValue(JSON.stringify(JSON.parse(contextMirror.getValue()), null, 4))
 
