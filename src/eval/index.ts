@@ -2,7 +2,7 @@
 
 import check from "../check";
 import { type EvalContext, type ContextFuncs, Lexer, parseExpr, runExpr } from "./eval";
-import { type TypeOf } from "../@types";
+import { AnyFn, type TypeOf } from "../@types";
 
 const fixString = (x: string) => {
   if (check.isString(x)) {
@@ -293,6 +293,14 @@ const builtinFunctions = () => {
   };
 };
 
+/**
+ *
+ * @param sentence sentence
+ * @param _ctx context
+ * @returns evaludated sentence
+ *
+ * @deprecated use `class SentenceParser`
+ */
 const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
   return sentence
     .split("\n")
@@ -355,12 +363,53 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
   return builder.join("").trim();
 };
 
-// @exports
 export type BuiltInFunction = ReturnType<typeof builtinFunctions>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 export type Context = EvalContext;
+export type SentenceParserOptions = {
+  includeBuiltIns: boolean,
+};
+class SentenceParser {
+  constructor(
+    private options: SentenceParserOptions = {
+      includeBuiltIns: true,
+    },
+    private ctx: Context = {},
+  ) {
+
+    if (options.includeBuiltIns) {
+      this.ctx.funcs = {
+        ...builtinFunctions(),
+        ...(this.ctx.funcs || {}),
+      };
+    }
+
+  }
+
+  fixName(name: string) {
+    return name.startsWith("$") ? name : "$" + name;
+  }
+
+  addVar(name: string, value: any) {
+    name = this.fixName(name);
+    this.ctx.vars = this.ctx.vars || {};
+    this.ctx.vars[name] = value;
+  }
+
+  addFunction(name: string, cb: AnyFn) {
+    name = this.fixName(name);
+    this.ctx.funcs = this.ctx.funcs || {};
+    this.ctx.funcs[name] = cb;
+  }
+
+  parse(sentence: string) {
+    return parseSentence(sentence, this.ctx || {});
+  }
+
+}
 
 export default {
+  SentenceParser,
   builtinFunctions,
   parseSentence,
 };

@@ -6,10 +6,12 @@
   "scripts": {
     "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts && npm run lint:fix",
     "lint:fix": "tslint --fix --force --quiet --project './tsconfig.json' -c tslint.json 'src/**/*.ts'",
-    "test": "npm run lint:fix && jest --silent .*.test.ts && npm run build:eval:doc && npm run build:web && npm run build:node",
+    "test": "npm run lint:fix && npm run examples && jest --silent .*.test.ts && npm run build:eval:doc && npm run build:web && npm run build:node",
     "build:eval:doc": "ts-node ./.buildevaldoc.ts",
     "build:web": "esbuild ./src/index.ts --global-name=ClasicoUtils --outfile=./dist/web/clasico-utils.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16 && cp ./dist/web/clasico-utils.js ./docs/clasico-utils.js && cp ./dist/web/clasico-utils.js.map ./docs/clasico-utils.js.map",
-    "build:node": "esbuild ./src/index.ts --outfile=./dist/node10.4/clasico-utils.js --bundle --sourcemap --platform=node --target=node10.4"
+    "build:node": "esbuild ./src/index.ts --outfile=./dist/node10.4/clasico-utils.js --bundle --sourcemap --platform=node --target=node10.4",
+    "examples": "npm run example:usage",
+    "example:usage": "ts-node ./examples/usage.ts"
   },
   "author": "",
   "license": "MIT",

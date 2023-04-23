@@ -771,7 +771,35 @@ var ClasicoUtils = (() => {
     }
     return builder.join("").trim();
   };
+  var SentenceParser = class {
+    constructor(options = {
+      includeBuiltIns: true
+    }, ctx = {}) {
+      this.options = options;
+      this.ctx = ctx;
+      if (options.includeBuiltIns) {
+        this.ctx.funcs = __spreadValues(__spreadValues({}, builtinFunctions()), this.ctx.funcs || {});
+      }
+    }
+    fixName(name) {
+      return name.startsWith("$") ? name : "$" + name;
+    }
+    addVar(name, value) {
+      name = this.fixName(name);
+      this.ctx.vars = this.ctx.vars || {};
+      this.ctx.vars[name] = value;
+    }
+    addFunction(name, cb) {
+      name = this.fixName(name);
+      this.ctx.funcs = this.ctx.funcs || {};
+      this.ctx.funcs[name] = cb;
+    }
+    parse(sentence) {
+      return parseSentence(sentence, this.ctx || {});
+    }
+  };
   var eval_default = {
+    SentenceParser,
     builtinFunctions,
     parseSentence
   };
@@ -1077,7 +1105,7 @@ var ClasicoUtils = (() => {
   // src/index.ts
   var src_default = __spreadValues({
     check: check_default,
-    eval: eval_default,
+    parser: eval_default,
     inflection: inlfection_default,
     utils: utils_default
   }, types_exports);

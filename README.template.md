@@ -2,66 +2,8 @@
 
 ## Permissive Sentence Parser
 
-### How-to
+### Usage
 
-```ts
-import parser, { Context } from "../src/eval";
-const ctx: Context = {
-  funcs: {
-    // Note: builtins need to be added explicitly 
-    ...parser.builtinFunctions(),
-    // You can declare your own functions like this
-    $myFunc: (a: number, b: number) => {
-      return a + b;
-    },import parser, { Context } from "<package>/src/eval/index";
-const ctx: Context = {
-    funcs: {
-        // Note: builtins need to be added explicitly 
-        ...parser.builtinFunctions(),
-        // You can declare your own functions like this
-        $myFunc: (a: number, b: number) => {
-            return a + b;
-        },
-    },
-    // You can declare your variables here
-    vars: {
-        $myVar: 42,
-        // for accessing deep variables use the builtin $getattr($other, 'some.variable')
-        $other: {
-            some: {
-                variable: 'Dustin'
-            }
-        },
-    }
-};
-parser.parseSentence("$myVar + $myFunc(21, $myVar / 2) should be 84! My name is $getattr($other, 'some.variable'), I have a number, it is $myVar.", ctx);
-  },
-  // You can declare your variables here
-  vars: {
-    $myVar: 42,
-    // for accessing deep variables use the builtin $getattr($other, $someVariable,)
-    $other: {
-      some: {
-        variable: "Dustin"
-      }
-    },
-    $someVariable: "some.variable"
-  }
-};
+Builtin Functions: [Documentation](./src/eval/README.md)
 
-const text = "$myVar + $myFunc(21, $myVar / 2) should be 84! My name is $str($getattr($other, 'some.variable')), I have a number, it is $myVar.";
-const result = parser.parseSentence(
-  text,
-  ctx,
-);
-
-console.log("Input:", text);
-console.log("Output:", result);
-```
-
-> **IMPORTANT**: Follow the naming convention of added a `$`
-> at the start of the variable name.
-
-#### Bultin Docs
-
-[Bultin Functions](./src/eval/README.md)
+{{USAGE_EXAMPLE}}
