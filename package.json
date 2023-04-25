@@ -2,7 +2,7 @@
   "name": "clasico-utils",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts && npm run lint:fix",
     "lint:fix": "tslint --fix --force --quiet --project './tsconfig.json' -c tslint.json 'src/**/*.ts'",
@@ -13,7 +13,7 @@
     "examples": "npm run example:usage",
     "example:usage": "ts-node ./examples/eval/usage.ts"
   },
-  "author": "",
+  "author": "Dustin Diaz",
   "license": "MIT",
   "devDependencies": {
     "@babel/preset-env": "^7.21.4",

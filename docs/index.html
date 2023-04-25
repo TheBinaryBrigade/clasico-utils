@@ -14,8 +14,8 @@
         <p>See builtin functions: <a target="_blank"
                 href="https://github.com/TheBinaryBrigade/common-js/tree/main/src/eval#readme">Documentaion</a></p>
 
-        <label for="output">Output</label>
-        <textarea name="output" id="output" disabled></textarea>
+        <label>Output</label>
+        <div ismarkdown id="output"></div>
 
         <label for="input">Input Expression</label>
         <textarea name="input"
@@ -31,20 +31,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
         integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="clasico-utils.js"></script>
+    <script src="./vendor/showdown.js"></script>
+    <script src="./clasico-utils.js"></script>
     <script>;
         ; (() => {
             console.log(ClasicoUtils.default);
             const { parser } = ClasicoUtils.default;
             const root = document.getElementById('root');
-            const outputTextArea = document.getElementById('output');
+            const outputDiv = document.getElementById('output');
             const inputTextArea = document.getElementById('input');
             const contextTextArea = document.getElementById('context');
 
             const inputMirror = CodeMirror.fromTextArea(inputTextArea);
-            const outputMirror = CodeMirror.fromTextArea(outputTextArea, {
-                readOnly: true,
-            });
             const contextMirror = CodeMirror.fromTextArea(contextTextArea, {
                 lineNumbers: true,
                 styleActiveLine: true,
@@ -54,6 +52,33 @@
                     json: true,
                 }
             });
+
+            // Render Markdown
+            const renderMarkdown = () => {
+                const original = {}
+                const elements = document.querySelectorAll('div[ismarkdown]');
+                const converter = new showdown.Converter();
+                if (elements.length === 0) {
+                    console.warn("[render-markdown] Nothing to render; no `div` elements with `ismarkdown` attribute present");
+                }
+                elements
+                    .forEach((element) => {
+                        const md = element.innerHTML
+                            .toString()
+                            .replace(/^<pre><code>/g, '')
+                            .replace(/<\/pre><\/code>$/g, '')
+                            .replace(/\n\n/, '<br /><br />')
+                            .trim();
+                        const mdHtml = converter.makeHtml(md);
+                        original[element.id] = {
+                            markdown: md,
+                            html: mdHtml
+                        };
+                        document
+                            .getElementById('portfolio')
+                        element.innerHTML = mdHtml;
+                    });
+            };
 
             inputMirror.on('change', (ev) => {
                 let ctx;
@@ -70,7 +95,8 @@
                     funcs: parser.builtinFunctions(),
                 };
                 const result = parser.parseSentence(sentence, context);
-                outputMirror.setValue(result);
+                outputDiv.innerHTML = result;
+                renderMarkdown();
             });
 
             contextMirror.on('change', (ev) => {
@@ -95,7 +121,8 @@
                         funcs: parser.builtinFunctions(),
                     };
                     const result = parser.parseSentence(sentence, context);
-                    outputMirror.setValue(result);
+                    outputDiv.innerHTML = result;
+                    renderMarkdown();
                 } catch (parserError) {
                     console.warn("parser exception: ", parserError);
                 }

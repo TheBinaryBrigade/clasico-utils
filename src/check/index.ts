@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import date from "../date";
+
 const TRUE = new Boolean(true);
 const FALSE = new Boolean(false);
 const BOOLEANS = [true, TRUE, false, FALSE];
@@ -159,6 +161,14 @@ const isFalse = (x: any) => {
   return false;
 };
 
+const isDate = (x: any) => {
+  if (isNil(x) || !isString(x) || !isNumber(x)) {
+    return false;
+  }
+  const y = date.parse(x);
+  return y !== null;
+};
+
 // @exports
 export default {
   isNumber,
@@ -173,4 +183,5 @@ export default {
   isArray,
   isSet,
   isIterable,
+  isDate,
 };

@@ -24,6 +24,36 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 
+// src/date/index.ts
+var subtractSeconds = (date, seconds) => {
+  date.setSeconds(date.getSeconds() - seconds);
+  return date;
+};
+var weekend = (date) => {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+};
+var between = (date, startDate, endDate) => {
+  return date >= startDate && date <= endDate;
+};
+function parse(input) {
+  try {
+    const inputDate = new Date(input);
+    const isValidDate = !isNaN(inputDate.getTime());
+    if (isValidDate) {
+      return inputDate;
+    }
+  } catch (ignored) {
+  }
+  return null;
+}
+var date_default = {
+  subtractSeconds,
+  parse,
+  weekend,
+  between
+};
+
 // src/check/index.ts
 var TRUE = new Boolean(true);
 var FALSE = new Boolean(false);
@@ -136,6 +166,13 @@ var isFalse = (x) => {
   }
   return false;
 };
+var isDate = (x) => {
+  if (isNil(x) || !isString(x) || !isNumber(x)) {
+    return false;
+  }
+  const y = date_default.parse(x);
+  return y !== null;
+};
 var check_default = {
   isNumber,
   isString,
@@ -148,7 +185,8 @@ var check_default = {
   isFalse,
   isArray,
   isSet,
-  isIterable
+  isIterable,
+  isDate
 };
 
 // src/eval/eval.ts
@@ -1093,15 +1131,6 @@ var inflection_default = {
   UNCOUNTABLES,
   PLURALS,
   SINGULARS
-};
-
-// src/date/index.ts
-var subtractSeconds = (date, seconds) => {
-  date.setSeconds(date.getSeconds() - seconds);
-  return date;
-};
-var date_default = {
-  subtractSeconds
 };
 
 // src/array/sorted.ts
