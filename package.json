@@ -1,8 +1,9 @@
 {
-  "name": "clasico-utils",
-  "version": "1.0.0",
+  "name": "clasico",
+  "version": "0.0.2",
   "description": "",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
     "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts && npm run lint:fix",
     "lint:fix": "tslint --fix --force --quiet --project './tsconfig.json' -c tslint.json 'src/**/*.ts'",
