@@ -376,13 +376,13 @@ export type SentenceParserOptions = {
 };
 class SentenceParser {
   constructor(
-    private options: SentenceParserOptions = {
+    public options: SentenceParserOptions = {
       includeBuiltIns: true,
     },
-    private ctx: Context = {},
+    public ctx: Context = {},
   ) {
 
-    if (options.includeBuiltIns) {
+    if (this.options.includeBuiltIns) {
       this.ctx.funcs = {
         ...builtinFunctions(),
         ...(this.ctx.funcs || {}),

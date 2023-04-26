@@ -1,5 +1,9 @@
 # Common Utility Functions
 
+```console
+npm i clasico
+```
+
 ## Permissive Sentence Parser
 
 ### Usage

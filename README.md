@@ -2,6 +2,10 @@
 
 # Common Utility Functions
 
+```console
+npm i clasico
+```
+
 ## Permissive Sentence Parser
 
 ### Usage
@@ -10,7 +14,7 @@ Builtin Functions: [Documentation](./src/eval/README.md)
 
 ```ts
 
-import clasico from "../../src/index";
+import clasico from "clasico";
 
 const parser = new clasico.parser.SentenceParser({
   includeBuiltIns: true,

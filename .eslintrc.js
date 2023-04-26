@@ -7,7 +7,8 @@ module.exports = {
   "ignorePatterns": [
     "docs/*.js",
     "dist/**/*.js",
-    "**/vendor/*.js"
+    "**/vendor/*.js",
+    "lib/*"
   ],
   "extends": [
     "eslint:recommended",

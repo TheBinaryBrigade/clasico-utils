@@ -1,4 +1,4 @@
-import fs from "fs";
+import * as fs from "fs";
 import doc, { BuiltinDoc, BuiltinExample } from "./src/eval/doc";
 
 const writeFile = (filename: string, content: string) => {
@@ -115,5 +115,7 @@ writeFile(evalReadme, [
 ].join(""));
 
 const usage = readFile("./examples/eval/usage.ts")
-const readmet = readFile(readmeTemplateFilename).replace(usageKey, blockCode(usage, "ts"));
+const readmet = readFile(readmeTemplateFilename)
+    .replace(usageKey, blockCode(usage, "ts"))
+    .replace("../../src/index", "clasico");
 writeFile(targetReadme, readmeWarn + "\n\n" + readmet)

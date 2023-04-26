@@ -1,0 +1,26 @@
+export type RegexReplaceList = [RegExp, string][];
+declare function dasherize(word: string): string;
+declare function humanize(word: string): string;
+declare function ordinal(number: string): string;
+declare function ordinalize(number: string): string;
+declare function titleize(word: string): string;
+declare function transliterate(string: string): string;
+declare function underscore(word: string): string;
+declare const _default: {
+    camelize: (string: string, uppercaseFirstLetter?: boolean) => string;
+    dasherize: typeof dasherize;
+    humanize: typeof humanize;
+    ordinal: typeof ordinal;
+    ordinalize: typeof ordinalize;
+    parameterize: (string: string, separator?: string) => string;
+    pluralize: (word: string) => string;
+    singularize: (word: string) => string;
+    tableize: (word: string) => string;
+    titleize: typeof titleize;
+    transliterate: typeof transliterate;
+    underscore: typeof underscore;
+    UNCOUNTABLES: Set<string>;
+    PLURALS: RegexReplaceList;
+    SINGULARS: RegexReplaceList;
+};
+export default _default;

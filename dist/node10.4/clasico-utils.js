@@ -808,7 +808,7 @@ var SentenceParser = class {
   }, ctx = {}) {
     this.options = options;
     this.ctx = ctx;
-    if (options.includeBuiltIns) {
+    if (this.options.includeBuiltIns) {
       this.ctx.funcs = {
         ...builtinFunctions(),
         ...this.ctx.funcs || {}
