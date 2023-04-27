@@ -186,7 +186,7 @@ const isDate = (x: any): boolean => {
   return !!y;
 };
 
-const isError = (x: any): boolean => {
+const isError = (x: any, errorLike=false): boolean => {
   if (isNil(x)) {
     return false;
   }
@@ -195,7 +195,7 @@ const isError = (x: any): boolean => {
     return true;
   }
 
-  if (x && x.stack && x.message) {
+  if (errorLike && x && x.stack && x.message) {
     return true;
   }
 
@@ -204,6 +204,7 @@ const isError = (x: any): boolean => {
 
 // @exports
 export default {
+  isNil,
   isNumber,
   isString,
   isBoolean,

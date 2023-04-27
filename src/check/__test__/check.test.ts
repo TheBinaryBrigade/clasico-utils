@@ -441,10 +441,72 @@ const tests: {
       { input: [1, 2][Symbol.iterator], output: false },
     ],
     returnType: "boolean"
+  },
+  isNil: {
+    examples: [
+      { input: null, output: true },
+      { input: undefined, output: true },
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: 1641004800000, output: false },
+      { input: "2022-01-01", output: false },
+      { input: "1995-12-17T03:24:00", output: false },
+      { input: new Date(), output: false },
+      { input: new Date().toISOString(), output: false },
+      { input: `${new Date()}`, output: false },
+      { input: "04 Dec 1995 00:12:00 GMT", output: false },
+      { input: "01 Jan 1970 00:00:00 GMT", output: false },
+      { input: 42, output: false },
+      { input: 42.01, output: false },
+      { input: Math.PI, output: false },
+      { input: "42", output: false },
+      { input: "42e1000", output: false },
+      { input: "padding42", output: false },
+      { input: "42px", output: false },
+      { input: " ", output: false },
+      { input: "", output: false },
+      { input: true, output: false },
+      { input: new Boolean(true), output: false },
+      { input: new Boolean(false), output: false },
+      { input: new Array([1]), output: false },
+      { input: new Set([1]), output: false },
+      { input: [1.42, 2.42, 3.42], output: false },
+      { input: { hello: 42 }, output: false },
+      { input: () => { return 42; }, output: false },
+      { input: [1, 2][Symbol.iterator], output: false },
+    ],
+    returnType: "boolean"
   }
 };
 
 describe("check", () => {
+  describe("isError (error like)", () => {
+    const examples = [
+      [new Error(), true],
+      [new _MyCustomError(), true],
+      [{stack: ["some stack"], message: "some error message"}, true],
+      [{stack: ["some stack"], messages: ["some error message"]}, false],
+      [{}, false],
+      [undefined, false],
+      [null, false],
+      ["", false],
+      ["Hello", false],
+      [42, false],
+      [false, false],
+      [new Set([42, 42, 42]), false],
+      [[1, 2, 3], false],
+      [() => new Error(), false],
+    ];
+
+    examples.forEach(([input, output]) => {
+      test(`(${JSON.stringify(input)}) : (${typeof input})`, () => {
+        const result = check.isError(input, true);
+        expect(typeof result).toBe("boolean");
+        expect(result).toBe(output);
+      });
+    });
+  });
+
   Object.entries(tests).forEach(([fnName, { examples, returnType }]) => {
     describe(fnName, () => {
       const call = check[fnName as CheckFn];

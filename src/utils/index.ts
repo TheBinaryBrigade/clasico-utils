@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import check from "../check";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const hashCode = (str: any, coerceToString=true): number | null => {
+const hashCode = (str: any, coerceToString = true): number | null => {
 
   if (coerceToString) {
     if (!check.isString(str)) {
@@ -12,8 +12,23 @@ const hashCode = (str: any, coerceToString=true): number | null => {
       if (check.isObject(str)) {
         try {
           str = JSON.stringify(str);
-          // eslint-disable-next-line no-empty
-        } catch(ignored) {}
+        } catch (ignored) {
+          const circularReference: any[] = [];
+          const jsonString = JSON.stringify(str, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (circularReference.includes(value)) {
+                return "[Circular]";
+              }
+              circularReference.push(value);
+            }
+            return value;
+          });
+
+          // Replace circular references with actual object reference
+          str = jsonString.replace(/"\[Circular\]"/g, () => {
+            return JSON.stringify("[Circular]");
+          });
+        }
       }
 
       if (!check.isString(str) && str.toString) {

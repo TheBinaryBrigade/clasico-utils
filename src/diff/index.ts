@@ -480,7 +480,7 @@ export type DiffResult = {
     _diff: PatienceDiffResult,
 };
 
-const diff = (a: string, b: string): DiffResult => {
+const compare = (a: string, b: string): DiffResult => {
   const desc = patienceDiff(a.split("\n"), b.split("\n"), true);
 
   const changes: Change[] = desc.lines.map((line, index) => {
@@ -513,4 +513,6 @@ const diff = (a: string, b: string): DiffResult => {
   };
 };
 
-export default diff;
+export default {
+  compare,
+};

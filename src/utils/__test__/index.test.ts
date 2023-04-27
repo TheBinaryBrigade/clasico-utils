@@ -36,6 +36,21 @@ describe("utils", () => {
       expect(utils.hashCode("$%^&*()")).toBe(-1262342590);
     });
 
+    test("circular reference", () => {
+      const example: any = {
+        a: 1,
+        b: {
+          c: 2,
+          d: null
+        }
+      };
+      example.b.d = example;
+      const result = utils.hashCode(example);
+      expect(typeof result).toBe("number");
+      expect(result).toBeTruthy();
+
+    });
+
     test("should handle many types", () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       type HashCodeTests = [any, { value?: number | null, typeOf?: TypeOf, args?: any[]}][];

@@ -340,8 +340,6 @@ function underscore(word: string) {
   return underscored.toLowerCase();
 }
 
-
-
 _irregular("person", "people");
 _irregular("man", "men");
 _irregular("human", "humans");
@@ -350,6 +348,19 @@ _irregular("sex", "sexes");
 _irregular("move", "moves");
 _irregular("cow", "kine");
 _irregular("zombie", "zombies");
+_irregular("slave", "slaves");
+_irregular("this", "this");
+_irregular("flour", "flour");
+_irregular("milk", "milk");
+_irregular("water", "water");
+_irregular("reserve", "reserves");
+_irregular("gas", "gasses");
+_irregular("bias", "biases");
+_irregular("atlas", "atlases");
+_irregular("goose", "geese");
+_irregular("pasta", "pastas");
+_irregular("slice", "slices");
+_irregular("cactus", "cacti");
 
 export default {
   camelize,
