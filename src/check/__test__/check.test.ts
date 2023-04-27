@@ -2,6 +2,8 @@ import { describe, expect, test } from "@jest/globals";
 import check from "..";
 import { TypeOf } from "../../@types";
 
+class _MyCustomError extends Error {}
+
 type CheckFn = keyof typeof check;
 const tests: {
     [key in CheckFn]: {
@@ -15,6 +17,9 @@ const tests: {
 } = {
   isNumber: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: true },
       { input: 42.01, output: true },
       { input: Math.PI, output: true },
@@ -41,6 +46,9 @@ const tests: {
   },
   isString: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -67,6 +75,9 @@ const tests: {
   },
   isBoolean: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -93,6 +104,9 @@ const tests: {
   },
   isFunction: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -118,6 +132,9 @@ const tests: {
   },
   isObject: {
     examples: [
+      { input: new Error(), output: true },
+      { input: new _MyCustomError(), output: true },
+      { input: new Date(), output: true },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -143,6 +160,9 @@ const tests: {
   },
   isNumeric: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: true },
       { input: 42.01, output: true },
       { input: Math.PI, output: true },
@@ -169,6 +189,9 @@ const tests: {
   },
   isValidBoolean: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -199,6 +222,9 @@ const tests: {
   },
   isTrue: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -233,6 +259,9 @@ const tests: {
   },
   isFalse: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -263,6 +292,9 @@ const tests: {
   },
   isArray: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -288,6 +320,9 @@ const tests: {
   },
   isSet: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -313,6 +348,9 @@ const tests: {
   },
   isIterable: {
     examples: [
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
       { input: Math.PI, output: false },
@@ -350,6 +388,41 @@ const tests: {
       { input: 42.01, output: true },
       { input: Math.PI, output: true },
       { input: "42", output: true },
+      { input: "42e1000", output: false },
+      { input: "padding42", output: false },
+      { input: "42px", output: false },
+      { input: " ", output: false },
+      { input: "", output: false },
+      { input: true, output: false },
+      { input: new Boolean(true), output: false },
+      { input: new Boolean(false), output: false },
+      { input: new Array([1]), output: false },
+      { input: new Set([1]), output: false },
+      { input: [1.42, 2.42, 3.42], output: false },
+      { input: { hello: 42 }, output: false },
+      { input: null, output: false },
+      { input: undefined, output: false },
+      { input: () => { return 42; }, output: false },
+      { input: [1, 2][Symbol.iterator], output: false },
+    ],
+    returnType: "boolean"
+  },
+  isError: {
+    examples: [
+      { input: new Error(), output: true },
+      { input: new _MyCustomError(), output: true },
+      { input: 1641004800000, output: false },
+      { input: "2022-01-01", output: false },
+      { input: "1995-12-17T03:24:00", output: false },
+      { input: new Date(), output: false },
+      { input: new Date().toISOString(), output: false },
+      { input: `${new Date()}`, output: false },
+      { input: "04 Dec 1995 00:12:00 GMT", output: false },
+      { input: "01 Jan 1970 00:00:00 GMT", output: false },
+      { input: 42, output: false },
+      { input: 42.01, output: false },
+      { input: Math.PI, output: false },
+      { input: "42", output: false },
       { input: "42e1000", output: false },
       { input: "padding42", output: false },
       { input: "42px", output: false },
