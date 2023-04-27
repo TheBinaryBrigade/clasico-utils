@@ -263,7 +263,13 @@ export const parsePrimary = (lexer: Lexer): Expression => {
           nextToken = lexer.next();
         }
         if (nextToken !== ")") {
-          throw Error("Expected ')' but got '" + nextToken + "'");
+          // throw Error("Expected ')' but got '" + nextToken + "'");
+          return {
+            "kind": "symbol",
+            "payload": {
+              "value": token
+            }
+          };
         }
         return {
           "kind": "funcall",

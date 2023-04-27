@@ -723,7 +723,12 @@ var parsePrimary = (lexer) => {
           nextToken = lexer.next();
         }
         if (nextToken !== ")") {
-          throw Error("Expected ')' but got '" + nextToken + "'");
+          return {
+            "kind": "symbol",
+            "payload": {
+              "value": token
+            }
+          };
         }
         return {
           "kind": "funcall",
@@ -1087,6 +1092,21 @@ var parseSentence = (sentence, _ctx = {}) => {
       })));
       return parsed.result;
     } catch (error) {
+      if (error.message.toLowerCase().startsWith("no primary expression starts with ')'") || error.message.startsWith("Expected ')' but got '")) {
+        const replaceParentheses = (str, open, close) => {
+          return str.replace(/(\W)\(([^)]+)\)/g, `$1${open}$2${close}`);
+        };
+        const modded = replaceParentheses(line, " <parentheses> ", " </parentheses>");
+        try {
+          const parsed = _parseSentence(modded, _ctx);
+          warnings.push(...parsed.warnings.map((message2) => ({
+            lineNumber: index + 1,
+            message: message2
+          })));
+          return parsed.result.replace(/<parentheses> /gi, "(").replace(/ <\/parentheses>/gi, ")");
+        } catch (ignored) {
+        }
+      }
       let message = "";
       if (error) {
         message = error.message;
@@ -1127,15 +1147,31 @@ var _parseSentence = (sentence, _ctx = {}) => {
       restoreSpace = _restore;
       let isPeriod = word.endsWith(".");
       let isExcla = word.endsWith("!");
-      while (word && (isPeriod || isExcla)) {
+      let isParenOpen = word.endsWith("(");
+      let isParenClose = word.endsWith(")");
+      let isGt = word.endsWith(">");
+      let isLt = word.endsWith("<");
+      while (word && (isPeriod || isExcla || isParenOpen || isParenClose || isGt || isLt)) {
         word = word.substring(0, word.length - 1);
         if (isPeriod) {
           cutHist.push(".");
         } else if (isExcla) {
           cutHist.push("!");
+        } else if (isParenOpen) {
+          cutHist.push("(");
+        } else if (isParenClose) {
+          cutHist.push(")");
+        } else if (isGt) {
+          cutHist.push(">");
+        } else if (isLt) {
+          cutHist.push("<");
         }
         isPeriod = word.endsWith(".");
         isExcla = word.endsWith("!");
+        isParenOpen = word.endsWith("(");
+        isParenClose = word.endsWith(")");
+        isGt = word.endsWith(">");
+        isLt = word.endsWith("<");
       }
       if (cutHist.length !== 0) {
         expr.payload.value = word;
