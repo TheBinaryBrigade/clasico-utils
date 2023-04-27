@@ -72,4 +72,4 @@ export declare class Lexer {
 }
 export declare const parsePrimary: (lexer: Lexer) => Expression;
 export declare const parseExpr: (lexer: Lexer, prec?: number) => Expression;
-export declare const runExpr: (expr: Expression, ctx?: EvalContext) => any;
+export declare const runExpr: (expr: Expression, ctx?: EvalContext, warnings?: string[]) => any;

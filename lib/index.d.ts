@@ -1,6 +1,8 @@
 import * as types from "./@types";
+import * as std from "./std";
 declare const _default: {
     check: {
+        isNil: (x: any) => boolean;
         isNumber: (x: any) => boolean;
         isString: (x: any) => boolean;
         isBoolean: (x: any) => boolean;
@@ -14,6 +16,7 @@ declare const _default: {
         isSet: (x: any) => boolean;
         isIterable: (x: any) => boolean;
         isDate: (x: any) => boolean;
+        isError: (x: any, errorLike?: boolean) => boolean;
     };
     parser: {
         SentenceParser: {
@@ -21,9 +24,22 @@ declare const _default: {
                 options: import("./eval").SentenceParserOptions;
                 ctx: import("./eval/eval").EvalContext;
                 fixName(name: string): string;
+                fnExists(name: string): boolean;
+                varExists(name: string): boolean;
                 addVar(name: string, value: any): void;
                 addFunction(name: string, cb: types.AnyFn): void;
-                parse(sentence: string): string;
+                parse(sentence: string): {
+                    result: string;
+                    warnings: {
+                        lineNumber: number;
+                        message: string;
+                    }[];
+                    errors: {
+                        lineNumber: number;
+                        message: string;
+                        error: Error;
+                    }[];
+                };
             };
         };
         builtinFunctions: () => {
@@ -62,7 +78,18 @@ declare const _default: {
             $upper: (x: any) => string;
             $now: () => Date;
         };
-        parseSentence: (sentence: string, _ctx?: import("./eval/eval").EvalContext) => string;
+        parseSentence: (sentence: string, _ctx?: import("./eval/eval").EvalContext) => {
+            result: string;
+            warnings: {
+                lineNumber: number;
+                message: string;
+            }[];
+            errors: {
+                lineNumber: number;
+                message: string;
+                error: Error;
+            }[];
+        };
     };
     inflection: {
         camelize: (string: string, uppercaseFirstLetter?: boolean) => string;
@@ -88,7 +115,7 @@ declare const _default: {
     date: {
         subtractSeconds: (date: Date, seconds: number) => Date;
         parse: (input: any) => Date | null;
-        weekend: (date: Date) => boolean;
+        isWeekend: (date: Date) => boolean;
         between: (date: Date, startDate: Date, endDate: Date) => boolean;
     };
     fuzzy: {
@@ -106,5 +133,9 @@ declare const _default: {
         ReverseCompareArray: typeof import("./array/sorted").ReverseCompareArray;
         SortedCompareArray: typeof import("./array/sorted").SortedCompareArray;
     };
+    diff: {
+        compare: (a: string, b: string) => import("./diff").DiffResult;
+    };
+    std: typeof std;
 };
 export default _default;

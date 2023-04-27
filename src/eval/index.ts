@@ -298,6 +298,17 @@ const builtinFunctions = () => {
   };
 };
 
+
+type ParseError = {
+  lineNumber: number,
+  message: string,
+  error: Error,
+};
+
+type ParseWarning = {
+  lineNumber: number,
+  message: string,
+};
 /**
  *
  * @param sentence sentence
@@ -307,13 +318,48 @@ const builtinFunctions = () => {
  * @deprecated use `class SentenceParser`
  */
 const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
-  return sentence
+  const warnings: ParseWarning[] = [];
+  const errors: ParseError[] = [];
+  const result = sentence
     .split("\n")
-    .map((line) => _parseSentence(line , _ctx))
+    .map((line, index) => {
+      try {
+        const parsed = _parseSentence(line , _ctx);
+        warnings.push(...parsed.warnings.map((message) => ({
+          lineNumber: index + 1,
+          message,
+        })));
+
+        return parsed.result;
+      } catch(error: any) {
+        let message = "";
+
+        if (error) {
+          message = error.message;
+          if (!message && error.toString) {
+            message = error.toString();
+          }
+        }
+
+        errors.push({
+          lineNumber: index + 1,
+          message,
+          error,
+        });
+      }
+
+      return line;
+    })
     .join("\n");
+  return {
+    result,
+    warnings,
+    errors,
+  };
 };
 
 const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
+  const warnings: string[] = [];
   const ctx = wrapCtxFuncs({/*clone*/..._ctx });
   const lex = new Lexer(sentence);
 
@@ -346,7 +392,7 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     }
     const isFuncCall = expr.kind === "funcall";
     const isSymbol = expr.kind === "symbol";
-    const resolved = runExpr(expr, ctx);
+    const resolved = runExpr(expr, ctx, /*&mut*/warnings);
     const append = cutHist.join("");
     builder.push(resolved + append + restoreSpace);
 
@@ -365,7 +411,10 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     }
   }
 
-  return builder.join("").trim();
+  return {
+    result: builder.join("").trim(),
+    warnings,
+  };
 };
 
 export type BuiltInFunction = ReturnType<typeof builtinFunctions>;

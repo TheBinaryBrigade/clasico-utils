@@ -326,7 +326,7 @@ export const parseExpr = (lexer: Lexer, prec: number = BIN_PREC.PREC0): Expressi
 //   return result;
 // };
 
-export const runExpr = (expr: Expression, ctx: EvalContext = {}): any => {
+export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: string[] = []): any => {
   console.assert(check.isObject(expr));
   switch (expr.kind) {
   case "symbol": {
@@ -338,7 +338,7 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}): any => {
         return ctx.vars[value];
       }
       if (value?.startsWith("$")) {
-        console.warn("WARN: Unknown variable '" + value + "'");
+        warnings.push("Unknown variable '" + value + "'");
       }
       return value;
     } else {
@@ -388,7 +388,7 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}): any => {
       );
     }
     if (name?.startsWith("$")) {
-      console.warn("WARN: Unknown function '" + name + "'");
+      warnings.push("Unknown function '" + name + "'");
     }
     const params = args
       ?.map((x) => x?.payload?.value)

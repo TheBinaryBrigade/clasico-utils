@@ -106,20 +106,20 @@ export class Result<
   }
 }
 
-const r = new Result<number, Error>(
-  (a: number, b: number) => {
-    return a + a * b;
-  },
-);
+// const r = new Result<number, Error>(
+//   (a: number, b: number) => {
+//     return a + a * b;
+//   },
+// );
 
-const [result, error] = r.run(1, 2).match({
-  onOk: (a) => {
-    //
-  },
-  onError: (a) => {
-    //
-  },
-});
+// const [result, error] = r.run(1, 2).match({
+//   onOk: (a) => {
+//     //
+//   },
+//   onError: (a) => {
+//     //
+//   },
+// });
 
 
 

@@ -16,7 +16,7 @@ Object.entries(doc).forEach(([$name, { examples }]) => {
         vars: input.context?.vars
       };
       test(`${text}; ctx=${JSON.stringify(input.context?.vars)}`, () => {
-        const result = parser.parseSentence(text, ctx);
+        const result = parser.parseSentence(text, ctx).result;
         if (typeof output === "function") {
           expect(output(result)).toBe(true);
         } else {

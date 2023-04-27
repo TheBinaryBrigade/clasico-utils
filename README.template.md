@@ -8,6 +8,6 @@ npm i clasico
 
 ### Usage
 
-Builtin Functions: [Documentation](./src/eval/README.md)
+Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-utils/blob/main/src/eval/README.md#table-of-contens)
 
 {{USAGE_EXAMPLE}}

@@ -81,7 +81,7 @@ const tests: {
 describe("parse sentence edge cases", () => {
   tests.forEach(({ input, output }) => {
     test(input, () => {
-      const result = parser.parseSentence(input, ctx);
+      const result = parser.parseSentence(input, ctx).result;
       expect(result).toBe(output);
     });
   });

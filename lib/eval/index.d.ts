@@ -36,6 +36,15 @@ declare const builtinFunctions: () => {
     $upper: (x: any) => string;
     $now: () => Date;
 };
+type ParseError = {
+    lineNumber: number;
+    message: string;
+    error: Error;
+};
+type ParseWarning = {
+    lineNumber: number;
+    message: string;
+};
 export type BuiltInFunction = ReturnType<typeof builtinFunctions>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 export type Context = EvalContext;
@@ -47,9 +56,15 @@ declare class SentenceParser {
     ctx: Context;
     constructor(options?: SentenceParserOptions, ctx?: Context);
     fixName(name: string): string;
+    fnExists(name: string): boolean;
+    varExists(name: string): boolean;
     addVar(name: string, value: any): void;
     addFunction(name: string, cb: AnyFn): void;
-    parse(sentence: string): string;
+    parse(sentence: string): {
+        result: string;
+        warnings: ParseWarning[];
+        errors: ParseError[];
+    };
 }
 declare const _default: {
     SentenceParser: typeof SentenceParser;
@@ -89,6 +104,10 @@ declare const _default: {
         $upper: (x: any) => string;
         $now: () => Date;
     };
-    parseSentence: (sentence: string, _ctx?: EvalContext) => string;
+    parseSentence: (sentence: string, _ctx?: EvalContext) => {
+        result: string;
+        warnings: ParseWarning[];
+        errors: ParseError[];
+    };
 };
 export default _default;

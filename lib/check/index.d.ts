@@ -1,4 +1,5 @@
 declare const _default: {
+    isNil: (x: any) => boolean;
     isNumber: (x: any) => boolean;
     isString: (x: any) => boolean;
     isBoolean: (x: any) => boolean;
@@ -12,5 +13,6 @@ declare const _default: {
     isSet: (x: any) => boolean;
     isIterable: (x: any) => boolean;
     isDate: (x: any) => boolean;
+    isError: (x: any, errorLike?: boolean) => boolean;
 };
 export default _default;

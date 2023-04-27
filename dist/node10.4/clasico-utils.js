@@ -24,19 +24,36 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 
+// src/@types/index.ts
+var types_exports = {};
+
+// src/array/sorted.ts
+var sorted_exports = {};
+__export(sorted_exports, {
+  BisectArray: () => BisectArray,
+  ReverseCompareArray: () => ReverseCompareArray,
+  ReverseNumberArray: () => ReverseNumberArray,
+  ReverseSortedArray: () => ReverseSortedArray,
+  ReverseStringArray: () => ReverseStringArray,
+  SortedArray: () => SortedArray,
+  SortedCompareArray: () => SortedCompareArray,
+  SortedNumberArray: () => SortedNumberArray,
+  SortedStringArray: () => SortedStringArray
+});
+
 // src/date/index.ts
 var subtractSeconds = (date, seconds) => {
   date.setSeconds(date.getSeconds() - seconds);
   return date;
 };
-var weekend = (date) => {
+var isWeekend = (date) => {
   const day = date.getDay();
   return day === 0 || day === 6;
 };
 var between = (date, startDate, endDate) => {
   return date >= startDate && date <= endDate;
 };
-function parse(input) {
+var parse = (input) => {
   try {
     const inputDate = new Date(input);
     const isValidDate = !isNaN(inputDate.getTime());
@@ -46,11 +63,11 @@ function parse(input) {
   } catch (ignored) {
   }
   return null;
-}
+};
 var date_default = {
   subtractSeconds,
   parse,
-  weekend,
+  isWeekend,
   between
 };
 
@@ -167,13 +184,38 @@ var isFalse = (x) => {
   return false;
 };
 var isDate = (x) => {
-  if (isNil(x) || !isString(x) || !isNumber(x)) {
+  if (isNil(x)) {
+    return false;
+  }
+  if (isString(x)) {
+    x = x.trim();
+    if (!x) {
+      return false;
+    }
+  }
+  if (isBoolean(x)) {
+    return false;
+  }
+  if (isArray(x) || isSet(x)) {
     return false;
   }
   const y = date_default.parse(x);
-  return y !== null;
+  return !!y;
+};
+var isError = (x, errorLike = false) => {
+  if (isNil(x)) {
+    return false;
+  }
+  if (x instanceof Error) {
+    return true;
+  }
+  if (errorLike && x && x.stack && x.message) {
+    return true;
+  }
+  return false;
 };
 var check_default = {
+  isNil,
   isNumber,
   isString,
   isBoolean,
@@ -186,7 +228,292 @@ var check_default = {
   isArray,
   isSet,
   isIterable,
-  isDate
+  isDate,
+  isError
+};
+
+// src/array/sorted.ts
+var BisectArray = class extends Array {
+  constructor(opts) {
+    const items = opts.items;
+    super(...items);
+    this.opts = opts;
+    if (this.isValidCmp()) {
+      this.sort(this.opts.cmp);
+    } else {
+      this.sort((a, b) => this.opts.key(a) - this.opts.key(b));
+    }
+    if (this.opts.asReversed) {
+      this.reverse();
+    }
+  }
+  pop() {
+    return this.isReversed() ? super.pop() : super.shift();
+  }
+  push(...items) {
+    for (const item of items) {
+      const index = this.binarySearch(item);
+      this.splice(index, 0, item);
+    }
+    return this.length;
+  }
+  binarySearch(item) {
+    let left = 0;
+    let right = this.length - 1;
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (this.shouldSwap(this[mid], item)) {
+        left = mid + 1;
+      } else if (this.shouldSwap(item, this[mid])) {
+        right = mid - 1;
+      } else {
+        return mid;
+      }
+    }
+    return left;
+  }
+  shouldSwap(a, b) {
+    if (this.opts.cmp && this.isValidCmp()) {
+      return this.isReversed() ? this.opts.cmp(b, a) <= 0 : this.opts.cmp(a, b) <= 0;
+    }
+    const keyA = this.opts.key(a);
+    const keyB = this.opts.key(b);
+    return this.isReversed() ? keyB - keyA <= 0 : keyA - keyB <= 0;
+  }
+  isValidCmp() {
+    return this.opts.cmp && check_default.isFunction(this.opts.cmp);
+  }
+  isReversed() {
+    return this.opts.asReversed;
+  }
+};
+var ReverseSortedArray = class extends BisectArray {
+  constructor(key, ...items) {
+    super({ key, asReversed: true, items });
+  }
+};
+var SortedArray = class extends BisectArray {
+  constructor(key, ...items) {
+    super({ key, asReversed: false, items });
+  }
+};
+var ReverseNumberArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: (a) => a, asReversed: true, items });
+  }
+};
+var SortedNumberArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: (a) => a, asReversed: false, items });
+  }
+};
+var ReverseStringArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
+  }
+};
+var SortedStringArray = class extends BisectArray {
+  constructor(...items) {
+    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
+  }
+};
+var ReverseCompareArray = class extends BisectArray {
+  constructor(cmp, ...items) {
+    super({ key: () => 0, cmp, asReversed: true, items });
+  }
+};
+var SortedCompareArray = class extends BisectArray {
+  constructor(cmp, ...items) {
+    super({ key: () => 0, cmp, asReversed: true, items });
+  }
+};
+
+// src/array/index.ts
+var array_default = {
+  ...sorted_exports
+};
+
+// src/diff/index.ts
+function patienceDiff(aLines, bLines, diffPlusFlag) {
+  function findUnique(arr, lo, hi) {
+    const lineMap = /* @__PURE__ */ new Map();
+    for (let i = lo; i <= hi; i++) {
+      const line = arr[i];
+      if (lineMap.has(line)) {
+        lineMap.get(line).count++;
+        lineMap.get(line).index = i;
+      } else {
+        lineMap.set(line, {
+          count: 1,
+          index: i
+        });
+      }
+    }
+    lineMap.forEach((val, key, map) => {
+      if (val.count !== 1) {
+        map.delete(key);
+      } else {
+        map.set(key, val.index);
+      }
+    });
+    return lineMap;
+  }
+  function uniqueCommon(aArray, aLo, aHi, bArray, bLo, bHi) {
+    const ma = findUnique(aArray, aLo, aHi);
+    const mb = findUnique(bArray, bLo, bHi);
+    ma.forEach((val, key, map) => {
+      if (mb.has(key)) {
+        map.set(key, {
+          indexA: val,
+          indexB: mb.get(key)
+        });
+      } else {
+        map.delete(key);
+      }
+    });
+    return ma;
+  }
+  function longestCommonSubsequence(abMap) {
+    const ja = [];
+    abMap.forEach((val, _key, _map) => {
+      let i = 0;
+      while (ja[i] && ja[i][ja[i].length - 1].indexB < val.indexB) {
+        i++;
+      }
+      if (!ja[i]) {
+        ja[i] = [];
+      }
+      if (0 < i) {
+        val.prev = ja[i - 1][ja[i - 1].length - 1];
+      }
+      ja[i].push(val);
+    });
+    let lcs = [];
+    if (0 < ja.length) {
+      const n = ja.length - 1;
+      lcs = [ja[n][ja[n].length - 1]];
+      while (lcs[lcs.length - 1].prev) {
+        lcs.push(lcs[lcs.length - 1].prev);
+      }
+    }
+    return lcs.reverse();
+  }
+  const result = [];
+  let deleted = 0;
+  let inserted = 0;
+  const aMove = [];
+  const aMoveIndex = [];
+  const bMove = [];
+  const bMoveIndex = [];
+  function addToResult(aIndex, bIndex) {
+    if (bIndex < 0) {
+      aMove.push(aLines[aIndex]);
+      aMoveIndex.push(result.length);
+      deleted++;
+    } else if (aIndex < 0) {
+      bMove.push(bLines[bIndex]);
+      bMoveIndex.push(result.length);
+      inserted++;
+    }
+    result.push({
+      line: 0 <= aIndex ? aLines[aIndex] : bLines[bIndex],
+      aIndex,
+      bIndex
+    });
+  }
+  function addSubMatch(aLo, aHi, bLo, bHi) {
+    while (aLo <= aHi && bLo <= bHi && aLines[aLo] === bLines[bLo]) {
+      addToResult(aLo++, bLo++);
+    }
+    const aHiTemp = aHi;
+    while (aLo <= aHi && bLo <= bHi && aLines[aHi] === bLines[bHi]) {
+      aHi--;
+      bHi--;
+    }
+    const uniqueCommonMap = uniqueCommon(aLines, aLo, aHi, bLines, bLo, bHi);
+    if (uniqueCommonMap.size === 0) {
+      while (aLo <= aHi) {
+        addToResult(aLo++, -1);
+      }
+      while (bLo <= bHi) {
+        addToResult(-1, bLo++);
+      }
+    } else {
+      recurseLCS(aLo, aHi, bLo, bHi, uniqueCommonMap);
+    }
+    while (aHi < aHiTemp) {
+      addToResult(++aHi, ++bHi);
+    }
+  }
+  function recurseLCS(aLo, aHi, bLo, bHi, uniqueCommonMap) {
+    const x = longestCommonSubsequence(uniqueCommonMap || uniqueCommon(aLines, aLo, aHi, bLines, bLo, bHi));
+    if (x.length === 0) {
+      addSubMatch(aLo, aHi, bLo, bHi);
+    } else {
+      if (aLo < x[0].indexA || bLo < x[0].indexB) {
+        addSubMatch(aLo, x[0].indexA - 1, bLo, x[0].indexB - 1);
+      }
+      let i;
+      for (i = 0; i < x.length - 1; i++) {
+        addSubMatch(x[i].indexA, x[i + 1].indexA - 1, x[i].indexB, x[i + 1].indexB - 1);
+      }
+      if (x[i].indexA <= aHi || x[i].indexB <= bHi) {
+        addSubMatch(x[i].indexA, aHi, x[i].indexB, bHi);
+      }
+    }
+  }
+  recurseLCS(0, aLines.length - 1, 0, bLines.length - 1);
+  if (diffPlusFlag) {
+    return {
+      lines: result,
+      lineCountDeleted: deleted,
+      lineCountInserted: inserted,
+      lineCountMoved: 0,
+      aMove,
+      aMoveIndex,
+      bMove,
+      bMoveIndex
+    };
+  }
+  return {
+    lines: result,
+    lineCountDeleted: deleted,
+    lineCountInserted: inserted,
+    lineCountMoved: 0
+  };
+}
+var ___IGNORE = patienceDiff([], [], true);
+var compare = (a, b) => {
+  const desc = patienceDiff(a.split("\n"), b.split("\n"), true);
+  const changes = desc.lines.map((line, index) => {
+    let changeType = "unknown";
+    if (line.aIndex >= 0 && line.bIndex < 0) {
+      changeType = "deleted";
+    } else if (line.aIndex < 0 && line.bIndex >= 0) {
+      changeType = "inserted";
+    } else if (line.aIndex >= 0 && line.bIndex >= 0) {
+      changeType = "changed";
+    }
+    return {
+      changeType,
+      lineNumber: index + 1,
+      lineContent: line.line,
+      aIndex: line.aIndex,
+      bIndex: line.bIndex
+    };
+  });
+  return {
+    changes,
+    deletedCount: desc.lineCountDeleted,
+    insertedCount: desc.lineCountInserted,
+    movedCount: desc.lineCountInserted,
+    linedMovedFromA: desc.aMove || [],
+    linesMovedFromB: desc.bMove || [],
+    _diff: desc
+  };
+};
+var diff_default = {
+  compare
 };
 
 // src/eval/eval.ts
@@ -444,7 +771,7 @@ var parseExpr = (lexer, prec = BIN_PREC.PREC0) => {
   }
   return lhs;
 };
-var runExpr = (expr, ctx = {}) => {
+var runExpr = (expr, ctx = {}, warnings = []) => {
   console.assert(check_default.isObject(expr));
   switch (expr.kind) {
     case "symbol": {
@@ -456,7 +783,7 @@ var runExpr = (expr, ctx = {}) => {
           return ctx.vars[value];
         }
         if (value == null ? void 0 : value.startsWith("$")) {
-          console.warn("WARN: Unknown variable '" + value + "'");
+          warnings.push("Unknown variable '" + value + "'");
         }
         return value;
       } else {
@@ -503,7 +830,7 @@ var runExpr = (expr, ctx = {}) => {
         );
       }
       if (name == null ? void 0 : name.startsWith("$")) {
-        console.warn("WARN: Unknown function '" + name + "'");
+        warnings.push("Unknown function '" + name + "'");
       }
       const params = args == null ? void 0 : args.map((x) => {
         var _a;
@@ -749,10 +1076,41 @@ var builtinFunctions = () => {
   };
 };
 var parseSentence = (sentence, _ctx = {}) => {
-  return sentence.split("\n").map((line) => _parseSentence(line, _ctx)).join("\n");
+  const warnings = [];
+  const errors = [];
+  const result = sentence.split("\n").map((line, index) => {
+    try {
+      const parsed = _parseSentence(line, _ctx);
+      warnings.push(...parsed.warnings.map((message) => ({
+        lineNumber: index + 1,
+        message
+      })));
+      return parsed.result;
+    } catch (error) {
+      let message = "";
+      if (error) {
+        message = error.message;
+        if (!message && error.toString) {
+          message = error.toString();
+        }
+      }
+      errors.push({
+        lineNumber: index + 1,
+        message,
+        error
+      });
+    }
+    return line;
+  }).join("\n");
+  return {
+    result,
+    warnings,
+    errors
+  };
 };
 var _parseSentence = (sentence, _ctx = {}) => {
   var _a;
+  const warnings = [];
   const ctx = wrapCtxFuncs({
     /*clone*/
     ..._ctx
@@ -785,7 +1143,12 @@ var _parseSentence = (sentence, _ctx = {}) => {
     }
     const isFuncCall = expr.kind === "funcall";
     const isSymbol = expr.kind === "symbol";
-    const resolved = runExpr(expr, ctx);
+    const resolved = runExpr(
+      expr,
+      ctx,
+      /*&mut*/
+      warnings
+    );
     const append = cutHist.join("");
     builder.push(resolved + append + restoreSpace);
     const isVar = (_a = lex.lastToken()) == null ? void 0 : _a.startsWith("$");
@@ -800,7 +1163,10 @@ var _parseSentence = (sentence, _ctx = {}) => {
       builder.push(" ");
     }
   }
-  return builder.join("").trim();
+  return {
+    result: builder.join("").trim(),
+    warnings
+  };
 };
 var SentenceParser = class {
   constructor(options = {
@@ -817,6 +1183,14 @@ var SentenceParser = class {
   }
   fixName(name) {
     return name.startsWith("$") ? name : "$" + name;
+  }
+  fnExists(name) {
+    name = this.fixName(name);
+    return name in (this.ctx.funcs || {});
+  }
+  varExists(name) {
+    name = this.fixName(name);
+    return name in (this.ctx.vars || {});
   }
   addVar(name, value) {
     name = this.fixName(name);
@@ -838,6 +1212,52 @@ var eval_default = {
   parseSentence
 };
 
+// src/fuzzy/index.ts
+var similarity = (str1, str2, gramSize = 2) => {
+  const getNGrams = (s, len) => {
+    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
+    const v = new Array(s.length - len + 1);
+    for (let i = 0; i < v.length; i++) {
+      v[i] = s.slice(i, i + len);
+    }
+    return v;
+  };
+  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
+    return 0;
+  }
+  const s1 = str1.length < str2.length ? str1 : str2;
+  const s2 = str1.length < str2.length ? str2 : str1;
+  const pairs1 = getNGrams(s1, gramSize);
+  const pairs2 = getNGrams(s2, gramSize);
+  const set = new Set(pairs1);
+  const total = pairs2.length;
+  let hits = 0;
+  for (const item of pairs2) {
+    if (set.delete(item)) {
+      hits++;
+    }
+  }
+  return hits / total;
+};
+var topSimilar = (value, values, key, topK = 5, gramSize = 2) => {
+  const str1 = key(value);
+  if (topK <= 0) {
+    topK = 5;
+  }
+  const arr = new ReverseSortedArray((x) => similarity(str1, key(x), gramSize));
+  values.forEach((x) => {
+    arr.push(x);
+    if (arr.length > topK) {
+      arr.pop();
+    }
+  });
+  return [...arr];
+};
+var fuzzy_default = {
+  similarity,
+  topSimilar
+};
+
 // src/utils/index.ts
 var hashCode = (str, coerceToString = true) => {
   if (coerceToString) {
@@ -849,6 +1269,19 @@ var hashCode = (str, coerceToString = true) => {
         try {
           str = JSON.stringify(str);
         } catch (ignored) {
+          const circularReference = [];
+          const jsonString = JSON.stringify(str, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (circularReference.includes(value)) {
+                return "[Circular]";
+              }
+              circularReference.push(value);
+            }
+            return value;
+          });
+          str = jsonString.replace(/"\[Circular\]"/g, () => {
+            return JSON.stringify("[Circular]");
+          });
         }
       }
       if (!check_default.isString(str) && str.toString) {
@@ -1115,6 +1548,19 @@ _irregular("sex", "sexes");
 _irregular("move", "moves");
 _irregular("cow", "kine");
 _irregular("zombie", "zombies");
+_irregular("slave", "slaves");
+_irregular("this", "this");
+_irregular("flour", "flour");
+_irregular("milk", "milk");
+_irregular("water", "water");
+_irregular("reserve", "reserves");
+_irregular("gas", "gasses");
+_irregular("bias", "biases");
+_irregular("atlas", "atlases");
+_irregular("goose", "geese");
+_irregular("pasta", "pastas");
+_irregular("slice", "slices");
+_irregular("cactus", "cacti");
 var inflection_default = {
   camelize,
   dasherize,
@@ -1133,167 +1579,86 @@ var inflection_default = {
   SINGULARS
 };
 
-// src/array/sorted.ts
-var sorted_exports = {};
-__export(sorted_exports, {
-  BisectArray: () => BisectArray,
-  ReverseCompareArray: () => ReverseCompareArray,
-  ReverseNumberArray: () => ReverseNumberArray,
-  ReverseSortedArray: () => ReverseSortedArray,
-  ReverseStringArray: () => ReverseStringArray,
-  SortedArray: () => SortedArray,
-  SortedCompareArray: () => SortedCompareArray,
-  SortedNumberArray: () => SortedNumberArray,
-  SortedStringArray: () => SortedStringArray
+// src/std/index.ts
+var std_exports = {};
+__export(std_exports, {
+  Option: () => Option,
+  Result: () => Result
 });
-var BisectArray = class extends Array {
-  constructor(opts) {
-    const items = opts.items;
-    super(...items);
-    this.opts = opts;
-    if (this.isValidCmp()) {
-      this.sort(this.opts.cmp);
-    } else {
-      this.sort((a, b) => this.opts.key(a) - this.opts.key(b));
-    }
-    if (this.opts.asReversed) {
-      this.reverse();
-    }
+var isError2 = (x) => {
+  return check_default.isError(
+    x,
+    /*error like = */
+    false
+  );
+};
+var Option = class {
+};
+var Result = class {
+  constructor(fn, result, error, ran = false) {
+    this.fn = fn;
+    this.result = result;
+    this.error = error;
+    this.ran = ran;
   }
-  pop() {
-    return this.isReversed() ? super.pop() : super.shift();
-  }
-  push(...items) {
-    for (const item of items) {
-      const index = this.binarySearch(item);
-      this.splice(index, 0, item);
+  match(callbacks) {
+    const isErr = this.isErr();
+    const isOk = this.isOk();
+    if (isErr === null && isOk === null && callbacks.debug) {
+      callbacks.debug(this.result, this.error);
     }
-    return this.length;
+    if (isOk && this.result !== void 0) {
+      callbacks.onOk(this.result);
+    } else if (isErr && this.error !== void 0) {
+      callbacks.onError(this.error);
+    } else if (callbacks.debug) {
+      callbacks.debug(this.result, this.error);
+    }
+    return [this.result, this.error];
   }
-  binarySearch(item) {
-    let left = 0;
-    let right = this.length - 1;
-    while (left <= right) {
-      const mid = Math.floor((left + right) / 2);
-      if (this.shouldSwap(this[mid], item)) {
-        left = mid + 1;
-      } else if (this.shouldSwap(item, this[mid])) {
-        right = mid - 1;
+  run(...args) {
+    this.ran = true;
+    try {
+      const result = this.fn(...args);
+      if (isError2(result)) {
+        this.error = result;
       } else {
-        return mid;
+        this.result = result;
       }
+    } catch (error) {
+      this.error = error;
     }
-    return left;
+    return this;
   }
-  shouldSwap(a, b) {
-    if (this.opts.cmp && this.isValidCmp()) {
-      return this.isReversed() ? this.opts.cmp(b, a) <= 0 : this.opts.cmp(a, b) <= 0;
+  isErr() {
+    if (!this.ran) {
+      return null;
     }
-    const keyA = this.opts.key(a);
-    const keyB = this.opts.key(b);
-    return this.isReversed() ? keyB - keyA <= 0 : keyA - keyB <= 0;
-  }
-  isValidCmp() {
-    return this.opts.cmp && check_default.isFunction(this.opts.cmp);
-  }
-  isReversed() {
-    return this.opts.asReversed;
-  }
-};
-var ReverseSortedArray = class extends BisectArray {
-  constructor(key, ...items) {
-    super({ key, asReversed: true, items });
-  }
-};
-var SortedArray = class extends BisectArray {
-  constructor(key, ...items) {
-    super({ key, asReversed: false, items });
-  }
-};
-var ReverseNumberArray = class extends BisectArray {
-  constructor(...items) {
-    super({ key: (a) => a, asReversed: true, items });
-  }
-};
-var SortedNumberArray = class extends BisectArray {
-  constructor(...items) {
-    super({ key: (a) => a, asReversed: false, items });
-  }
-};
-var ReverseStringArray = class extends BisectArray {
-  constructor(...items) {
-    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
-  }
-};
-var SortedStringArray = class extends BisectArray {
-  constructor(...items) {
-    super({ key: () => 0, cmp: (a, b) => a.localeCompare(b), asReversed: true, items });
-  }
-};
-var ReverseCompareArray = class extends BisectArray {
-  constructor(cmp, ...items) {
-    super({ key: () => 0, cmp, asReversed: true, items });
-  }
-};
-var SortedCompareArray = class extends BisectArray {
-  constructor(cmp, ...items) {
-    super({ key: () => 0, cmp, asReversed: true, items });
-  }
-};
-
-// src/array/index.ts
-var array_default = {
-  ...sorted_exports
-};
-
-// src/fuzzy/index.ts
-var similarity = (str1, str2, gramSize = 2) => {
-  const getNGrams = (s, len) => {
-    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
-    const v = new Array(s.length - len + 1);
-    for (let i = 0; i < v.length; i++) {
-      v[i] = s.slice(i, i + len);
+    const noError = this.error === void 0;
+    const noResult = this.result === void 0;
+    if (noResult && noError) {
+      return null;
     }
-    return v;
-  };
-  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
-    return 0;
-  }
-  const s1 = str1.length < str2.length ? str1 : str2;
-  const s2 = str1.length < str2.length ? str2 : str1;
-  const pairs1 = getNGrams(s1, gramSize);
-  const pairs2 = getNGrams(s2, gramSize);
-  const set = new Set(pairs1);
-  const total = pairs2.length;
-  let hits = 0;
-  for (const item of pairs2) {
-    if (set.delete(item)) {
-      hits++;
+    if (noResult && !noError) {
+      return true;
     }
+    return false;
   }
-  return hits / total;
-};
-var topSimilar = (value, values, key, topK = 5, gramSize = 2) => {
-  const str1 = key(value);
-  if (topK <= 0) {
-    topK = 5;
-  }
-  const arr = new ReverseSortedArray((x) => similarity(str1, key(x), gramSize));
-  values.forEach((x) => {
-    arr.push(x);
-    if (arr.length > topK) {
-      arr.pop();
+  isOk() {
+    if (!this.ran) {
+      return null;
     }
-  });
-  return [...arr];
+    const noError = this.error === void 0;
+    const noResult = this.result === void 0;
+    if (noResult && noError) {
+      return null;
+    }
+    if (noError) {
+      return true;
+    }
+    return false;
+  }
 };
-var fuzzy_default = {
-  similarity,
-  topSimilar
-};
-
-// src/@types/index.ts
-var types_exports = {};
 
 // src/index.ts
 var src_default = {
@@ -1304,6 +1669,8 @@ var src_default = {
   date: date_default,
   fuzzy: fuzzy_default,
   array: array_default,
+  diff: diff_default,
+  std: std_exports,
   ...types_exports
 };
 //# sourceMappingURL=clasico-utils.js.map
