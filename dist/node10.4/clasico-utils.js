@@ -881,211 +881,6 @@ var wrapCtxFuncs = (mut_ctx) => {
   }
   return mut_ctx;
 };
-var builtinFunctions = () => {
-  const $abs = (x) => Math.abs(x);
-  const $all = (...args) => {
-    return args.map($bool).every((x) => x === true);
-  };
-  const $any = (...args) => {
-    return args.map($bool).some((x) => x === true);
-  };
-  const $bool = (x) => {
-    if (check_default.isValidBoolean(x)) {
-      return check_default.isTrue(x);
-    }
-    return !!x && $isset(x);
-  };
-  const $float = (x) => parseFloat(x);
-  const $str = (x) => {
-    if (check_default.isObject(x)) {
-      x = JSON.stringify(x, null, 0);
-    }
-    if (!check_default.isString(x)) {
-      x = x.toString ? x.toString() : `${x}`;
-    }
-    return x;
-  };
-  const $format = (fmt, ...args) => {
-    if (!check_default.isString(fmt) || args.length === 0) {
-      return fmt;
-    }
-    args.map($str).forEach((variable, index) => {
-      const template = `{${index}}`;
-      while (fmt.includes(template)) {
-        fmt = fmt.replace(template, variable);
-      }
-    });
-    return fmt;
-  };
-  const $if = (condition, ifTrue, ifFalse) => {
-    return $bool(condition) ? ifTrue : ifFalse;
-  };
-  const $int = (x) => parseInt(x);
-  const $isinstance = (x, ...types) => {
-    const xType = $type(x);
-    return types.map($str).some((t) => xType === t);
-  };
-  const $tisstring = (x) => {
-    return $isinstance(x, "string");
-  };
-  const $tisnumber = (x) => {
-    return $isinstance(x, "number", "bigint");
-  };
-  const $tisundefined = (x) => {
-    return $isinstance(x, "undefined");
-  };
-  const $tisobject = (x) => {
-    return $isinstance(x, "object");
-  };
-  const $tisboolean = (x) => {
-    return $isinstance(x, "boolean");
-  };
-  const $isnil = (x) => {
-    return x === null || x === void 0;
-  };
-  const $endsWith = (x, searchString, endPos) => {
-    x = $str(x);
-    searchString = $str(searchString);
-    return x.endsWith(searchString, endPos);
-  };
-  const $startsWith = (x, searchString, pos) => {
-    return $str(x).startsWith(searchString, pos);
-  };
-  const $lower = (x) => {
-    return $str(x).toLowerCase();
-  };
-  const $upper = (x) => {
-    return $str(x).toUpperCase();
-  };
-  const $len = (x) => {
-    return $str(x).length;
-  };
-  const $max = (...args) => {
-    return Math.max(
-      ...args.map($str).map($float).filter((x) => !isNaN(x))
-    );
-  };
-  const $min = (...args) => {
-    return Math.min(
-      ...args.map($str).map($float).filter((x) => !isNaN(x))
-    );
-  };
-  const $pow = (a, b) => Math.pow(a, b);
-  const $round = (a) => Math.round(a);
-  const $math = (key, ...args) => {
-    try {
-      const intrinsic = Math[key];
-      const result = check_default.isFunction(intrinsic) ? intrinsic(...args) : intrinsic;
-      if (result) {
-        return result;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    const argv = args.join(", ");
-    return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
-  };
-  const $concat = (...args) => {
-    return args.map($str).join("");
-  };
-  const $substring = (x, start, end) => {
-    const str = $str(x);
-    if (start === void 0 || !check_default.isNumber(start) || start < 0) {
-      start = 0;
-    }
-    if (end === void 0 || !check_default.isNumber(start) || end > str.length) {
-      end = str.length;
-    }
-    return str.substring(start, end);
-  };
-  const $type = (x) => typeof x;
-  const $getattr = (obj, ...path) => {
-    let ptr = obj;
-    path.filter(check_default.isString).forEach((literalKey) => {
-      let keys = literalKey.split(".");
-      if (!ptr[keys[0]]) {
-        keys = [literalKey];
-      }
-      keys.filter((x) => !!x).forEach((key) => {
-        if (ptr && key && ptr[key]) {
-          ptr = ptr[key];
-        }
-      });
-    });
-    return ptr;
-  };
-  const $hasattr = (obj, ...path) => {
-    let ptr = obj;
-    let result = true;
-    path.filter(check_default.isString).forEach((literalKey) => {
-      let keys = literalKey.split(".");
-      if (!ptr[keys[0]]) {
-        keys = [literalKey];
-      }
-      keys.filter((x) => !!x).forEach((key) => {
-        if (ptr && key && ptr[key]) {
-          ptr = ptr[key];
-        } else {
-          result = false;
-        }
-      });
-    });
-    return result;
-  };
-  const $isset = (obj) => {
-    return !$str(obj).startsWith("$");
-  };
-  const $includes = (x, value) => {
-    if (x) {
-      if (x.includes && check_default.isFunction(x.includes)) {
-        return x.includes(value);
-      }
-      if (x.has && check_default.isFunction(x.has)) {
-        return x.has(value);
-      }
-    }
-    return false;
-  };
-  const $now = () => {
-    return /* @__PURE__ */ new Date();
-  };
-  return {
-    $if,
-    $abs,
-    $all,
-    $any,
-    $bool,
-    $float,
-    $str,
-    $format,
-    $int,
-    $isnil,
-    $isinstance,
-    $tisstring,
-    $tisnumber,
-    $tisboolean,
-    $tisundefined,
-    $tisobject,
-    $len,
-    $max,
-    $min,
-    $pow,
-    $round,
-    $substring,
-    $type,
-    $math,
-    $getattr,
-    $concat,
-    $hasattr,
-    $isset,
-    $includes,
-    $endsWith,
-    $startsWith,
-    $lower,
-    $upper,
-    $now
-  };
-};
 var parseSentence = (sentence, _ctx = {}) => {
   const warnings = [];
   const errors = [];
@@ -1213,15 +1008,222 @@ var _parseSentence = (sentence, _ctx = {}) => {
 var SentenceParser = class {
   constructor(options = {
     includeBuiltIns: true
-  }, ctx = {}) {
+  }, ctx = {}, errors = [], warnings = []) {
     this.options = options;
     this.ctx = ctx;
+    this.errors = errors;
+    this.warnings = warnings;
     if (this.options.includeBuiltIns) {
       this.ctx.funcs = {
-        ...builtinFunctions(),
+        ...this.builtinFunctions(),
         ...this.ctx.funcs || {}
       };
     }
+  }
+  builtinFunctions() {
+    const $abs = (x) => Math.abs(x);
+    const $all = (...args) => {
+      return args.map($bool).every((x) => x === true);
+    };
+    const $any = (...args) => {
+      return args.map($bool).some((x) => x === true);
+    };
+    const $bool = (x) => {
+      if (check_default.isValidBoolean(x)) {
+        return check_default.isTrue(x);
+      }
+      return !!x && $isset(x);
+    };
+    const $float = (x) => parseFloat(x);
+    const $str = (x) => {
+      if (check_default.isObject(x)) {
+        x = JSON.stringify(x, null, 0);
+      }
+      if (!check_default.isString(x)) {
+        x = x.toString ? x.toString() : `${x}`;
+      }
+      return x;
+    };
+    const $format = (fmt, ...args) => {
+      if (!check_default.isString(fmt) || args.length === 0) {
+        return fmt;
+      }
+      args.map($str).forEach((variable, index) => {
+        const template = `{${index}}`;
+        while (fmt.includes(template)) {
+          fmt = fmt.replace(template, variable);
+        }
+      });
+      return fmt;
+    };
+    const $if = (condition, ifTrue, ifFalse) => {
+      return $bool(condition) ? ifTrue : ifFalse;
+    };
+    const $int = (x) => parseInt(x);
+    const $isinstance = (x, ...types) => {
+      const xType = $type(x);
+      return types.map($str).some((t) => xType === t);
+    };
+    const $tisstring = (x) => {
+      return $isinstance(x, "string");
+    };
+    const $tisnumber = (x) => {
+      return $isinstance(x, "number", "bigint");
+    };
+    const $tisundefined = (x) => {
+      return $isinstance(x, "undefined");
+    };
+    const $tisobject = (x) => {
+      return $isinstance(x, "object");
+    };
+    const $tisboolean = (x) => {
+      return $isinstance(x, "boolean");
+    };
+    const $isnil = (x) => {
+      return x === null || x === void 0;
+    };
+    const $endsWith = (x, searchString, endPos) => {
+      x = $str(x);
+      searchString = $str(searchString);
+      return x.endsWith(searchString, endPos);
+    };
+    const $startsWith = (x, searchString, pos) => {
+      return $str(x).startsWith(searchString, pos);
+    };
+    const $lower = (x) => {
+      return $str(x).toLowerCase();
+    };
+    const $upper = (x) => {
+      return $str(x).toUpperCase();
+    };
+    const $len = (x) => {
+      return $str(x).length;
+    };
+    const $max = (...args) => {
+      return Math.max(
+        ...args.map($str).map($float).filter((x) => !isNaN(x))
+      );
+    };
+    const $min = (...args) => {
+      return Math.min(
+        ...args.map($str).map($float).filter((x) => !isNaN(x))
+      );
+    };
+    const $pow = (a, b) => Math.pow(a, b);
+    const $round = (a) => Math.round(a);
+    const $math = (key, ...args) => {
+      try {
+        const intrinsic = Math[key];
+        const result = check_default.isFunction(intrinsic) ? intrinsic(...args) : intrinsic;
+        if (result) {
+          return result;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      const argv = args.join(", ");
+      return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
+    };
+    const $concat = (...args) => {
+      return args.map($str).join("");
+    };
+    const $substring = (x, start, end) => {
+      const str = $str(x);
+      if (start === void 0 || !check_default.isNumber(start) || start < 0) {
+        start = 0;
+      }
+      if (end === void 0 || !check_default.isNumber(start) || end > str.length) {
+        end = str.length;
+      }
+      return str.substring(start, end);
+    };
+    const $type = (x) => typeof x;
+    const $getattr = (obj, ...path) => {
+      let ptr = obj;
+      path.filter(check_default.isString).forEach((literalKey) => {
+        let keys = literalKey.split(".");
+        if (!ptr[keys[0]]) {
+          keys = [literalKey];
+        }
+        keys.filter((x) => !!x).forEach((key) => {
+          if (ptr && key && ptr[key]) {
+            ptr = ptr[key];
+          }
+        });
+      });
+      return ptr;
+    };
+    const $hasattr = (obj, ...path) => {
+      let ptr = obj;
+      let result = true;
+      path.filter(check_default.isString).forEach((literalKey) => {
+        let keys = literalKey.split(".");
+        if (!ptr[keys[0]]) {
+          keys = [literalKey];
+        }
+        keys.filter((x) => !!x).forEach((key) => {
+          if (ptr && key && ptr[key]) {
+            ptr = ptr[key];
+          } else {
+            result = false;
+          }
+        });
+      });
+      return result;
+    };
+    const $isset = (obj) => {
+      return !$str(obj).startsWith("$");
+    };
+    const $includes = (x, value) => {
+      if (x) {
+        if (x.includes && check_default.isFunction(x.includes)) {
+          return x.includes(value);
+        }
+        if (x.has && check_default.isFunction(x.has)) {
+          return x.has(value);
+        }
+      }
+      return false;
+    };
+    const $now = () => {
+      return /* @__PURE__ */ new Date();
+    };
+    return {
+      $if,
+      $abs,
+      $all,
+      $any,
+      $bool,
+      $float,
+      $str,
+      $format,
+      $int,
+      $isnil,
+      $isinstance,
+      $tisstring,
+      $tisnumber,
+      $tisboolean,
+      $tisundefined,
+      $tisobject,
+      $len,
+      $max,
+      $min,
+      $pow,
+      $round,
+      $substring,
+      $type,
+      $math,
+      $getattr,
+      $concat,
+      $hasattr,
+      $isset,
+      $includes,
+      $endsWith,
+      $startsWith,
+      $lower,
+      $upper,
+      $now
+    };
   }
   fixName(name) {
     return name.startsWith("$") ? name : "$" + name;
@@ -1244,14 +1246,22 @@ var SentenceParser = class {
     this.ctx.funcs = this.ctx.funcs || {};
     this.ctx.funcs[name] = cb;
   }
+  clearWarnings() {
+    this.warnings = [];
+  }
+  clearErrors() {
+    this.errors = [];
+  }
   parse(sentence) {
-    return parseSentence(sentence, this.ctx || {});
+    const result = parseSentence(sentence, this.ctx || {});
+    this.errors.push(...result.errors);
+    this.warnings.push(...result.warnings);
+    return result;
   }
 };
+var ____builtins = new SentenceParser({ includeBuiltIns: false }).builtinFunctions;
 var eval_default = {
-  SentenceParser,
-  builtinFunctions,
-  parseSentence
+  SentenceParser
 };
 
 // src/fuzzy/index.ts
@@ -1646,9 +1656,6 @@ var Result = class {
   match(callbacks) {
     const isErr = this.isErr();
     const isOk = this.isOk();
-    if (isErr === null && isOk === null && callbacks.debug) {
-      callbacks.debug(this.result, this.error);
-    }
     if (isOk && this.result !== void 0) {
       callbacks.onOk(this.result);
     } else if (isErr && this.error !== void 0) {

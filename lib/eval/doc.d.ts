@@ -11,7 +11,6 @@ export type BuiltinDoc = {
     description: string;
     examples: BuiltinExample[];
     isDeprecated: boolean;
-    implementation?: string;
 };
 export type BuiltinDocs = {
     [key in BuiltInFunctionKey]: BuiltinDoc;

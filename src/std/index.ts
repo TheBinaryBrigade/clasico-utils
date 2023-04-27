@@ -35,10 +35,6 @@ export class Result<
     const isErr = this.isErr();
     const isOk = this.isOk();
 
-    if (isErr === null && isOk === null && callbacks.debug) {
-      callbacks.debug(this.result, this.error);
-    }
-
     if (isOk && this.result !== undefined) {
       callbacks.onOk(this.result);
     } else if (isErr && this.error !== undefined) {

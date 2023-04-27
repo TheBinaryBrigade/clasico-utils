@@ -1,6 +1,6 @@
 
 
-import _eval, { BuiltInFunctionKey, Context } from "./index";
+import parser, { BuiltInFunctionKey, Context } from "./index";
 import fuzzy from "../fuzzy";
 
 export type BuiltinExample = {
@@ -15,7 +15,6 @@ export type BuiltinDoc = {
     description: string,
     examples: BuiltinExample[],
     isDeprecated: boolean,
-    implementation?: string,
 };
 
 export type BuiltinDocs = {
@@ -1144,7 +1143,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $concat: {
     description: "Concatenate values",
@@ -1166,7 +1164,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $hasattr: {
     description: "Wrapper for `$bool($getattr($obj, 'example.path'))` and also checks for `$` at the start of the result",
@@ -1203,7 +1200,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $isset: {
     description: "",
@@ -1240,7 +1236,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $includes: {
     description: "Checks to see if array-like variable contains a value",
@@ -1303,7 +1298,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $endsWith: {
     description: "Checks to see if values ends with a value",
@@ -1354,7 +1348,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $startsWith: {
     description: "Checks if value starts with value",
@@ -1394,7 +1387,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $lower: {
     description: "Lowercase value",
@@ -1412,7 +1404,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $upper: {
     description: "Uppercase value",
@@ -1430,7 +1421,6 @@ const docs: BuiltinDocs = {
       },
     ],
     isDeprecated: false,
-    implementation: undefined
   },
   $now: {
     description: "Gets current datetime",
@@ -1443,20 +1433,17 @@ const docs: BuiltinDocs = {
       }
     ],
     isDeprecated: false,
-    implementation: undefined
   }
 };
 
 
 (() => {
-  const builtins = _eval.builtinFunctions();
+  const builtins = new parser.SentenceParser().builtinFunctions();
   const keys = Object.keys(builtins) as BuiltInFunctionKey[];
   keys.forEach((key) => {
     if (!docs[key]) {
       console.warn(`WARN: ${key} in docs doesn't have any examples.`);
     } else {
-      docs[key].implementation = builtins[key].toString();
-
       if (!docs[key].examples) {
         console.warn(`WARN: ${key} in docs doesn't have any examples.`);
       }
@@ -1467,8 +1454,6 @@ const docs: BuiltinDocs = {
         }
       });
     }
-
-
   });
 })();
 

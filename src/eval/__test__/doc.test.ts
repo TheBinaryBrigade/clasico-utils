@@ -10,13 +10,15 @@ Object.entries(doc).forEach(([$name, { examples }]) => {
       const text = input.text;
       const ctx: Context = {
         funcs: {
-          ...parser.builtinFunctions(),
           ...(input.context?.funcs || {})
         },
-        vars: input.context?.vars
+        vars: {
+          ...(input.context?.vars || {})
+        }
       };
       test(`${text}; ctx=${JSON.stringify(input.context?.vars)}`, () => {
-        const result = parser.parseSentence(text, ctx).result;
+        const sparser = new parser.SentenceParser({includeBuiltIns: true}, ctx);
+        const result = sparser.parse(input.text).result;
         if (typeof output === "function") {
           expect(output(result)).toBe(true);
         } else {

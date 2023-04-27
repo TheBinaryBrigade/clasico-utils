@@ -4,8 +4,6 @@ import parser, { Context } from "../index";
 
 const ctx: Context = {
   funcs: {
-    // Note: builtins need to be added explicitly
-    ...parser.builtinFunctions(),
     // You can declare your own functions like this
     $myFunc: (a: number, b: number) => {
       return a + b;
@@ -110,8 +108,10 @@ const tests: {
 describe("parse sentence edge cases", () => {
   tests.forEach(({ input, output }) => {
     test(input, () => {
-      const result = parser.parseSentence(input, ctx);
-      expect(result.result).toBe(output);
+      const result = new parser.SentenceParser({
+        includeBuiltIns: true,
+      }, ctx);
+      expect(result.parse(input).result).toBe(output);
     });
   });
 });
