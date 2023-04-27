@@ -345,6 +345,10 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
       }
       if (value?.startsWith("$")) {
         warnings.push("Unknown variable '" + value + "'");
+
+        if (value in (ctx.funcs || {})) {
+          warnings.push("'" + value + "' is defined as a function.");
+        }
       }
       return value;
     } else {
@@ -395,6 +399,10 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
     }
     if (name?.startsWith("$")) {
       warnings.push("Unknown function '" + name + "'");
+
+      if (name in (ctx.vars || {})) {
+        warnings.push("'" + name + "' is defined as a variable.");
+      }
     }
     const params = args
       ?.map((x) => x?.payload?.value)

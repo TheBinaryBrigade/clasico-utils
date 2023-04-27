@@ -789,6 +789,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
         }
         if (value == null ? void 0 : value.startsWith("$")) {
           warnings.push("Unknown variable '" + value + "'");
+          if (value in (ctx.funcs || {})) {
+            warnings.push("'" + value + "' is defined as a function.");
+          }
         }
         return value;
       } else {
@@ -836,6 +839,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
       }
       if (name == null ? void 0 : name.startsWith("$")) {
         warnings.push("Unknown function '" + name + "'");
+        if (name in (ctx.vars || {})) {
+          warnings.push("'" + name + "' is defined as a variable.");
+        }
       }
       const params = args == null ? void 0 : args.map((x) => {
         var _a;
