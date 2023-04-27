@@ -1036,8 +1036,27 @@ var SentenceParser = class {
     };
     const $float = (x) => parseFloat(x);
     const $str = (x) => {
+      if ($isnil(x)) {
+        return `${x}`;
+      }
       if (check_default.isObject(x)) {
-        x = JSON.stringify(x, null, 0);
+        try {
+          x = JSON.stringify(x);
+        } catch (ignored) {
+          const circularReference = [];
+          const jsonString = JSON.stringify(x, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (circularReference.includes(value)) {
+                return "[Circular]";
+              }
+              circularReference.push(value);
+            }
+            return value;
+          });
+          x = jsonString.replace(/"\[Circular\]"/g, () => {
+            return JSON.stringify("[Circular]");
+          });
+        }
       }
       if (!check_default.isString(x)) {
         x = x.toString ? x.toString() : `${x}`;
@@ -1119,10 +1138,18 @@ var SentenceParser = class {
           return result;
         }
       } catch (error) {
-        console.error(error);
+        this.errors.push({
+          error,
+          message: error.message || `${error}`,
+          lineNumber: NaN
+        });
       }
       const argv = args.join(", ");
-      return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
+      this.warnings.push({
+        lineNumber: NaN,
+        message: `Couldn't resolve Math.${key}${!argv ? "" : "(" + argv + ")"}`
+      });
+      return `$math('${key}'${!argv ? "" : ", " + argv})`;
     };
     const $concat = (...args) => {
       return args.map($str).join("");

@@ -48,7 +48,6 @@ describe("utils", () => {
       const result = utils.hashCode(example);
       expect(typeof result).toBe("number");
       expect(result).toBeTruthy();
-
     });
 
     test("should handle many types", () => {

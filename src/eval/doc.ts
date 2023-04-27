@@ -21,6 +21,15 @@ export type BuiltinDocs = {
     [key in BuiltInFunctionKey]: BuiltinDoc;
 };
 
+const cirecularObject: any = {
+  a: 1,
+  b: {
+    c: 2,
+    d: null
+  }
+};
+cirecularObject.b.d = cirecularObject;
+
 const docs: BuiltinDocs = {
   $abs: {
     description: "Return the absolute value of the argument.",
@@ -180,6 +189,17 @@ const docs: BuiltinDocs = {
           }
         },
         output: "false",
+      },
+      {
+        input: {
+          text: "$str($x)",
+          context: {
+            vars: {
+              $x: cirecularObject,
+            }
+          }
+        },
+        output: "{\"a\":1,\"b\":{\"c\":2,\"d\":\"[Circular]\"}}",
       },
       {
         input: {
@@ -588,47 +608,31 @@ const docs: BuiltinDocs = {
     examples: [
       {
         input: {
-          text: "$math($PI)",
-          context: {
-            vars: {
-              $PI: "PI",
-            }
-          }
+          text: "$math('PI')",
+          context: {}
         },
         output: Math.PI + "",
       },
       {
         input: {
-          text: "$math($cos, 90)",
-          context: {
-            vars: {
-              $cos: "cos",
-            }
-          }
+          text: "$math('cos', 90)",
+          context: {}
         },
         output: Math.cos(90) + "",
       },
       {
         input: {
-          text: "$math($x, 90)",
-          context: {
-            vars: {
-              $x: "someUnknownFunction",
-            }
-          }
+          text: "$math('someUnknownFunction', 90)",
+          context: {}
         },
-        output: "Math.someUnknownFunction(90)",
+        output: "$math('someUnknownFunction', 90)",
       },
       {
         input: {
-          text: "$math($x)",
-          context: {
-            vars: {
-              $x: "someUnknownVar",
-            }
-          }
+          text: "$math('someUnknownVar')",
+          context: {}
         },
-        output: "Math.someUnknownVar",
+        output: "$math('someUnknownVar')",
       },
     ],
     isDeprecated: false,

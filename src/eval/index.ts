@@ -231,8 +231,31 @@ class SentenceParser {
     };
     const $float = (x: any): number => parseFloat(x);
     const $str = (x: any): string => {
+      if ($isnil(x)) {
+        return `${x}`;
+      }
+
       if (check.isObject(x)) {
-        x = JSON.stringify(x, null, 0);
+
+        try {
+          x = JSON.stringify(x);
+        } catch (ignored) {
+          const circularReference: any[] = [];
+          const jsonString = JSON.stringify(x, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (circularReference.includes(value)) {
+                return "[Circular]";
+              }
+              circularReference.push(value);
+            }
+            return value;
+          });
+
+          // Replace circular references with actual object reference
+          x = jsonString.replace(/"\[Circular\]"/g, () => {
+            return JSON.stringify("[Circular]");
+          });
+        }
       }
 
       if (!check.isString(x)) {
@@ -331,12 +354,21 @@ class SentenceParser {
         if (result) {
           return result;
         }
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        this.errors.push({
+          error,
+          message: error.message || `${error}`,
+          lineNumber: NaN,
+        });
       }
 
       const argv = args.join(", ");
-      return `Math.${key}${!argv ? "" : "(" + argv + ")"}`;
+
+      this.warnings.push({
+        lineNumber: NaN,
+        message: `Couldn't resolve Math.${key}${!argv ? "" : "(" + argv + ")"}`,
+      });
+      return `$math('${key}'${!argv ? "" : ", " + argv})`;
     };
     const $concat = (...args: any[]) => {
       return args.map($str).join("");

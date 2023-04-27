@@ -1,5 +1,8 @@
 import * as fs from "fs";
 import doc, { BuiltinDoc, BuiltinExample } from "./src/eval/doc";
+import parser from './src/eval';
+
+const $str = new parser.SentenceParser({includeBuiltIns:true}).builtinFunctions().$str;
 
 const writeFile = (filename: string, content: string) => {
     fs.writeFile(filename, content, (err) => {
@@ -50,7 +53,7 @@ const examplesView = (examples: BuiltinExample[]) => {
                 "\n\n",
                 "Input: " + inlineCode(text) + "<br />",
                 (typeof output === "string" ? "Output: " + inlineCode(output) + "<br />" : "") + "\n\n",
-                (context ? "\nContext: \n" + inlineCode(JSON.stringify(context, null, 4)) : ""),
+                (context ? "\nContext: \n" + inlineCode($str(context)) : ""),
                 // notes ? "\nNotes: \n\n1. " + notes.join("\n1. ") : "",
                 "\n---\n"
 

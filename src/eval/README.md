@@ -69,11 +69,7 @@ Output: `NaN`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello, world!"
-    }
-}`
+`{"vars":{"$x":"hello, world!"}}`
 
 ---
 
@@ -264,11 +260,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": ""
-    }
-}`
+`{"vars":{"$x":""}}`
 
 ---
 
@@ -282,11 +274,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, world!"
-    }
-}`
+`{"vars":{"$x":"Hello, world!"}}`
 
 ---
 
@@ -311,15 +299,7 @@ Output: `true42HelloWorld!{}`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$a": true,
-        "$b": 42,
-        "$c": "Hello",
-        "$d": "World!",
-        "$e": {}
-    }
-}`
+`{"vars":{"$a":true,"$b":42,"$c":"Hello","$d":"World!","$e":{}}}`
 
 ---
 
@@ -344,11 +324,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -362,11 +338,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -380,11 +352,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -398,11 +366,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -451,11 +415,7 @@ Output: `42.2`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "42.2"
-    }
-}`
+`{"vars":{"$x":"42.2"}}`
 
 ---
 
@@ -469,11 +429,7 @@ Output: `NaN`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -498,13 +454,7 @@ Output: `This is Garfield a cat. Garfield likes lasagna.`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$fmt": "This is {0} a {1}. {0} likes lasagna.",
-        "$name": "Garfield",
-        "$animal": "cat"
-    }
-}`
+`{"vars":{"$fmt":"This is {0} a {1}. {0} likes lasagna.","$name":"Garfield","$animal":"cat"}}`
 
 ---
 
@@ -529,11 +479,7 @@ Output: `11`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "some string"
-    }
-}`
+`{"vars":{"$x":"some string"}}`
 
 ---
 
@@ -547,17 +493,7 @@ Output: `42`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some":{"deep":{"object":42}}}}}`
 
 ---
 
@@ -571,18 +507,7 @@ Output: `42`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        },
-        "$attrobject": "object"
-    }
-}`
+`{"vars":{"$x":{"some":{"deep":{"object":42}}},"$attrobject":"object"}}`
 
 ---
 
@@ -596,17 +521,7 @@ Output: `42`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some.tricky": {
-                "deep": {
-                    "object": 42
-                }
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some.tricky":{"deep":{"object":42}}}}}`
 
 ---
 
@@ -631,15 +546,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some":{"attr":42}}}}`
 
 ---
 
@@ -653,15 +560,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some":{"attr":42}}}}`
 
 ---
 
@@ -686,12 +585,7 @@ Output: `this is true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$whenTrue": "this is true",
-        "$whenFalse": "this is false"
-    }
-}`
+`{"vars":{"$whenTrue":"this is true","$whenFalse":"this is false"}}`
 
 ---
 
@@ -705,12 +599,7 @@ Output: `this is false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$whenTrue": "this is true",
-        "$whenFalse": "this is false"
-    }
-}`
+`{"vars":{"$whenTrue":"this is true","$whenFalse":"this is false"}}`
 
 ---
 
@@ -724,18 +613,7 @@ Output: `Hi James, welcome to the app!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$isLoggedIn": true,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!",
-        "$client": {
-            "user": {
-                "name": "James"
-            }
-        }
-    }
-}`
+`{"vars":{"$isLoggedIn":true,"$welcomeMessage":"Hi {0}, welcome to the app!","$welcomeMessage2":"Hi, welcome to the app!","$client":{"user":{"name":"James"}}}}`
 
 ---
 
@@ -749,13 +627,7 @@ Output: `Hi, welcome to the app!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$isLoggedIn": false,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!"
-    }
-}`
+`{"vars":{"$isLoggedIn":false,"$welcomeMessage":"Hi {0}, welcome to the app!","$welcomeMessage2":"Hi, welcome to the app!"}}`
 
 ---
 
@@ -769,13 +641,7 @@ Output: `Hi, welcome to the app!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$isLoggedIn": true,
-        "$welcomeMessage": "Hi {0}, welcome to the app!",
-        "$welcomeMessage2": "Hi, welcome to the app!"
-    }
-}`
+`{"vars":{"$isLoggedIn":true,"$welcomeMessage":"Hi {0}, welcome to the app!","$welcomeMessage2":"Hi, welcome to the app!"}}`
 
 ---
 
@@ -800,14 +666,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$arr": [
-            "a",
-            "b"
-        ]
-    }
-}`
+`{"vars":{"$arr":["a","b"]}}`
 
 ---
 
@@ -821,14 +680,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$arr": [
-            "a",
-            "b"
-        ]
-    }
-}`
+`{"vars":{"$arr":["a","b"]}}`
 
 ---
 
@@ -842,11 +694,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$set": {}
-    }
-}`
+`{"vars":{"$set":{}}}`
 
 ---
 
@@ -860,11 +708,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$set": {}
-    }
-}`
+`{"vars":{"$set":{}}}`
 
 ---
 
@@ -913,11 +757,7 @@ Output: `42`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "42.2"
-    }
-}`
+`{"vars":{"$x":"42.2"}}`
 
 ---
 
@@ -931,11 +771,7 @@ Output: `NaN`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -958,13 +794,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello",
-        "$strType": "string",
-        "$numType": "number"
-    }
-}`
+`{"vars":{"$x":"hello","$strType":"string","$numType":"number"}}`
 
 ---
 
@@ -978,13 +808,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42,
-        "$strType": "string",
-        "$numType": "number"
-    }
-}`
+`{"vars":{"$x":42,"$strType":"string","$numType":"number"}}`
 
 ---
 
@@ -998,13 +822,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true,
-        "$strType": "string",
-        "$numType": "number"
-    }
-}`
+`{"vars":{"$x":true,"$strType":"string","$numType":"number"}}`
 
 ---
 
@@ -1018,12 +836,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true,
-        "$boolType": "boolean"
-    }
-}`
+`{"vars":{"$x":true,"$boolType":"boolean"}}`
 
 ---
 
@@ -1048,11 +861,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": null
-    }
-}`
+`{"vars":{"$x":null}}`
 
 ---
 
@@ -1066,9 +875,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -1082,13 +889,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -1102,11 +903,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 0
-    }
-}`
+`{"vars":{"$x":0}}`
 
 ---
 
@@ -1120,11 +917,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": ""
-    }
-}`
+`{"vars":{"$x":""}}`
 
 ---
 
@@ -1147,15 +940,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some":{"attr":42}}}}`
 
 ---
 
@@ -1169,15 +954,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "some": {
-                "attr": 42
-            }
-        }
-    }
-}`
+`{"vars":{"$x":{"some":{"attr":42}}}}`
 
 ---
 
@@ -1202,11 +979,7 @@ Output: `4`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -1220,11 +993,7 @@ Output: `2`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -1238,11 +1007,7 @@ Output: `5`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello"
-    }
-}`
+`{"vars":{"$x":"Hello"}}`
 
 ---
 
@@ -1256,13 +1021,7 @@ Output: `18`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "world!"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"world!"}}}`
 
 ---
 
@@ -1287,11 +1046,7 @@ Output: `hello, world!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, World!"
-    }
-}`
+`{"vars":{"$x":"Hello, World!"}}`
 
 ---
 
@@ -1310,17 +1065,13 @@ An intrinsic function that provides basic mathematics functionality and constant
 
 
 
-Input: `$math($PI)`<br />
+Input: `$math('PI')`<br />
 Output: `3.141592653589793`<br />
 
 
 
 Context: 
-`{
-    "vars": {
-        "$PI": "PI"
-    }
-}`
+`{}`
 
 ---
 
@@ -1328,17 +1079,13 @@ Context:
 
 
 
-Input: `$math($cos, 90)`<br />
+Input: `$math('cos', 90)`<br />
 Output: `-0.4480736161291702`<br />
 
 
 
 Context: 
-`{
-    "vars": {
-        "$cos": "cos"
-    }
-}`
+`{}`
 
 ---
 
@@ -1346,17 +1093,13 @@ Context:
 
 
 
-Input: `$math($x, 90)`<br />
-Output: `Math.someUnknownFunction(90)`<br />
+Input: `$math('someUnknownFunction', 90)`<br />
+Output: `$math('someUnknownFunction', 90)`<br />
 
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "someUnknownFunction"
-    }
-}`
+`{}`
 
 ---
 
@@ -1364,17 +1107,13 @@ Context:
 
 
 
-Input: `$math($x)`<br />
-Output: `Math.someUnknownVar`<br />
+Input: `$math('someUnknownVar')`<br />
+Output: `$math('someUnknownVar')`<br />
 
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "someUnknownVar"
-    }
-}`
+`{}`
 
 ---
 
@@ -1399,11 +1138,7 @@ Output: `4`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -1417,11 +1152,7 @@ Output: `50`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 50
-    }
-}`
+`{"vars":{"$x":50}}`
 
 ---
 
@@ -1435,11 +1166,7 @@ Output: `4`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1453,11 +1180,7 @@ Output: `4`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": -1
-    }
-}`
+`{"vars":{"$x":-1}}`
 
 ---
 
@@ -1482,11 +1205,7 @@ Output: `1`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -1500,11 +1219,7 @@ Output: `1`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 50
-    }
-}`
+`{"vars":{"$x":50}}`
 
 ---
 
@@ -1518,11 +1233,7 @@ Output: `1`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1536,11 +1247,7 @@ Output: `-1`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": -1
-    }
-}`
+`{"vars":{"$x":-1}}`
 
 ---
 
@@ -1694,11 +1401,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -1712,11 +1415,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -1730,11 +1429,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, b"
-    }
-}`
+`{"vars":{"$x":"Hello, b"}}`
 
 ---
 
@@ -1759,15 +1454,25 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": false
-    }
-}`
+`{"vars":{"$x":false}}`
 
 ---
 
 #### Example No.2
+
+
+
+Input: `$str($x)`<br />
+Output: `{"a":1,"b":{"c":2,"d":"[Circular]"}}`<br />
+
+
+
+Context: 
+`{"vars":{"$x":{"a":1,"b":{"c":2,"d":"[Circular]"}}}}`
+
+---
+
+#### Example No.3
 
 
 
@@ -1777,15 +1482,11 @@ Output: `42`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
-#### Example No.3
+#### Example No.4
 
 
 
@@ -1795,15 +1496,11 @@ Output: `Hello, World!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, World!"
-    }
-}`
+`{"vars":{"$x":"Hello, World!"}}`
 
 ---
 
-#### Example No.4
+#### Example No.5
 
 
 
@@ -1813,13 +1510,7 @@ Output: `{"hello":"world"}`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "world"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"world"}}}`
 
 ---
 
@@ -1844,11 +1535,7 @@ Output: `hell`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1862,11 +1549,7 @@ Output: `ello`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1880,11 +1563,7 @@ Output: `hello`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1898,11 +1577,7 @@ Output: `hell`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1927,11 +1602,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -1945,11 +1616,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -1963,11 +1630,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -1981,9 +1644,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -1997,13 +1658,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2028,11 +1683,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -2046,11 +1697,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -2064,11 +1711,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -2082,9 +1725,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -2098,13 +1739,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2129,11 +1764,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -2147,11 +1778,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -2165,11 +1792,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -2183,9 +1806,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -2199,13 +1820,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2230,11 +1845,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -2248,11 +1859,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -2266,11 +1873,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -2284,9 +1887,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -2300,13 +1901,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2331,11 +1926,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -2349,11 +1940,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -2367,11 +1954,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -2385,9 +1968,7 @@ Output: `true`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -2401,13 +1982,7 @@ Output: `false`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2432,11 +2007,7 @@ Output: `string`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "hello"
-    }
-}`
+`{"vars":{"$x":"hello"}}`
 
 ---
 
@@ -2450,11 +2021,7 @@ Output: `number`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": 42
-    }
-}`
+`{"vars":{"$x":42}}`
 
 ---
 
@@ -2468,11 +2035,7 @@ Output: `boolean`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": true
-    }
-}`
+`{"vars":{"$x":true}}`
 
 ---
 
@@ -2486,9 +2049,7 @@ Output: `undefined`<br />
 
 
 Context: 
-`{
-    "vars": {}
-}`
+`{"vars":{}}`
 
 ---
 
@@ -2502,13 +2063,7 @@ Output: `object`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": {
-            "hello": "42"
-        }
-    }
-}`
+`{"vars":{"$x":{"hello":"42"}}}`
 
 ---
 
@@ -2533,11 +2088,7 @@ Output: `HELLO, WORLD!`<br />
 
 
 Context: 
-`{
-    "vars": {
-        "$x": "Hello, World!"
-    }
-}`
+`{"vars":{"$x":"Hello, World!"}}`
 
 ---
 
