@@ -17,3 +17,17 @@ npm run build:node10
 
 # Build npm pacakge
 npm run build:lib
+
+shadir() {
+    find $1 -type f \( -exec sha512sum {} \; \)
+}
+
+( \
+    echo "$(shadir dist)" \
+    && echo "$(shadir lib)" \
+    && echo "$(shadir docs)" \
+    && echo "$(shadir examples)" \
+    && echo "$(shadir src)" \
+    && echo "$(shadir *.ts)" \
+    && echo "$(shadir *.cjs)" \
+) > './checksums.txt'
