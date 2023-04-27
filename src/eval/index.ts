@@ -388,11 +388,20 @@ class SentenceParser {
         ...(this.ctx.funcs || {}),
       };
     }
-
   }
 
   fixName(name: string) {
     return name.startsWith("$") ? name : "$" + name;
+  }
+
+  fnExists(name: string): boolean {
+    name = this.fixName(name);
+    return name in (this.ctx.funcs || {});
+  }
+
+  varExists(name: string): boolean {
+    name = this.fixName(name);
+    return name in (this.ctx.vars || {});
   }
 
   addVar(name: string, value: any) {

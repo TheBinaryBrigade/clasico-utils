@@ -6,7 +6,7 @@ const TRUE = new Boolean(true);
 const FALSE = new Boolean(false);
 const BOOLEANS = [true, TRUE, false, FALSE];
 
-const isNumber = (x: any) => {
+const isNumber = (x: any): boolean => {
   return (
     typeof x === "number"
     || x instanceof Number
@@ -15,14 +15,14 @@ const isNumber = (x: any) => {
   );
 };
 
-const isString = (x: any) => {
+const isString = (x: any): boolean => {
   return (
     typeof x === "string"
     || x instanceof String
   );
 };
 
-const isBoolean = (x: any) => {
+const isBoolean = (x: any): boolean => {
   return (
     typeof x === "boolean"
     || x instanceof Boolean
@@ -30,14 +30,14 @@ const isBoolean = (x: any) => {
   );
 };
 
-const isFunction = (x: any) => {
+const isFunction = (x: any): boolean => {
   return (
     typeof x === "function"
     || x instanceof Function
   );
 };
 
-const isObject = (x: any) => {
+const isObject = (x: any): boolean => {
   if (isNil(x)) {
     return false;
   }
@@ -45,11 +45,11 @@ const isObject = (x: any) => {
   return typeof x === "object";
 };
 
-const isNil = (x: any) => {
+const isNil = (x: any): boolean => {
   return x === null || x === undefined;
 };
 
-const isArray = (x: any) => {
+const isArray = (x: any): boolean => {
   return (
     Array.isArray(x)
     || x instanceof Array
@@ -57,14 +57,14 @@ const isArray = (x: any) => {
   );
 };
 
-const isSet = (x: any) => {
+const isSet = (x: any): boolean => {
   return (
     x instanceof Set
     || Object.prototype.toString.call(x) === "[object Set]"
   );
 };
 
-const isIterable = (x: any) => {
+const isIterable = (x: any): boolean => {
   // checks for null and undefined
   if (isNil(x)) {
     return false;
@@ -72,7 +72,7 @@ const isIterable = (x: any) => {
   return isFunction(x[Symbol.iterator]);
 };
 
-const isNumeric = (x: any) => {
+const isNumeric = (x: any): boolean => {
   if (isNumber(x)) {
     return true;
   }
@@ -82,7 +82,7 @@ const isNumeric = (x: any) => {
   return !isNaN(x) && !isNaN(parseFloat(x));
 };
 
-const isValidBoolean = (x: any) => {
+const isValidBoolean = (x: any): boolean => {
   if (isBoolean(x)) {
     return true;
   }
@@ -119,7 +119,7 @@ const isValidBoolean = (x: any) => {
   return false;
 };
 
-const isTrue = (x: any) => {
+const isTrue = (x: any): boolean => {
   if (x && x.toString && x.toString() === "true") {
     return true;
   }
@@ -149,7 +149,7 @@ const isTrue = (x: any) => {
   return false;
 };
 
-const isFalse = (x: any) => {
+const isFalse = (x: any): boolean => {
   if (x && x.toString && x.toString() === "false") {
     return true;
   }
@@ -161,12 +161,45 @@ const isFalse = (x: any) => {
   return false;
 };
 
-const isDate = (x: any) => {
-  if (isNil(x) || !isString(x) || !isNumber(x)) {
+const isDate = (x: any): boolean => {
+  if (isNil(x)) {
     return false;
   }
+
+  if (isString(x)) {
+    x = x.trim();
+
+    if (!x) {
+      return false;
+    }
+  }
+
+  if (isBoolean(x)) {
+    return false;
+  }
+
+  if (isArray(x) || isSet(x)) {
+    return false;
+  }
+
   const y = date.parse(x);
-  return y !== null;
+  return !!y;
+};
+
+const isError = (x: any): boolean => {
+  if (isNil(x)) {
+    return false;
+  }
+
+  if (x instanceof Error) {
+    return true;
+  }
+
+  if (x && x.stack && x.message) {
+    return true;
+  }
+
+  return false;
 };
 
 // @exports
@@ -184,4 +217,5 @@ export default {
   isSet,
   isIterable,
   isDate,
+  isError,
 };
