@@ -80,3 +80,38 @@ console.assert(
 
 
 ```
+
+
+### Array Types
+
+#### Usage
+TODO: Usage
+
+### Date Utils
+
+#### Usage
+TODO: Usage
+
+### Diff Utils
+
+#### Usage
+TODO: Usage
+
+### Fuzzy Utils
+
+#### Usage
+TODO: Usage
+
+### Inflection Port
+
+#### Usage
+TODO: Usage
+
+### Misc Utils
+
+#### Usage
+TODO: Usage
+
+## Goals
+
+The goal of this package is to be dependency free (or at least close to that).

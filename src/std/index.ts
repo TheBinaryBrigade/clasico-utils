@@ -13,6 +13,7 @@ export class Option<T> {
 export class Result<
     TReturn,
     E = Error,
+    // Fix any[] inferr from input
     Fn extends (...any: any[]) => TReturn = (...any: any[]) => TReturn,
     FnArgs extends any[] = Parameters<Fn>,
 > {

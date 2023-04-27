@@ -1,5 +1,8 @@
 set -e -o xtrace
 
+# Auto fix liniting issues
+npm run lint:fix
+
 # Run examples
 npm run example:eval:usage
 

@@ -72,10 +72,22 @@ const tests: {
     input: "$myVar brings all the $concat($myVar, \"s\")! to the $myVar",
     output: "42 brings all the 42s! to the 42",
   },
-//   {
-//     input: "Hello, $myVar. I have 1 + 1 $format(\"{0}\", \"cats\").",
-//     output: "Hello, 42. I have 2 cats."
-//   }
+  {
+    input: "Hello, $myVar. I have 1 + 1 $format(\"{0}\", \"cats\").",
+    output: "Hello, 42. I have 2 cats."
+  },
+  {
+    input: "$myVar $myVar $myVar $myVar $myVar",
+    output: "42 42 42 42 42"
+  },
+  {
+    input: "$myVar 42 $myVar 42 $myVar",
+    output: "42 42 42 42 42"
+  },
+  {
+    input: "$myVar was and $myVar is",
+    output: "42 was and 42 is"
+  },
 ];
 
 describe("parse sentence edge cases", () => {

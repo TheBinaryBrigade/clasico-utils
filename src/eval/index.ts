@@ -402,7 +402,7 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
       builder.splice(commaLoc, 1);
     }
 
-    if (isFuncCall && lex.nextToken() !== "!") {
+    if (isFuncCall && !["!", ".", ","].includes(lex.nextToken() as string)) {
       builder.push(" ");
     }
 

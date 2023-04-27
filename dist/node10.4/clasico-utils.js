@@ -1156,7 +1156,7 @@ var _parseSentence = (sentence, _ctx = {}) => {
     if (lex.lastToken() === "," && builder[commaLoc] === " ") {
       builder.splice(commaLoc, 1);
     }
-    if (isFuncCall && lex.nextToken() !== "!") {
+    if (isFuncCall && !["!", ".", ","].includes(lex.nextToken())) {
       builder.push(" ");
     }
     if (!(isFuncCall || isSymbol && isVar)) {
