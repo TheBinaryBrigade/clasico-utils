@@ -35,8 +35,8 @@
     <script src="./clasico-utils.js"></script>
     <script>;
         ; (() => {
-            console.log(ClasicoUtils.default);
-            const { parser } = ClasicoUtils.default;
+            console.log(Clasico.default);
+            const clasico = Clasico.default;
             const root = document.getElementById('root');
             const outputDiv = document.getElementById('output');
             const inputTextArea = document.getElementById('input');
@@ -92,10 +92,10 @@
                 const sentence = inputMirror.getValue();
                 const context = {
                     vars: ctx || {},
-                    funcs: parser.builtinFunctions(),
+                    funcs: clasico.parser.builtinFunctions(),
                 };
-                const result = parser.parseSentence(sentence, context);
-                outputDiv.innerHTML = result;
+                const result = clasico.parser.parseSentence(sentence, context);
+                outputDiv.innerHTML = result.result;
                 renderMarkdown();
             });
 
@@ -118,10 +118,10 @@
                     const sentence = inputMirror.getValue();
                     const context = {
                         vars: JSON.parse(contextMirror.getValue() || "{}"),
-                        funcs: parser.builtinFunctions(),
+                        funcs: clasico.parser.builtinFunctions(),
                     };
-                    const result = parser.parseSentence(sentence, context);
-                    outputDiv.innerHTML = result;
+                    const result = clasico.parser.parseSentence(sentence, context);
+                    outputDiv.innerHTML = result.result;
                     renderMarkdown();
                 } catch (parserError) {
                     console.warn("parser exception: ", parserError);

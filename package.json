@@ -9,13 +9,14 @@
     "example:eval:usage": "ts-node ./examples/eval/usage.ts",
     "test": "npm run lint:fix && jest --silent .*.test.ts",
     "build:eval:doc": "ts-node ./.buildevaldoc.ts",
-    "build:web": "esbuild ./src/index.ts --global-name=ClasicoUtils --outfile=./dist/web/clasico-utils.js --minify --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16 && cp ./dist/web/clasico-utils.js ./docs/clasico-utils.js && cp ./dist/web/clasico-utils.js.map ./docs/clasico-utils.js.map",
+    "build:web": "esbuild ./src/index.ts --global-name=Clasico --outfile=./dist/web/clasico-utils.js --minify --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16 && cp ./dist/web/clasico-utils.js ./docs/clasico-utils.js && cp ./dist/web/clasico-utils.js.map ./docs/clasico-utils.js.map",
     "build:node10": "esbuild ./src/index.ts --outfile=./dist/node10.4/clasico-utils.js --bundle --sourcemap --platform=node --target=node10.4",
     "build:lib": "tsc",
     "build": "sh build.sh"
   },
   "author": "Dustin Diaz",
   "license": "MIT",
+  "repository": "https://github.com/TheBinaryBrigade/clasico-utils",
   "devDependencies": {
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-typescript": "^7.21.4",
