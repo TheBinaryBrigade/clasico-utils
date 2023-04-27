@@ -37,6 +37,7 @@ describe("utils", () => {
     });
 
     test("circular reference", () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const example: any = {
         a: 1,
         b: {

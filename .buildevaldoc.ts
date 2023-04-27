@@ -17,7 +17,6 @@ const readFile = (filename: string) => {
     return fs.readFileSync(filename, { encoding: "utf-8" });
 };
 
-
 type WrapCodeLang = "js" | "python" | "ts" | "json";
 
 type WrapCode = {

@@ -21,14 +21,6 @@ export type BuiltinDocs = {
     [key in BuiltInFunctionKey]: BuiltinDoc;
 };
 
-const cirecularObject: any = {
-  a: 1,
-  b: {
-    c: 2,
-    d: null
-  }
-};
-cirecularObject.b.d = cirecularObject;
 
 const docs: BuiltinDocs = {
   $abs: {
@@ -195,7 +187,18 @@ const docs: BuiltinDocs = {
           text: "$str($x)",
           context: {
             vars: {
-              $x: cirecularObject,
+              $x: (() => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const cirecularObject: any = {
+                  a: 1,
+                  b: {
+                    c: 2,
+                    d: null
+                  }
+                };
+                cirecularObject.b.d = cirecularObject;
+                return cirecularObject;
+              })(),
             }
           }
         },
