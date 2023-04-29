@@ -24,7 +24,6 @@ describe("fuzzy", () => {
   test("topSimilar", () => {
     const _expect = <T>(value: T, key: (obj: T) => string, topK: number, input: T[], output: T[]) => {
       const result = fuzzy.topSimilar(value, input, key, topK);
-      expect(result.length).toBe(topK >= 0 ? topK : 5);
       expect(JSON.stringify(result.map(key))).toBe(JSON.stringify(output.map(key)));
     };
 
@@ -50,15 +49,11 @@ describe("fuzzy", () => {
         const outputA: ExampleA[] = [
           { foo: { bar: "hrllo" } },
           { foo: { bar: "hallo" } },
-          { foo: { bar: "hola" } },
         ];
 
         const outputB: ExampleA[] = [
           { foo: { bar: "hrllo" } },
           { foo: { bar: "hallo" } },
-          { foo: { bar: "hola" } },
-          { foo: { bar: "konnichiwa" } },
-          { foo: { bar: "bye" } },
         ];
 
         _expect(

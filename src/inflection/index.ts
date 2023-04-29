@@ -155,7 +155,7 @@ const _irregular = (singular: string, plural: string): void => {
 const camelize = (string: string, uppercaseFirstLetter = true): string => {
   const camelCase = dasherize(string)
     .replace(/-/, " ")
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, "");
@@ -167,55 +167,55 @@ const camelize = (string: string, uppercaseFirstLetter = true): string => {
   return result;
 };
 
-function dasherize(word: string): string {
-  // Replace underscores with dashes in the string.
-  // Example: dasherize("puni_puni") returns 'puni-puni'
+/** Replace underscores with dashes in the string.
+ Example: dasherize("puni_puni") returns 'puni-puni'
+ */
+const dasherize = (word: string): string => {
   return word.replace(/_/g, "-");
-}
+};
 
-function humanize(word: string): string {
-  /*
-    Capitalize the first word and turn underscores into spaces and strip a
-    trailing "_id", if any. Like titleize, this is meant for creating pretty output.
+/**
+  Capitalize the first word and turn underscores into spaces and strip a
+  trailing "_id", if any. Like titleize, this is meant for creating pretty output.
 
-    Examples:
+  Examples:
 
-    >>> humanize("employee_salary")
-    'Employee salary'
-    >>> humanize("author_id")
-    'Author'
-    */
-
+  >>> humanize("employee_salary")
+  'Employee salary'
+  >>> humanize("author_id")
+  'Author'
+  */
+const humanize = (word: string): string => {
   word = word.replace(/_id$/i, "");
   word = word.replace(/_/g, " ");
-  word = word.replace(/([a-z\d]*)/g, function (m) {
+  word = word.replace(/([a-z\d]*)/g, (m) => {
     return m.toLowerCase();
   });
-  word = word.replace(/^\w/, function (m) {
+  word = word.replace(/^\w/, (m) => {
     return m.toUpperCase();
   });
   return word;
-}
+};
 
-function ordinal(number: string): string {
-  /*
-    Return the suffix that should be added to a number to denote the position
-    in an ordered sequence such as 1st, 2nd, 3rd, 4th.
+/**
+  Return the suffix that should be added to a number to denote the position
+  in an ordered sequence such as 1st, 2nd, 3rd, 4th.
 
-    Examples:
-    >>> ordinal(1)
-    'st'
-    >>> ordinal(2)
-    'nd'
-    >>> ordinal(1002)
-    'nd'
-    >>> ordinal(1003)
-    'rd'
-    >>> ordinal(-11)
-    'th'
-    >>> ordinal(-1021)
-    'st'
-    */
+  Examples:
+  >>> ordinal(1)
+  'st'
+  >>> ordinal(2)
+  'nd'
+  >>> ordinal(1002)
+  'nd'
+  >>> ordinal(1003)
+  'rd'
+  >>> ordinal(-11)
+  'th'
+  >>> ordinal(-1021)
+  'st'
+  */
+const ordinal = (number: string): string => {
 
   const n = Math.abs(parseInt(number));
   if ([11, 12, 13].includes(n % 100)) {
@@ -232,31 +232,30 @@ function ordinal(number: string): string {
       return "th";
     }
   }
-}
+};
 
-function ordinalize(number: string) {
-  /*
-    Turn a number into an ordinal string used to denote the position in an
-    ordered sequence such as 1st, 2nd, 3rd, 4th.
+/**
+  Turn a number into an ordinal string used to denote the position in an
+  ordered sequence such as 1st, 2nd, 3rd, 4th.
 
-    Examples:
+  Examples:
 
-    >>> ordinalize(1)
-    '1st'
-    >>> ordinalize(2)
-    '2nd'
-    >>> ordinalize(1002)
-    '1002nd'
-    >>> ordinalize(1003)
-    '1003rd'
-    >>> ordinalize(-11)
-    '-11th'
-    >>> ordinalize(-1021)
-    '-1021st'
-    */
-
+  >>> ordinalize(1)
+  '1st'
+  >>> ordinalize(2)
+  '2nd'
+  >>> ordinalize(1002)
+  '1002nd'
+  >>> ordinalize(1003)
+  '1003rd'
+  >>> ordinalize(-11)
+  '-11th'
+  >>> ordinalize(-1021)
+  '-1021st'
+  */
+const ordinalize = (number: string) => {
   return number + ordinal(number);
-}
+};
 
 const parameterize = (string: string, separator = "-") => {
   const cleaned = transliterate(string);
@@ -316,29 +315,29 @@ const tableize = (word: string): string => {
   return pluralize(underscore(word));
 };
 
-function titleize(word: string) {
+const titleize = (word: string) => {
   return humanize(underscore(word))
     .split(/\s+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-}
+};
 
 
-function transliterate(string: string) {
+const transliterate = (string: string) => {
   const normalized = string.normalize("NFKD");
   return normalized
     .replace(/[\u0300-\u036f]/g, "") // remove combining diacritical marks
     // eslint-disable-next-line no-control-regex
     .replace(/[^\x00-\x7F]/g, "") // remove non-ASCII characters
     .trim();
-}
+};
 
-function underscore(word: string) {
+const underscore = (word: string) => {
   let underscored = word.replace(/([a-z\d])([A-Z])/g, "$1_$2"); // split camelCase
   underscored = underscored.replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2"); // split PascalCase
   underscored = underscored.replace(/-/g, "_"); // replace hyphens with underscores
   return underscored.toLowerCase();
-}
+};
 
 _irregular("person", "people");
 _irregular("man", "men");

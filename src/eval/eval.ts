@@ -6,6 +6,7 @@
 
 import { type AnyFn } from "../@types";
 import check from "../check";
+import fuzzy from "../fuzzy";
 
 const __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
 
@@ -332,8 +333,24 @@ export const parseExpr = (lexer: Lexer, prec: number = BIN_PREC.PREC0): Expressi
 //   return result;
 // };
 
+
 export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: string[] = []): any => {
   console.assert(check.isObject(expr));
+  const recommend = (ctxKey: keyof EvalContext, value: string): string[] => {
+    return fuzzy.topSimilar(
+      value,
+      [...Object.keys(ctx[ctxKey] || {})],
+      (x) => x,
+      5,
+    )
+      .map((str) => {
+        return str.replace(
+          /[\u00A0-\u9999<>&]/g,
+          (i) => "&#" + i.charCodeAt(0) + ";"
+        );
+      });
+  };
+
   switch (expr.kind) {
   case "symbol": {
     const symbol = expr.payload;
@@ -344,7 +361,9 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
         return ctx.vars[value];
       }
       if (value?.startsWith("$")) {
-        warnings.push("Unknown variable '" + value + "'");
+        const similarValues = JSON.stringify(recommend("vars", value));
+        const recommendations = ` maybe your meant one of these variables ${similarValues}`;
+        warnings.push("Unknown variable '" + value + "'" + (similarValues !== "[]" ? recommendations : ""));
 
         if (value in (ctx.funcs || {})) {
           warnings.push("'" + value + "' is defined as a function.");
@@ -398,7 +417,9 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
       );
     }
     if (name?.startsWith("$")) {
-      warnings.push("Unknown function '" + name + "'");
+      const similarNames = JSON.stringify(recommend("funcs", name));
+      const recommendations = `maybe your meant one of these functions ${similarNames}`;
+      warnings.push("Unknown function '" + name + "' " + (similarNames !== "[]" ? recommendations : ""));
 
       if (name in (ctx.vars || {})) {
         warnings.push("'" + name + "' is defined as a variable.");

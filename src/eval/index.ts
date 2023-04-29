@@ -61,20 +61,17 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     .split("\n")
     .map((line, index) => {
       try {
-        const parsed = _parseSentence(line , _ctx);
+        const parsed = _parseSentence(line, _ctx);
         warnings.push(...parsed.warnings.map((message) => ({
           lineNumber: index + 1,
           message,
         })));
 
         return parsed.result;
-      } catch(error: any) {
+      } catch (error: any) {
 
         if (error.message.toLowerCase().startsWith("no primary expression starts with ')'") || error.message.startsWith("Expected ')' but got '")) {
-          const replaceParentheses = (str: string, open: string, close: string) => {
-            return str.replace(/(\W)\(([^)]+)\)/g, `$1${open}$2${close}`);
-          };
-          const modded = replaceParentheses(line, " <parentheses> ", " </parentheses>");
+          const modded = line.replace(/(\W)\(([^)]+)\)/g, "$1 <parentheses> $2 </parentheses>");
 
           try {
             const parsed = _parseSentence(modded, _ctx);
@@ -539,7 +536,7 @@ class SentenceParser {
   }
 }
 
-const ____builtins = new SentenceParser({includeBuiltIns: false}).builtinFunctions;
+const ____builtins = new SentenceParser({ includeBuiltIns: false }).builtinFunctions;
 export type BuiltInFunction = ReturnType<typeof ____builtins>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 

@@ -1,7 +1,7 @@
-const subtractSeconds = (date: Date, seconds: number) => {
-  date.setSeconds(date.getSeconds() - seconds);
-  return date;
-};
+// const subtractSeconds = (date: Date, seconds: number) => {
+//   date.setSeconds(date.getSeconds() - seconds);
+//   return date;
+// };
 
 const isWeekend = (date: Date) => {
   const day = date.getDay(); // get day of week as integer (0 - 6)
@@ -28,7 +28,7 @@ const parse = (input: any): Date | null => {
 };
 
 export default {
-  subtractSeconds,
+  // subtractSeconds,
   parse,
   isWeekend,
   between,

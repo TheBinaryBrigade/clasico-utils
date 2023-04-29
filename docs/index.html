@@ -5,133 +5,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentence Parser</title>
+    <title>PlayGround</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        div {
+            width: 50%;
+            height: 50%;
+            float: left;
+        }
+
+        #div1 {
+            background: #DDD;
+        }
+
+        #div2 {
+            background: #AAA;
+        }
+
+        #div3 {
+            background: #777;
+        }
+
+        #div4 {
+            background: #444;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th {
+            background-color: #eee;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .error {
+            background-color: #fdd;
+        }
+
+        .warn {
+            background-color: #ffd;
+        }
+    </style>
 </head>
 
 <body>
-
-    <div id="root">
-        <p>See builtin functions: <a target="_blank"
-                href="https://github.com/TheBinaryBrigade/common-js/tree/main/src/eval#readme">Documentaion</a></p>
-
-        <label>Output</label>
-        <div ismarkdown id="output"></div>
-
-        <label for="input">Input Expression</label>
-        <textarea name="input"
-            id="input">Hello, the area of a cicle with a radius of $radius is $math("PI") * $math("pow", $radius, 2)</textarea>
-
-        <label for="context">Input Context</label>
-        <textarea name="context" id="context">{"$myVar": "world", "$radius": 2}</textarea>
-
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"
-        integrity="sha512-8RnEqURPUc5aqFEN04aQEiPlSAdE0jlFS/9iGgUyNtwFnSKCXhmB6ZTNl7LnDtDWKabJIASzXrzD0K+LYexU9g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
-        integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="./vendor/showdown.js"></script>
-    <script src="./clasico-utils.js"></script>
-    <script>;
-        ; (() => {
-            console.log(Clasico.default);
-            const clasico = Clasico.default;
-            const root = document.getElementById('root');
-            const outputDiv = document.getElementById('output');
-            const inputTextArea = document.getElementById('input');
-            const contextTextArea = document.getElementById('context');
-
-            const inputMirror = CodeMirror.fromTextArea(inputTextArea);
-            const contextMirror = CodeMirror.fromTextArea(contextTextArea, {
-                lineNumbers: true,
-                styleActiveLine: true,
-                matchBrackets: true,
-                mode: {
-                    name: "json",
-                    json: true,
-                }
-            });
-
-            // Render Markdown
-            const renderMarkdown = () => {
-                const original = {}
-                const elements = document.querySelectorAll('div[ismarkdown]');
-                const converter = new showdown.Converter();
-                if (elements.length === 0) {
-                    console.warn("[render-markdown] Nothing to render; no `div` elements with `ismarkdown` attribute present");
-                }
-                elements
-                    .forEach((element) => {
-                        const md = element.innerHTML
-                            .toString()
-                            .replace(/^<pre><code>/g, '')
-                            .replace(/<\/pre><\/code>$/g, '')
-                            .replace(/\n\n/, '<br /><br />')
-                            .trim();
-                        const mdHtml = converter.makeHtml(md);
-                        original[element.id] = {
-                            markdown: md,
-                            html: mdHtml
-                        };
-                        document
-                            .getElementById('portfolio')
-                        element.innerHTML = mdHtml;
-                    });
-            };
-
-            inputMirror.on('change', (ev) => {
-                let ctx;
-                try {
-                    ctx = JSON.parse(contextMirror.getValue() || "{}");
-                } catch (contextFormatError) {
-                    console.warn("problem with context format: ", contextFormatError);
-                    return;
-                }
-                // run parser
-                const sentence = inputMirror.getValue();
-                const context = {
-                    vars: ctx || {},
-                    funcs: clasico.parser.builtinFunctions(),
-                };
-                const result = clasico.parser.parseSentence(sentence, context);
-                outputDiv.innerHTML = result.result;
-                renderMarkdown();
-            });
-
-            contextMirror.on('change', (ev) => {
-                // Format content
-                try {
-                    const prev = contextMirror.getValue();
-                    const parsed = JSON.parse(contextMirror.getValue());
-                    const repl = JSON.stringify(parsed, null, 4);
-                    if (prev !== repl) {
-                        contextMirror.setValue(repl);
-                    }
-                } catch (formatError) {
-                    console.warn("problem with context format: ", formatError);
-                    return;
-                }
-
-                // rerun parser
-                try {
-                    const sentence = inputMirror.getValue();
-                    const context = {
-                        vars: JSON.parse(contextMirror.getValue() || "{}"),
-                        funcs: clasico.parser.builtinFunctions(),
-                    };
-                    const result = clasico.parser.parseSentence(sentence, context);
-                    outputDiv.innerHTML = result.result;
-                    renderMarkdown();
-                } catch (parserError) {
-                    console.warn("parser exception: ", parserError);
-                }
-            });
-
-            // Trigger on change
-            contextMirror.setValue(JSON.stringify(JSON.parse(contextMirror.getValue()), null, 4));
-        })();
-    </script>
+    <main>
+        <div id="div1">
+            <textarea name="" id="input" cols="30" rows="10"></textarea>
+        </div>
+        <div id="div2">
+            <textarea name="" id="output" cols="30" rows="10"></textarea>
+        </div>
+        <div id="div3">
+            <textarea name="" id="ctx" cols="30" rows="10"></textarea>
+        </div>
+        <div id="div4">
+            <table id="logs"></table>
+        </div>
+    </main>
 </body>
 
 </html>

@@ -2,20 +2,20 @@ import * as types from "./@types";
 import * as std from "./std";
 declare const _default: {
     check: {
-        isNil: (x: any) => boolean;
-        isNumber: (x: any) => boolean;
-        isString: (x: any) => boolean;
-        isBoolean: (x: any) => boolean;
-        isFunction: (x: any) => boolean;
-        isObject: (x: any) => boolean;
+        isNil: (x: unknown) => boolean;
+        isNumber: (x: unknown) => boolean;
+        isString: (x: unknown) => boolean;
+        isBoolean: (x: unknown) => boolean;
+        isFunction: (x: unknown) => boolean;
+        isObject: (x: unknown) => boolean;
         isNumeric: (x: any) => boolean;
         isValidBoolean: (x: any) => boolean;
-        isTrue: (x: any) => boolean;
-        isFalse: (x: any) => boolean;
-        isArray: (x: any) => boolean;
-        isSet: (x: any) => boolean;
+        isTrue: (x: unknown) => boolean;
+        isFalse: (x: unknown) => boolean;
+        isArray: (x: unknown) => boolean;
+        isSet: (x: unknown) => boolean;
         isIterable: (x: any) => boolean;
-        isDate: (x: any) => boolean;
+        isDate: (x: unknown) => boolean;
         isError: (x: any, errorLike?: boolean) => boolean;
     };
     parser: {
@@ -119,14 +119,13 @@ declare const _default: {
         capitalize: (str: string) => string;
     };
     date: {
-        subtractSeconds: (date: Date, seconds: number) => Date;
         parse: (input: any) => Date | null;
         isWeekend: (date: Date) => boolean;
         between: (date: Date, startDate: Date, endDate: Date) => boolean;
     };
     fuzzy: {
         similarity: (str1: string, str2: string, gramSize?: number) => number;
-        topSimilar: <T = string>(value: T, values: T[], key: (obj: T) => string, topK?: number, gramSize?: number) => T[];
+        topSimilar: <T = string>(value: T, values: T[], key: (obj: T) => string, topK?: number, thresh?: number, gramSize?: number) => T[];
     };
     array: {
         BisectArray: typeof import("./array/sorted").BisectArray;

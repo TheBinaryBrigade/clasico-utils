@@ -49,18 +49,34 @@ const similarity = (str1: string, str2: string, gramSize = 2) => {
  * @param key Function used to get the value to sort by
  * @returns a reference to the same array which was sorted in place.
  */
-const topSimilar = <T = string>(value: T, values: T[], key: (obj: T) => string, topK = 5, gramSize = 2) => {
+const topSimilar = <T = string>(value: T, values: T[], key: (obj: T) => string, topK = 5, thresh = 0.35, gramSize = 2) => {
   const str1 = key(value);
   if (topK <= 0) {
     topK = 5;
   }
 
-  const arr = new ReverseSortedArray((x: T) => similarity(str1, key(x), gramSize));
+  const keysim = new Map<string, number>();
+  const arr = new ReverseSortedArray((x: T) => {
+    const value = key(x);
+    const cachedScore = keysim.get(value);
+    const score = cachedScore || similarity(str1, value, gramSize);
+    if (cachedScore === undefined) {
+      keysim.set(value, score);
+    }
+    return score;
+  });
   values.forEach((x) => {
-    arr.push(x);
+    const score = similarity(str1, key(x), gramSize);
+    if (score >= thresh) {
+      arr.push(x);
 
-    if (arr.length > topK) {
-      arr.pop();
+      if (arr.length > topK) {
+        const popped = arr.pop();
+
+        if (popped) {
+          keysim.delete(key(popped));
+        }
+      }
     }
   });
 

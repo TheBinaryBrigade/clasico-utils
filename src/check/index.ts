@@ -1,12 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import date from "../date";
 
-const TRUE = new Boolean(true);
-const FALSE = new Boolean(false);
-const BOOLEANS = [true, TRUE, false, FALSE];
-
-const isNumber = (x: any): boolean => {
+const isNumber = (x: unknown): boolean => {
   return (
     typeof x === "number"
     || x instanceof Number
@@ -15,29 +10,28 @@ const isNumber = (x: any): boolean => {
   );
 };
 
-const isString = (x: any): boolean => {
+const isString = (x: unknown): boolean => {
   return (
     typeof x === "string"
     || x instanceof String
   );
 };
 
-const isBoolean = (x: any): boolean => {
+const isBoolean = (x: unknown): boolean => {
   return (
     typeof x === "boolean"
     || x instanceof Boolean
-    || BOOLEANS.includes(x)
   );
 };
 
-const isFunction = (x: any): boolean => {
+const isFunction = (x: unknown): boolean => {
   return (
     typeof x === "function"
     || x instanceof Function
   );
 };
 
-const isObject = (x: any): boolean => {
+const isObject = (x: unknown): boolean => {
   if (isNil(x)) {
     return false;
   }
@@ -45,11 +39,11 @@ const isObject = (x: any): boolean => {
   return typeof x === "object";
 };
 
-const isNil = (x: any): boolean => {
+const isNil = (x: unknown): boolean => {
   return x === null || x === undefined;
 };
 
-const isArray = (x: any): boolean => {
+const isArray = (x: unknown): boolean => {
   return (
     Array.isArray(x)
     || x instanceof Array
@@ -57,13 +51,14 @@ const isArray = (x: any): boolean => {
   );
 };
 
-const isSet = (x: any): boolean => {
+const isSet = (x: unknown): boolean => {
   return (
     x instanceof Set
     || Object.prototype.toString.call(x) === "[object Set]"
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isIterable = (x: any): boolean => {
   // checks for null and undefined
   if (isNil(x)) {
@@ -72,6 +67,7 @@ const isIterable = (x: any): boolean => {
   return isFunction(x[Symbol.iterator]);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isNumeric = (x: any): boolean => {
   if (isNumber(x)) {
     return true;
@@ -82,6 +78,7 @@ const isNumeric = (x: any): boolean => {
   return !isNaN(x) && !isNaN(parseFloat(x));
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isValidBoolean = (x: any): boolean => {
   if (isBoolean(x)) {
     return true;
@@ -97,8 +94,8 @@ const isValidBoolean = (x: any): boolean => {
       0,
       "1",
       "0",
-      TRUE,
-      FALSE,
+      new Boolean(true),
+      new Boolean(false),
       true,
       false,
     ];
@@ -119,28 +116,56 @@ const isValidBoolean = (x: any): boolean => {
   return false;
 };
 
-const isTrue = (x: any): boolean => {
-  if (x && x.toString && x.toString() === "true") {
+const valueOf = <T>(x: T): string | number | bigint | boolean | symbol | undefined | object | T => {
+  if (
+    x instanceof Boolean
+    || x instanceof Number
+    || x instanceof String
+    || x instanceof BigInt
+    || x instanceof Symbol
+  ) {
+    if (x.valueOf && isFunction(x.valueOf)) {
+      return x.valueOf();
+    }
+  }
+
+  return x;
+};
+
+const isTrue = (x: unknown): boolean => {
+  const valueOfX = valueOf(x);
+  if (x === true || valueOfX === true) {
     return true;
   }
 
   if (isValidBoolean(x)) {
-    const alts = [
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const alts: any[] = [
       true,
       "true",
       "1",
       1,
-      TRUE,
+      new Boolean(true),
     ];
 
     if (alts.includes(x)) {
       return true;
     }
 
+    if (!isNil(valueOfX)) {
+      if (alts.includes(valueOfX)) {
+        return true;
+      }
+
+      if (isString(valueOfX)) {
+        x = valueOfX;
+      }
+    }
+
     if (isString(x)) {
-      x = x.trim();
+      const y = (x as string).trim();
       const len = Math.max(...alts.map((x) => x.toString().length));
-      if (x.length <= len && alts.includes(x.toLowerCase())) {
+      if (y.length <= len && alts.includes(y.toLowerCase())) {
         return true;
       }
     }
@@ -149,8 +174,8 @@ const isTrue = (x: any): boolean => {
   return false;
 };
 
-const isFalse = (x: any): boolean => {
-  if (x && x.toString && x.toString() === "false") {
+const isFalse = (x: unknown): boolean => {
+  if (x === false || valueOf(x) === false) {
     return true;
   }
 
@@ -161,12 +186,12 @@ const isFalse = (x: any): boolean => {
   return false;
 };
 
-const isDate = (x: any): boolean => {
+const isDate = (x: unknown): boolean => {
   if (isNil(x)) {
     return false;
   }
 
-  if (isString(x)) {
+  if (isString(x) && typeof x === "string") {
     x = x.trim();
 
     if (!x) {
@@ -186,6 +211,7 @@ const isDate = (x: any): boolean => {
   return !!y;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isError = (x: any, errorLike=false): boolean => {
   if (isNil(x)) {
     return false;

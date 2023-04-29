@@ -2,19 +2,21 @@ import { describe, expect, test } from "@jest/globals";
 import check from "..";
 import { TypeOf } from "../../@types";
 
-class _MyCustomError extends Error {}
+class _MyCustomError extends Error { }
 
 type CheckFn = keyof typeof check;
-const tests: {
-    [key in CheckFn]: {
-        examples: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            input: any,
-            output: boolean,
-        }[],
-        returnType: TypeOf,
-    }
-} = {
+type Tests = {
+  [key in CheckFn]: {
+    examples: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      input: any,
+      output: boolean,
+    }[],
+    returnTypes: TypeOf[],
+  }
+};
+
+const tests: Tests = {
   isNumber: {
     examples: [
       { input: new Error(), output: false },
@@ -42,7 +44,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isString: {
     examples: [
@@ -71,7 +73,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isBoolean: {
     examples: [
@@ -100,7 +102,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isFunction: {
     examples: [
@@ -128,7 +130,7 @@ const tests: {
       { input: () => { return 42; }, output: true },
       { input: [1, 2][Symbol.iterator], output: true },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isObject: {
     examples: [
@@ -156,7 +158,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isNumeric: {
     examples: [
@@ -185,7 +187,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isValidBoolean: {
     examples: [
@@ -218,7 +220,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isTrue: {
     examples: [
@@ -244,6 +246,10 @@ const tests: {
       { input: "true", output: true },
       { input: "  FALSE", output: false },
       { input: "  TRUE", output: true },
+      { input: new String("  FALSE"), output: false },
+      { input: new String("  TRUE"), output: true },
+      { input: new String("true"), output: true },
+      { input: new String("false"), output: false },
       { input: new Boolean(true), output: true },
       { input: new Boolean(false), output: false },
       { input: new Array([1]), output: false },
@@ -255,7 +261,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isFalse: {
     examples: [
@@ -288,7 +294,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isArray: {
     examples: [
@@ -316,7 +322,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isSet: {
     examples: [
@@ -344,7 +350,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isIterable: {
     examples: [
@@ -372,7 +378,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean",
+    returnTypes: ["boolean"],
   },
   isDate: {
     examples: [
@@ -405,7 +411,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean"
+    returnTypes: ["boolean"]
   },
   isError: {
     examples: [
@@ -440,7 +446,7 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean"
+    returnTypes: ["boolean"]
   },
   isNil: {
     examples: [
@@ -475,17 +481,17 @@ const tests: {
       { input: () => { return 42; }, output: false },
       { input: [1, 2][Symbol.iterator], output: false },
     ],
-    returnType: "boolean"
-  }
+    returnTypes: ["boolean"]
+  },
 };
 
 describe("check", () => {
-  describe("isError (error like)", () => {
+  describe("isError", () => {
     const examples = [
       [new Error(), true],
       [new _MyCustomError(), true],
-      [{stack: ["some stack"], message: "some error message"}, true],
-      [{stack: ["some stack"], messages: ["some error message"]}, false],
+      [{ stack: ["some stack"], message: "some error message" }, true],
+      [{ stack: ["some stack"], messages: ["some error message"] }, false],
       [{}, false],
       [undefined, false],
       [null, false],
@@ -499,7 +505,7 @@ describe("check", () => {
     ];
 
     examples.forEach(([input, output]) => {
-      test(`(${JSON.stringify(input)}) : (${typeof input})`, () => {
+      test(`(${JSON.stringify(input)}: ${typeof input}, errorLike=true)`, () => {
         const result = check.isError(input, true);
         expect(typeof result).toBe("boolean");
         expect(result).toBe(output);
@@ -507,13 +513,13 @@ describe("check", () => {
     });
   });
 
-  Object.entries(tests).forEach(([fnName, { examples, returnType }]) => {
+  Object.entries(tests).forEach(([fnName, { examples, returnTypes }]) => {
     describe(fnName, () => {
       const call = check[fnName as CheckFn];
-      examples.forEach(({input, output}) => {
-        test(`(${JSON.stringify(input)}) : (${typeof input})`, () => {
+      examples.forEach(({ input, output }) => {
+        test(`(${JSON.stringify(input)}: ${typeof input})`, () => {
           const result = call(input);
-          expect(typeof result).toBe(returnType);
+          expect(returnTypes.includes(typeof result)).toBe(true);
           expect(result).toBe(output);
         });
       });

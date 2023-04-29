@@ -42,10 +42,6 @@ __export(sorted_exports, {
 });
 
 // src/date/index.ts
-var subtractSeconds = (date, seconds) => {
-  date.setSeconds(date.getSeconds() - seconds);
-  return date;
-};
 var isWeekend = (date) => {
   const day = date.getDay();
   return day === 0 || day === 6;
@@ -65,16 +61,13 @@ var parse = (input) => {
   return null;
 };
 var date_default = {
-  subtractSeconds,
+  // subtractSeconds,
   parse,
   isWeekend,
   between
 };
 
 // src/check/index.ts
-var TRUE = new Boolean(true);
-var FALSE = new Boolean(false);
-var BOOLEANS = [true, TRUE, false, FALSE];
 var isNumber = (x) => {
   return typeof x === "number" || x instanceof Number || typeof x === "bigint" || x instanceof BigInt;
 };
@@ -82,7 +75,7 @@ var isString = (x) => {
   return typeof x === "string" || x instanceof String;
 };
 var isBoolean = (x) => {
-  return typeof x === "boolean" || x instanceof Boolean || BOOLEANS.includes(x);
+  return typeof x === "boolean" || x instanceof Boolean;
 };
 var isFunction = (x) => {
   return typeof x === "function" || x instanceof Function;
@@ -131,8 +124,8 @@ var isValidBoolean = (x) => {
       0,
       "1",
       "0",
-      TRUE,
-      FALSE,
+      new Boolean(true),
+      new Boolean(false),
       true,
       false
     ];
@@ -149,8 +142,17 @@ var isValidBoolean = (x) => {
   }
   return false;
 };
+var valueOf = (x) => {
+  if (x instanceof Boolean || x instanceof Number || x instanceof String || x instanceof BigInt || x instanceof Symbol) {
+    if (x.valueOf && isFunction(x.valueOf)) {
+      return x.valueOf();
+    }
+  }
+  return x;
+};
 var isTrue = (x) => {
-  if (x && x.toString && x.toString() === "true") {
+  const valueOfX = valueOf(x);
+  if (x === true || valueOfX === true) {
     return true;
   }
   if (isValidBoolean(x)) {
@@ -159,15 +161,23 @@ var isTrue = (x) => {
       "true",
       "1",
       1,
-      TRUE
+      new Boolean(true)
     ];
     if (alts.includes(x)) {
       return true;
     }
+    if (!isNil(valueOfX)) {
+      if (alts.includes(valueOfX)) {
+        return true;
+      }
+      if (isString(valueOfX)) {
+        x = valueOfX;
+      }
+    }
     if (isString(x)) {
-      x = x.trim();
+      const y = x.trim();
       const len = Math.max(...alts.map((x2) => x2.toString().length));
-      if (x.length <= len && alts.includes(x.toLowerCase())) {
+      if (y.length <= len && alts.includes(y.toLowerCase())) {
         return true;
       }
     }
@@ -175,7 +185,7 @@ var isTrue = (x) => {
   return false;
 };
 var isFalse = (x) => {
-  if (x && x.toString && x.toString() === "false") {
+  if (x === false || valueOf(x) === false) {
     return true;
   }
   if (isValidBoolean(x)) {
@@ -187,7 +197,7 @@ var isDate = (x) => {
   if (isNil(x)) {
     return false;
   }
-  if (isString(x)) {
+  if (isString(x) && typeof x === "string") {
     x = x.trim();
     if (!x) {
       return false;
@@ -516,6 +526,67 @@ var diff_default = {
   compare
 };
 
+// src/fuzzy/index.ts
+var similarity = (str1, str2, gramSize = 2) => {
+  const getNGrams = (s, len) => {
+    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
+    const v = new Array(s.length - len + 1);
+    for (let i = 0; i < v.length; i++) {
+      v[i] = s.slice(i, i + len);
+    }
+    return v;
+  };
+  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
+    return 0;
+  }
+  const s1 = str1.length < str2.length ? str1 : str2;
+  const s2 = str1.length < str2.length ? str2 : str1;
+  const pairs1 = getNGrams(s1, gramSize);
+  const pairs2 = getNGrams(s2, gramSize);
+  const set = new Set(pairs1);
+  const total = pairs2.length;
+  let hits = 0;
+  for (const item of pairs2) {
+    if (set.delete(item)) {
+      hits++;
+    }
+  }
+  return hits / total;
+};
+var topSimilar = (value, values, key, topK = 5, thresh = 0.35, gramSize = 2) => {
+  const str1 = key(value);
+  if (topK <= 0) {
+    topK = 5;
+  }
+  const keysim = /* @__PURE__ */ new Map();
+  const arr = new ReverseSortedArray((x) => {
+    const value2 = key(x);
+    const cachedScore = keysim.get(value2);
+    const score = cachedScore || similarity(str1, value2, gramSize);
+    if (cachedScore === void 0) {
+      keysim.set(value2, score);
+    }
+    return score;
+  });
+  values.forEach((x) => {
+    const score = similarity(str1, key(x), gramSize);
+    if (score >= thresh) {
+      arr.push(x);
+      if (arr.length > topK) {
+        const popped = arr.pop();
+        if (popped) {
+          keysim.delete(key(popped));
+        }
+      }
+    }
+  });
+  return [...arr];
+};
+var fuzzy_default = {
+  similarity,
+  topSimilar
+};
+
 // src/eval/eval.ts
 var __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
 var BIN_PREC = {
@@ -778,6 +849,19 @@ var parseExpr = (lexer, prec = BIN_PREC.PREC0) => {
 };
 var runExpr = (expr, ctx = {}, warnings = []) => {
   console.assert(check_default.isObject(expr));
+  const recommend = (ctxKey, value) => {
+    return fuzzy_default.topSimilar(
+      value,
+      [...Object.keys(ctx[ctxKey] || {})],
+      (x) => x,
+      5
+    ).map((str) => {
+      return str.replace(
+        /[\u00A0-\u9999<>&]/g,
+        (i) => "&#" + i.charCodeAt(0) + ";"
+      );
+    });
+  };
   switch (expr.kind) {
     case "symbol": {
       const symbol = expr.payload;
@@ -788,7 +872,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
           return ctx.vars[value];
         }
         if (value == null ? void 0 : value.startsWith("$")) {
-          warnings.push("Unknown variable '" + value + "'");
+          const similarValues = JSON.stringify(recommend("vars", value));
+          const recommendations = ` maybe your meant one of these variables ${similarValues}`;
+          warnings.push("Unknown variable '" + value + "'" + (similarValues !== "[]" ? recommendations : ""));
           if (value in (ctx.funcs || {})) {
             warnings.push("'" + value + "' is defined as a function.");
           }
@@ -838,7 +924,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
         );
       }
       if (name == null ? void 0 : name.startsWith("$")) {
-        warnings.push("Unknown function '" + name + "'");
+        const similarNames = JSON.stringify(recommend("funcs", name));
+        const recommendations = `maybe your meant one of these functions ${similarNames}`;
+        warnings.push("Unknown function '" + name + "' " + (similarNames !== "[]" ? recommendations : ""));
         if (name in (ctx.vars || {})) {
           warnings.push("'" + name + "' is defined as a variable.");
         }
@@ -894,10 +982,7 @@ var parseSentence = (sentence, _ctx = {}) => {
       return parsed.result;
     } catch (error) {
       if (error.message.toLowerCase().startsWith("no primary expression starts with ')'") || error.message.startsWith("Expected ')' but got '")) {
-        const replaceParentheses = (str, open, close) => {
-          return str.replace(/(\W)\(([^)]+)\)/g, `$1${open}$2${close}`);
-        };
-        const modded = replaceParentheses(line, " <parentheses> ", " </parentheses>");
+        const modded = line.replace(/(\W)\(([^)]+)\)/g, "$1 <parentheses> $2 </parentheses>");
         try {
           const parsed = _parseSentence(modded, _ctx);
           warnings.push(...parsed.warnings.map((message2) => ({
@@ -1291,52 +1376,6 @@ var eval_default = {
   SentenceParser
 };
 
-// src/fuzzy/index.ts
-var similarity = (str1, str2, gramSize = 2) => {
-  const getNGrams = (s, len) => {
-    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
-    const v = new Array(s.length - len + 1);
-    for (let i = 0; i < v.length; i++) {
-      v[i] = s.slice(i, i + len);
-    }
-    return v;
-  };
-  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
-    return 0;
-  }
-  const s1 = str1.length < str2.length ? str1 : str2;
-  const s2 = str1.length < str2.length ? str2 : str1;
-  const pairs1 = getNGrams(s1, gramSize);
-  const pairs2 = getNGrams(s2, gramSize);
-  const set = new Set(pairs1);
-  const total = pairs2.length;
-  let hits = 0;
-  for (const item of pairs2) {
-    if (set.delete(item)) {
-      hits++;
-    }
-  }
-  return hits / total;
-};
-var topSimilar = (value, values, key, topK = 5, gramSize = 2) => {
-  const str1 = key(value);
-  if (topK <= 0) {
-    topK = 5;
-  }
-  const arr = new ReverseSortedArray((x) => similarity(str1, key(x), gramSize));
-  values.forEach((x) => {
-    arr.push(x);
-    if (arr.length > topK) {
-      arr.pop();
-    }
-  });
-  return [...arr];
-};
-var fuzzy_default = {
-  similarity,
-  topSimilar
-};
-
 // src/utils/index.ts
 var hashCode = (str, coerceToString = true) => {
   if (coerceToString) {
@@ -1516,27 +1555,27 @@ var _irregular = (singular, plural) => {
   }
 };
 var camelize = (string, uppercaseFirstLetter = true) => {
-  const camelCase = dasherize(string).replace(/-/, " ").replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+  const camelCase = dasherize(string).replace(/-/, " ").replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
     return index === 0 ? word.toLowerCase() : word.toUpperCase();
   }).replace(/\s+/g, "");
   const result = uppercaseFirstLetter ? camelCase.charAt(0).toUpperCase() + camelCase.slice(1) : camelCase;
   return result;
 };
-function dasherize(word) {
+var dasherize = (word) => {
   return word.replace(/_/g, "-");
-}
-function humanize(word) {
+};
+var humanize = (word) => {
   word = word.replace(/_id$/i, "");
   word = word.replace(/_/g, " ");
-  word = word.replace(/([a-z\d]*)/g, function(m) {
+  word = word.replace(/([a-z\d]*)/g, (m) => {
     return m.toLowerCase();
   });
-  word = word.replace(/^\w/, function(m) {
+  word = word.replace(/^\w/, (m) => {
     return m.toUpperCase();
   });
   return word;
-}
-function ordinal(number) {
+};
+var ordinal = (number) => {
   const n = Math.abs(parseInt(number));
   if ([11, 12, 13].includes(n % 100)) {
     return "th";
@@ -1552,10 +1591,10 @@ function ordinal(number) {
         return "th";
     }
   }
-}
-function ordinalize(number) {
+};
+var ordinalize = (number) => {
   return number + ordinal(number);
-}
+};
 var parameterize = (string, separator = "-") => {
   const cleaned = transliterate(string);
   let param = cleaned.replace(/[^\d\w-]+/gmi, separator);
@@ -1606,19 +1645,19 @@ var singularize = (word) => {
 var tableize = (word) => {
   return pluralize(underscore(word));
 };
-function titleize(word) {
+var titleize = (word) => {
   return humanize(underscore(word)).split(/\s+/).map((word2) => word2.charAt(0).toUpperCase() + word2.slice(1)).join(" ");
-}
-function transliterate(string) {
+};
+var transliterate = (string) => {
   const normalized = string.normalize("NFKD");
   return normalized.replace(/[\u0300-\u036f]/g, "").replace(/[^\x00-\x7F]/g, "").trim();
-}
-function underscore(word) {
+};
+var underscore = (word) => {
   let underscored = word.replace(/([a-z\d])([A-Z])/g, "$1_$2");
   underscored = underscored.replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2");
   underscored = underscored.replace(/-/g, "_");
   return underscored.toLowerCase();
-}
+};
 _irregular("person", "people");
 _irregular("man", "men");
 _irregular("human", "humans");
