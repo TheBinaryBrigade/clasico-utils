@@ -73,14 +73,28 @@ I don't have $yuo!!!
 I DON'T HAVE $foo!!!
 `;
 console.log("Input:", input);
-// Input: $myVar + $myFunc(21, $myVar / 2) should be 84! My name is $getattr($other, 'some.variable'), I have a number, it is $myVar. I don't have $yous!!
 
 // Example Output
 const output = parser.parse(input);
 console.log("Output:", output);
 // Output: {
-//   result: "84 should be 84! My name is Isla, I have a number, it is 42. I don't have $you!!",
-//   warnings: [ { lineNumber: 1, message: "Unknown variable '$you'" } ],
+//   result: '\n' +
+//     '84 should be 84!\n' +
+//     '\n' +
+//     'My name is Isla.\n' +
+//     '\n' +
+//     'I have a number, it is 42.\n' +
+//     '\n' +
+//     "I don't have $yuo!!!\n" +
+//     '\n' +
+//     "I DON'T HAVE $foo!!!\n",
+//   warnings: [
+//     {
+//       lineNumber: 8,
+//       message: "Unknown variable '$yuo'. The most similar variable is $you"
+//     },
+//     { lineNumber: 10, message: "Unknown variable '$foo'. " }
+//   ],
 //   errors: []
 // }
 

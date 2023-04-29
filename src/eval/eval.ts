@@ -7,6 +7,7 @@
 import { type AnyFn } from "../@types";
 import check from "../check";
 import fuzzy from "../fuzzy";
+import inflection from "../inflection";
 
 const __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
 
@@ -351,6 +352,10 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
       });
   };
 
+  const singularOrPlural = (word: string, count: number) => {
+    return count > 1 ? inflection.pluralize(word) : inflection.singularize(word);
+  };
+
   switch (expr.kind) {
   case "symbol": {
     const symbol = expr.payload;
@@ -361,9 +366,11 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
         return ctx.vars[value];
       }
       if (value?.startsWith("$")) {
-        const similarValues = JSON.stringify(recommend("vars", value));
-        const recommendations = ` maybe your meant one of these variables ${similarValues}`;
-        warnings.push("Unknown variable '" + value + "'" + (similarValues !== "[]" ? recommendations : ""));
+        const similarNames = recommend("vars", value);
+        const typeName = singularOrPlural("variable", similarNames.length);
+        const areIs = similarNames.length > 1 ? "are" : "is";
+        const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+        warnings.push("Unknown variable '" + value + "'. " + (similarNames.length > 0 ? recommendations : ""));
 
         if (value in (ctx.funcs || {})) {
           warnings.push("'" + value + "' is defined as a function.");
@@ -417,9 +424,11 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
       );
     }
     if (name?.startsWith("$")) {
-      const similarNames = JSON.stringify(recommend("funcs", name));
-      const recommendations = `maybe your meant one of these functions ${similarNames}`;
-      warnings.push("Unknown function '" + name + "' " + (similarNames !== "[]" ? recommendations : ""));
+      const similarNames = recommend("funcs", name);
+      const typeName = singularOrPlural("function", similarNames.length);
+      const areIs = similarNames.length > 1 ? "are" : "is";
+      const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+      warnings.push("Unknown function '" + name + "'. " + (similarNames.length > 0 ? recommendations : ""));
 
       if (name in (ctx.vars || {})) {
         warnings.push("'" + name + "' is defined as a variable.");
