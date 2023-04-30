@@ -139,13 +139,15 @@
     </main>
 
     <!-- Load necessary libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.18.0/ace.js" integrity="sha512-nGERTncRnKK6JW7AeRyRM6yHeRAkp+bn6Id3UOXPJBDt3zPSuex2MSDbTNMTFjh5w5X2H9P0JSYiXfzwbHreIA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.18.0/ext-language_tools.min.js" integrity="sha512-Yfq8006FlU9jvJkQga/htWTCwByd5es+PgocTYX2ztHGyZ9VinDxo7FC+KG7WTbVPnSHz1xcdh+bfzMJ7iq84g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./clasico-utils.js"></script>
 
     <!-- Script to initialize the code editors and handle the outputs -->
     <script>
         // Initialize Clasico Utilities
+        const markdown = new showdown.Converter();
         ; const clasico = Clasico.default;
         ; (() => {
             const builtinsWordList = Object.keys(
@@ -184,21 +186,35 @@
             textEditor.getSession().setValue(`
 $myVar * 2 should be 84! 
 
-My name is $getattr($other, 'some.variable').
+My name is $getattr($some, 'deep.variable').
+
+I miss $getattr($some, 'other', 'deep', 'variable')
+
+$str("---")
+Look at warnings
+
+Misspelled function: $getatr($some, 'deep.variable').
 
 I have a number, it is $myVar.
 
 I don't have $yuo!!! 
 
 I DON'T HAVE $foo!!!
+
             `.trim())
             contextEditor.getSession().setValue(JSON.stringify({
-                myVar: 42,
-                other: {
-                    some: {
-                        variable: "Isla"
+                "myVar": 42,
+                "some": {
+                    "deep": {
+                        "variable": "Bob"
                     },
+                    "other": {
+                        "deep": {
+                            "variable": "Alice"
+                        }
+                    }
                 },
+                "you": "Alice"
             }, null, 4))
 
             // Create a new autocomplete object
@@ -259,7 +275,7 @@ I DON'T HAVE $foo!!!
             // Function to handle plain text output
             function handleTextOutput(text) {
                 const outputDiv = document.getElementById("text-output");
-                outputDiv.innerText = text;
+                outputDiv.innerHTML = markdown.makeHtml(text);
             }
 
             function formatDate(date) {

@@ -14,7 +14,7 @@ npm install --save clasico
 yarn add clasico
 ```
 
-### Static files
+### With Static files
 
 Static files for the web and node are provided in the `dist` folder
 
@@ -41,6 +41,8 @@ const parser = new clasico.parser.SentenceParser({
 #### Usage
 
 Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-utils/blob/main/src/eval/README.md#table-of-contens)
+
+Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 ```ts
 
@@ -123,37 +125,6 @@ if (expected !== output.result) {
 }
 
 ```
-
-
-### Array Types
-
-#### Usage
-TODO: Usage
-
-### Date Utils
-
-#### Usage
-TODO: Usage
-
-### Diff Utils
-
-#### Usage
-TODO: Usage
-
-### Fuzzy Utils
-
-#### Usage
-TODO: Usage
-
-### Inflection Port
-
-#### Usage
-TODO: Usage
-
-### Misc Utils
-
-#### Usage
-TODO: Usage
 
 ## Goals
 
