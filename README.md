@@ -44,87 +44,35 @@ Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-u
 
 Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
-```ts
+{{EVAL_USAGE_EXAMPLE}}
 
-import clasico from "clasico";
+### Inflection Port
 
-const parser = new clasico.parser.SentenceParser({
-  includeBuiltIns: true,
-});
+#### Usage
 
-// Add functions
-parser.addFunction("myFunc", (a: number, b: number) => {
-  return a + b;
-});
+{{INFLECTION_USAGE_EXAMPLE}}
 
-// Add variables
-parser.addVar("myVar", 42);
-parser.addVar("you", "someone");
-parser.addVar("other", { "some": { "variable": "Isla" } });
+### Diff Utils
 
-// Example Input
-const input = `
-$myVar + $myFunc(21, $myVar / 2) should be 84! 
+#### Usage
 
-My name is $getattr($other, 'some.variable').
+{{DIFF_USAGE_EXAMPLE}}
 
-I have a number, it is $myVar.
+### Fuzzy Utils
 
-I don't have $yuo!!! 
+#### Usage
+{{FUZZY_USAGE_EXAMPLE}}
 
-I DON'T HAVE $foo!!!
-`;
-console.log("Input:", input);
+### Bisect Array Class
 
-// Example Output
-const output = parser.parse(input);
-console.log("Output:", output);
-// Output: {
-//   result: '\n' +
-//     '84 should be 84!\n' +
-//     '\n' +
-//     'My name is Isla.\n' +
-//     '\n' +
-//     'I have a number, it is 42.\n' +
-//     '\n' +
-//     "I don't have $yuo!!!\n" +
-//     '\n' +
-//     "I DON'T HAVE $foo!!!\n",
-//   logs: [
-//     {
-//       lineNumber: 8,
-//       level: 'WARN',
-//       timestamp: 2023-04-30T06:07:04.648Z,
-//       message: "Unknown variable '$yuo'. The most similar variable is $you"
-//     },
-//     {
-//       lineNumber: 10,
-//       level: 'WARN',
-//       timestamp: 2023-04-30T06:07:04.649Z,
-//       message: "Unknown variable '$foo'."
-//     }
-//   ]
-// }
+#### Usage
+{{BISECT_ARRAY_USAGE_EXAMPLE}}
 
-const expected = `
-84 should be 84!
+### Misc Utils
 
-My name is Isla.
+#### Usage
 
-I have a number, it is 42.
-
-I don't have $yuo!!!
-
-I DON'T HAVE $foo!!!
-`;
-
-if (expected !== output.result) {
-  console.log("Expected did not match output");
-  console.log(JSON.stringify(expected), "\n", JSON.stringify(output.result));
-  process.exit(1);
-}
-
-```
+{{MISC_USAGE_EXAMPLE}}
 
 ## Goals
 

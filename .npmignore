@@ -1,0 +1,12 @@
+/.gitignore
+/.github
+/coverage
+/docs
+/node_modules
+/.buildevaldoc.ts
+/.eslintrc.js
+/babel.config.cjs
+/jest.config.ts
+/tslint.json
+/README.template.md
+/build.sh

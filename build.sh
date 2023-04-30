@@ -5,6 +5,8 @@ npm run lint:fix
 
 # Run examples
 npm run example:eval:usage
+npm run example:utils:hashcode
+npm run example:utils:capitalize
 
 # Run unit tests
 npm test
@@ -17,6 +19,10 @@ npm run build:web
 
 # Build node distributions
 npm run build:node10
+npm run build:node12
+npm run build:node14
+npm run build:node16
+npm run build:node18
 
 # Build npm pacakge
 npm run build:lib

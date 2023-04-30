@@ -42,38 +42,35 @@ Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-u
 
 Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
-{{USAGE_EXAMPLE}}
-
-
-### Array Types
-
-#### Usage
-TODO: Usage
-
-### Date Utils
-
-#### Usage
-TODO: Usage
-
-### Diff Utils
-
-#### Usage
-TODO: Usage
-
-### Fuzzy Utils
-
-#### Usage
-TODO: Usage
+{{EVAL_USAGE_EXAMPLE}}
 
 ### Inflection Port
 
 #### Usage
-TODO: Usage
+
+{{INFLECTION_USAGE_EXAMPLE}}
+
+### Diff Utils
+
+#### Usage
+
+{{DIFF_USAGE_EXAMPLE}}
+
+### Fuzzy Utils
+
+#### Usage
+{{FUZZY_USAGE_EXAMPLE}}
+
+### Bisect Array Class
+
+#### Usage
+{{BISECT_ARRAY_USAGE_EXAMPLE}}
 
 ### Misc Utils
 
 #### Usage
-TODO: Usage
+
+{{MISC_USAGE_EXAMPLE}}
 
 ## Goals
 

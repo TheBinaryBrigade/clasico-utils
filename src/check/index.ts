@@ -116,7 +116,7 @@ const isValidBoolean = (x: any): boolean => {
   return false;
 };
 
-const valueOf = <T>(x: T): string | number | bigint | boolean | symbol | undefined | object | T => {
+const valueOf = <T>(x: T): string | number | bigint | boolean | symbol | T => {
   if (
     x instanceof Boolean
     || x instanceof Number

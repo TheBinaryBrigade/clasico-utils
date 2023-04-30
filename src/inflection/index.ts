@@ -215,9 +215,9 @@ const humanize = (word: string): string => {
   >>> ordinal(-1021)
   'st'
   */
-const ordinal = (number: string): string => {
-
-  const n = Math.abs(parseInt(number));
+const ordinal = (number: string | number): string => {
+  number = typeof number === "number" ? number : parseInt(number);
+  const n = Math.abs(number);
   if ([11, 12, 13].includes(n % 100)) {
     return "th";
   } else {
@@ -253,8 +253,8 @@ const ordinal = (number: string): string => {
   >>> ordinalize(-1021)
   '-1021st'
   */
-const ordinalize = (number: string) => {
-  return number + ordinal(number);
+const ordinalize = (number: string | number) => {
+  return number.toString() + ordinal(number);
 };
 
 const parameterize = (string: string, separator = "-") => {

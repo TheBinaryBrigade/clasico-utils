@@ -536,7 +536,7 @@ var similarity = (str1, str2, gramSize = 2) => {
     }
     return v;
   };
-  if (!(str1 == null ? void 0 : str1.length) || !(str2 == null ? void 0 : str2.length)) {
+  if (!str1?.length || !str2?.length) {
     return 0;
   }
   const s1 = str1.length < str2.length ? str1 : str2;
@@ -787,7 +787,8 @@ var humanize = (word) => {
   return word;
 };
 var ordinal = (number) => {
-  const n = Math.abs(parseInt(number));
+  number = typeof number === "number" ? number : parseInt(number);
+  const n = Math.abs(number);
   if ([11, 12, 13].includes(n % 100)) {
     return "th";
   } else {
@@ -804,7 +805,7 @@ var ordinal = (number) => {
   }
 };
 var ordinalize = (number) => {
-  return number + ordinal(number);
+  return number.toString() + ordinal(number);
 };
 var parameterize = (string, separator = "-") => {
   const cleaned = transliterate(string);
@@ -1201,7 +1202,7 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
         if (ctx.vars && value && value in ctx.vars) {
           return ctx.vars[value];
         }
-        if ((value == null ? void 0 : value.startsWith("$")) && !/^\$\d/.test(value)) {
+        if (value?.startsWith("$") && !/^\$\d/.test(value)) {
           const similarNames = recommend("vars", value);
           const typeName = singularOrPlural("variable", similarNames.length);
           const areIs = similarNames.length > 1 ? "are" : "is";
@@ -1218,8 +1219,8 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
     }
     case "unary_op": {
       const unary_op = expr.payload;
-      const op = unary_op == null ? void 0 : unary_op.op;
-      const operand = unary_op == null ? void 0 : unary_op.operand;
+      const op = unary_op?.op;
+      const operand = unary_op?.operand;
       if (op && op in UNARY_OPS) {
         if (operand === void 0) {
           throw new Error("operand needs to be an object not undefined");
@@ -1230,9 +1231,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
     }
     case "binary_op": {
       const binary_op = expr.payload;
-      const op = binary_op == null ? void 0 : binary_op.op;
-      const lhs = binary_op == null ? void 0 : binary_op.lhs;
-      const rhs = binary_op == null ? void 0 : binary_op.rhs;
+      const op = binary_op?.op;
+      const lhs = binary_op?.lhs;
+      const rhs = binary_op?.rhs;
       if (op && op in BINARY_OPS) {
         if (lhs === void 0) {
           throw new Error(`lhs operand needs to be an object not undefined: lhs=${lhs} :: rhs=${rhs}`);
@@ -1255,7 +1256,7 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
           args.map((arg) => runExpr(arg, ctx))
         );
       }
-      if ((name == null ? void 0 : name.startsWith("$")) && !/^\$\d/.test(name)) {
+      if (name?.startsWith("$") && !/^\$\d/.test(name)) {
         const similarNames = recommend("funcs", name);
         const typeName = singularOrPlural("function", similarNames.length);
         const areIs = similarNames.length > 1 ? "are" : "is";
@@ -1265,10 +1266,7 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
           warnings_push("'" + name + "' is defined as a variable.");
         }
       }
-      const params = args == null ? void 0 : args.map((x) => {
-        var _a;
-        return (_a = x == null ? void 0 : x.payload) == null ? void 0 : _a.value;
-      }).map((x) => check_default.isObject(x) ? JSON.stringify(x) : x).join(", ");
+      const params = args?.map((x) => x?.payload?.value).map((x) => check_default.isObject(x) ? JSON.stringify(x) : x).join(", ");
       return `${name}(${params || ""})`;
     }
     default: {
@@ -1289,7 +1287,7 @@ var fixString = (x) => {
   return x;
 };
 var wrapCtxFuncs = (mut_ctx) => {
-  const _f = mut_ctx == null ? void 0 : mut_ctx.funcs;
+  const _f = mut_ctx?.funcs;
   if (_f && check_default.isObject(_f)) {
     const f = { ..._f };
     const updated = {};
@@ -1354,7 +1352,6 @@ var parseSentence = (sentence, _ctx = {}) => {
   };
 };
 var _parseSentence = (sentence, _ctx = {}) => {
-  var _a;
   const warnings = [];
   const ctx = wrapCtxFuncs({
     /*clone*/
@@ -1412,7 +1409,7 @@ var _parseSentence = (sentence, _ctx = {}) => {
     );
     const append = cutHist.join("");
     builder.push(resolved + append + restoreSpace);
-    const isVar = (_a = lex.lastToken()) == null ? void 0 : _a.startsWith("$");
+    const isVar = lex.lastToken()?.startsWith("$");
     const commaLoc = builder.lastIndexOf(",") - 1;
     if (lex.lastToken() === "," && builder[commaLoc] === " ") {
       builder.splice(commaLoc, 1);
