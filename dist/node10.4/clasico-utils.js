@@ -1170,6 +1170,12 @@ var parseExpr = (lexer, prec = BIN_PREC.PREC0) => {
 };
 var runExpr = (expr, ctx = {}, warnings = []) => {
   console.assert(check_default.isObject(expr));
+  const warnings_push = (message) => {
+    warnings.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      message
+    });
+  };
   const recommend = (ctxKey, value) => {
     return fuzzy_default.topSimilar(
       value,
@@ -1195,14 +1201,14 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
         if (ctx.vars && value && value in ctx.vars) {
           return ctx.vars[value];
         }
-        if (value == null ? void 0 : value.startsWith("$")) {
+        if ((value == null ? void 0 : value.startsWith("$")) && !/^\$\d/.test(value)) {
           const similarNames = recommend("vars", value);
           const typeName = singularOrPlural("variable", similarNames.length);
           const areIs = similarNames.length > 1 ? "are" : "is";
-          const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-          warnings.push("Unknown variable '" + value + "'. " + (similarNames.length > 0 ? recommendations : ""));
+          const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+          warnings_push("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
           if (value in (ctx.funcs || {})) {
-            warnings.push("'" + value + "' is defined as a function.");
+            warnings_push("'" + value + "' is defined as a function.");
           }
         }
         return value;
@@ -1249,14 +1255,14 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
           args.map((arg) => runExpr(arg, ctx))
         );
       }
-      if (name == null ? void 0 : name.startsWith("$")) {
+      if ((name == null ? void 0 : name.startsWith("$")) && !/^\$\d/.test(name)) {
         const similarNames = recommend("funcs", name);
         const typeName = singularOrPlural("function", similarNames.length);
         const areIs = similarNames.length > 1 ? "are" : "is";
-        const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-        warnings.push("Unknown function '" + name + "'. " + (similarNames.length > 0 ? recommendations : ""));
+        const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+        warnings_push("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
         if (name in (ctx.vars || {})) {
-          warnings.push("'" + name + "' is defined as a variable.");
+          warnings_push("'" + name + "' is defined as a variable.");
         }
       }
       const params = args == null ? void 0 : args.map((x) => {
@@ -1298,14 +1304,14 @@ var wrapCtxFuncs = (mut_ctx) => {
   return mut_ctx;
 };
 var parseSentence = (sentence, _ctx = {}) => {
-  const warnings = [];
-  const errors = [];
+  const logs = [];
   const result = sentence.split("\n").map((line, index) => {
     try {
       const parsed = _parseSentence(line, _ctx);
-      warnings.push(...parsed.warnings.map((message) => ({
+      logs.push(...parsed.warnings.map((wranMeta) => ({
         lineNumber: index + 1,
-        message
+        level: "WARN",
+        ...wranMeta
       })));
       return parsed.result;
     } catch (error) {
@@ -1313,9 +1319,10 @@ var parseSentence = (sentence, _ctx = {}) => {
         const modded = line.replace(/(\W)\(([^)]+)\)/g, "$1 <parentheses> $2 </parentheses>");
         try {
           const parsed = _parseSentence(modded, _ctx);
-          warnings.push(...parsed.warnings.map((message2) => ({
+          logs.push(...parsed.warnings.map((wranMeta) => ({
             lineNumber: index + 1,
-            message: message2
+            level: "WARN",
+            ...wranMeta
           })));
           return parsed.result.replace(/<parentheses> /gi, "(").replace(/ <\/parentheses>/gi, ")");
         } catch (ignored) {
@@ -1328,18 +1335,22 @@ var parseSentence = (sentence, _ctx = {}) => {
           message = error.toString();
         }
       }
-      errors.push({
+      if (!message) {
+        message = `${error}`;
+      }
+      logs.push({
         lineNumber: index + 1,
+        level: "ERROR",
         message,
-        error
+        error,
+        timestamp: /* @__PURE__ */ new Date()
       });
     }
     return line;
   }).join("\n");
   return {
     result,
-    warnings,
-    errors
+    logs
   };
 };
 var _parseSentence = (sentence, _ctx = {}) => {
@@ -1421,11 +1432,10 @@ var _parseSentence = (sentence, _ctx = {}) => {
 var SentenceParser = class {
   constructor(options = {
     includeBuiltIns: true
-  }, ctx = {}, errors = [], warnings = []) {
+  }, ctx = {}, logs = []) {
     this.options = options;
     this.ctx = ctx;
-    this.errors = errors;
-    this.warnings = warnings;
+    this.logs = logs;
     if (this.options.includeBuiltIns) {
       this.ctx.funcs = {
         ...this.builtinFunctions(),
@@ -1551,16 +1561,20 @@ var SentenceParser = class {
           return result;
         }
       } catch (error) {
-        this.errors.push({
+        this.logs.push({
+          level: "ERROR",
           error,
           message: error.message || `${error}`,
-          lineNumber: NaN
+          lineNumber: NaN,
+          timestamp: /* @__PURE__ */ new Date()
         });
       }
       const argv = args.join(", ");
-      this.warnings.push({
+      this.logs.push({
+        level: "WARN",
         lineNumber: NaN,
-        message: `Couldn't resolve Math.${key}${!argv ? "" : "(" + argv + ")"}`
+        message: `Couldn't resolve Math.${key}${!argv ? "" : "(" + argv + ")"}`,
+        timestamp: /* @__PURE__ */ new Date()
       });
       return `$math('${key}'${!argv ? "" : ", " + argv})`;
     };
@@ -1686,16 +1700,12 @@ var SentenceParser = class {
     this.ctx.funcs = this.ctx.funcs || {};
     this.ctx.funcs[name] = cb;
   }
-  clearWarnings() {
-    this.warnings = [];
-  }
-  clearErrors() {
-    this.errors = [];
+  clearLogs() {
+    this.logs = [];
   }
   parse(sentence) {
     const result = parseSentence(sentence, this.ctx || {});
-    this.errors.push(...result.errors);
-    this.warnings.push(...result.warnings);
+    this.logs.push(...result.logs);
     return result;
   }
 };

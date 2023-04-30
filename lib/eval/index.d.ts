@@ -1,13 +1,10 @@
-import { type EvalContext } from "./eval";
+import { type EvalContext, type EvalWarningMeta } from "./eval";
 import { AnyFn, type TypeOf } from "../@types";
-type ParseError = {
+export type ParserLogsLevel = "WARN" | "ERROR";
+export type ParserLogs = EvalWarningMeta & {
+    level: "WARN" | "ERROR";
     lineNumber: number;
-    message: string;
-    error: Error;
-};
-type ParseWarning = {
-    lineNumber: number;
-    message: string;
+    error?: Error;
 };
 export type Context = EvalContext;
 export type SentenceParserOptions = {
@@ -16,9 +13,8 @@ export type SentenceParserOptions = {
 declare class SentenceParser {
     options: SentenceParserOptions;
     ctx: Context;
-    errors: ParseError[];
-    warnings: ParseWarning[];
-    constructor(options?: SentenceParserOptions, ctx?: Context, errors?: ParseError[], warnings?: ParseWarning[]);
+    logs: ParserLogs[];
+    constructor(options?: SentenceParserOptions, ctx?: Context, logs?: ParserLogs[]);
     builtinFunctions(): {
         $if: (condition: boolean, ifTrue: any, ifFalse: any) => any;
         $abs: (x: any) => number;
@@ -60,12 +56,10 @@ declare class SentenceParser {
     varExists(name: string): boolean;
     addVar(name: string, value: any): void;
     addFunction(name: string, cb: AnyFn): void;
-    clearWarnings(): void;
-    clearErrors(): void;
+    clearLogs(): void;
     parse(sentence: string): {
         result: string;
-        warnings: ParseWarning[];
-        errors: ParseError[];
+        logs: ParserLogs[];
     };
 }
 declare const ____builtins: () => {

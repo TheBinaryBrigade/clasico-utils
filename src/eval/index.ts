@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import check from "../check";
-import { type EvalContext, type ContextFuncs, Lexer, parseExpr, runExpr } from "./eval";
+import { type EvalContext, type ContextFuncs, type EvalWarningMeta, Lexer, parseExpr, runExpr } from "./eval";
 import { AnyFn, type TypeOf } from "../@types";
 
 const fixString = (x: string) => {
@@ -35,15 +35,11 @@ const wrapCtxFuncs = (mut_ctx: EvalContext) => {
   return mut_ctx;
 };
 
-type ParseError = {
+export type ParserLogsLevel = "WARN" | "ERROR";
+export type ParserLogs = EvalWarningMeta & {
+  level: "WARN" | "ERROR",
   lineNumber: number,
-  message: string,
-  error: Error,
-};
-
-type ParseWarning = {
-  lineNumber: number,
-  message: string,
+  error?: Error,
 };
 
 /**
@@ -55,16 +51,17 @@ type ParseWarning = {
  * @deprecated use `class SentenceParser`
  */
 const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
-  const warnings: ParseWarning[] = [];
-  const errors: ParseError[] = [];
+  const logs: ParserLogs[] = [];
+
   const result = sentence
     .split("\n")
     .map((line, index) => {
       try {
         const parsed = _parseSentence(line, _ctx);
-        warnings.push(...parsed.warnings.map((message) => ({
+        logs.push(...parsed.warnings.map((wranMeta) => ({
           lineNumber: index + 1,
-          message,
+          level: "WARN" as const,
+          ...wranMeta,
         })));
 
         return parsed.result;
@@ -75,10 +72,10 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
 
           try {
             const parsed = _parseSentence(modded, _ctx);
-
-            warnings.push(...parsed.warnings.map((message) => ({
+            logs.push(...parsed.warnings.map((wranMeta) => ({
               lineNumber: index + 1,
-              message,
+              level: "WARN" as const,
+              ...wranMeta,
             })));
             return parsed
               .result
@@ -96,10 +93,16 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
           }
         }
 
-        errors.push({
+        if (!message) {
+          message = `${error}`;
+        }
+
+        logs.push({
           lineNumber: index + 1,
+          level: "ERROR",
           message,
           error,
+          timestamp: new Date(),
         });
       }
 
@@ -108,13 +111,12 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
     .join("\n");
   return {
     result,
-    warnings,
-    errors,
+    logs,
   };
 };
 
 const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
-  const warnings: string[] = [];
+  const warnings: EvalWarningMeta[] = [];
   const ctx = wrapCtxFuncs({/*clone*/..._ctx });
   const lex = new Lexer(sentence);
 
@@ -198,8 +200,7 @@ class SentenceParser {
       includeBuiltIns: true,
     },
     public ctx: Context = {},
-    public errors: ParseError[] = [],
-    public warnings: ParseWarning[] = [],
+    public logs: ParserLogs[] = [],
   ) {
 
     if (this.options.includeBuiltIns) {
@@ -352,18 +353,21 @@ class SentenceParser {
           return result;
         }
       } catch (error: any) {
-        this.errors.push({
+        this.logs.push({
+          level: "ERROR",
           error,
           message: error.message || `${error}`,
           lineNumber: NaN,
+          timestamp: new Date(),
         });
       }
 
       const argv = args.join(", ");
-
-      this.warnings.push({
+      this.logs.push({
+        level: "WARN",
         lineNumber: NaN,
         message: `Couldn't resolve Math.${key}${!argv ? "" : "(" + argv + ")"}`,
+        timestamp: new Date(),
       });
       return `$math('${key}'${!argv ? "" : ", " + argv})`;
     };
@@ -520,18 +524,13 @@ class SentenceParser {
     this.ctx.funcs[name] = cb;
   }
 
-  clearWarnings() {
-    this.warnings = [];
-  }
-
-  clearErrors() {
-    this.errors = [];
+  clearLogs() {
+    this.logs = [];
   }
 
   parse(sentence: string) {
     const result = parseSentence(sentence, this.ctx || {});
-    this.errors.push(...result.errors);
-    this.warnings.push(...result.warnings);
+    this.logs.push(...result.logs);
     return result;
   }
 }

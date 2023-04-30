@@ -334,9 +334,22 @@ export const parseExpr = (lexer: Lexer, prec: number = BIN_PREC.PREC0): Expressi
 //   return result;
 // };
 
+export type EvalWarningMeta = {
+  timestamp: Date,
+  message: string
+};
 
-export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: string[] = []): any => {
+
+export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: EvalWarningMeta[] = []): any => {
   console.assert(check.isObject(expr));
+
+  const warnings_push = (message: string) => {
+    warnings.push({
+      timestamp: new Date(),
+      message,
+    });
+  };
+
   const recommend = (ctxKey: keyof EvalContext, value: string): string[] => {
     return fuzzy.topSimilar(
       value,
@@ -365,15 +378,15 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
       if (ctx.vars && value && value in ctx.vars) {
         return ctx.vars[value];
       }
-      if (value?.startsWith("$")) {
+      if (value?.startsWith("$") && !/^\$\d/.test(value)) {
         const similarNames = recommend("vars", value);
         const typeName = singularOrPlural("variable", similarNames.length);
         const areIs = similarNames.length > 1 ? "are" : "is";
-        const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-        warnings.push("Unknown variable '" + value + "'. " + (similarNames.length > 0 ? recommendations : ""));
+        const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+        warnings_push("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
 
         if (value in (ctx.funcs || {})) {
-          warnings.push("'" + value + "' is defined as a function.");
+          warnings_push("'" + value + "' is defined as a function.");
         }
       }
       return value;
@@ -423,15 +436,15 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: strin
         )
       );
     }
-    if (name?.startsWith("$")) {
+    if (name?.startsWith("$") && !/^\$\d/.test(name)) {
       const similarNames = recommend("funcs", name);
       const typeName = singularOrPlural("function", similarNames.length);
       const areIs = similarNames.length > 1 ? "are" : "is";
-      const recommendations = `The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-      warnings.push("Unknown function '" + name + "'. " + (similarNames.length > 0 ? recommendations : ""));
+      const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
+      warnings_push("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
 
       if (name in (ctx.vars || {})) {
-        warnings.push("'" + name + "' is defined as a variable.");
+        warnings_push("'" + name + "' is defined as a variable.");
       }
     }
     const params = args

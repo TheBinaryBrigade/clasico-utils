@@ -1,83 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayGround</title>
-
+    <title>Clasico | Parser | Playground</title>
     <style>
-        html,
-        body {
-            height: 100%;
-            padding: 0;
-            margin: 0;
+        .container {
+            display: flex;
+            flex-wrap: wrap;
         }
 
-        div {
-            width: 50%;
-            height: 50%;
-            float: left;
+        .editor-container {
+            /* width: 50%; */
+            margin: 10px;
         }
 
-        #div1 {
-            background: #DDD;
+        .editor {
+            height: 400px;
+            border: 1px solid black;
+            padding: 10px;
         }
 
-        #div2 {
-            background: #AAA;
+        .output-container {
+            /* width: 50%; */
+            margin: 10px;
         }
 
-        #div3 {
-            background: #777;
+        .output {
+            height: 400px;
+            border: 1px solid black;
+            padding: 10px;
+            overflow-y: scroll;
         }
 
-        #div4 {
-            background: #444;
-        }
-
-        .table {
+        table {
             border-collapse: collapse;
             width: 100%;
         }
 
-        th {
-            background-color: #eee;
-            font-weight: bold;
-            text-align: left;
-        }
-
+        th,
         td {
-            border: 1px solid #ccc;
-            padding: 5px;
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
         }
 
-        .error {
-            background-color: #fdd;
+        th {
+            background-color: #f2f2f2;
         }
 
-        .warn {
-            background-color: #ffd;
+        table tr.info {
+            background-color: #c4fbff;
+        }
+
+        table tr.warn {
+            background-color: #fff2af;
+        }
+
+        table tr.error {
+            background-color: #f85d5d;
+        }
+
+        .container {
+            flex: 1,
+        }
+
+        .left {
+            flex: 0.5
+        }
+
+        .right {
+            flex: 0.5
+        }
+
+        .highlight-info {
+            position: absolute;
+            background: #c4fbff;
+            opacity: 0.2;
+            z-index: 20
+        }
+
+        .highlight-warn {
+            position: absolute;
+            background: #fff2af;
+            opacity: 0.2;
+            z-index: 20
+        }
+
+        .highlight-error {
+            position: absolute;
+            background: #f85d5d;
+            opacity: 0.2;
+            z-index: 20
         }
     </style>
 </head>
 
 <body>
     <main>
-        <div id="div1">
-            <textarea name="" id="input" cols="30" rows="10"></textarea>
-        </div>
-        <div id="div2">
-            <textarea name="" id="output" cols="30" rows="10"></textarea>
-        </div>
-        <div id="div3">
-            <textarea name="" id="ctx" cols="30" rows="10"></textarea>
-        </div>
-        <div id="div4">
-            <table id="logs"></table>
-        </div>
+        <h1>Clasico Playground</h1>
+
+        <section>
+            <h2>Sentence Parser</h2>
+            <div class="container">
+                <div class="left">
+                    <div class="editor-container">
+                        <h3>Text Editor</h3>
+                        <div class="editor" id="text-editor"></div>
+                    </div>
+                    <div class="editor-container">
+                        <h3>Context Editor</h3>
+                        <div class="editor" id="json-editor"></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="output-container">
+                        <h3>Output</h3>
+                        <div class="output" id="text-output"></div>
+                    </div>
+                    <div class="output-container">
+                        <h3>Logs</h3>
+                        <table id="log-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Level</th>
+                                    <th>Line</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-body">
+                                <!-- Log messages will be added dynamically here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <!-- Load necessary libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+    <script src="./clasico-utils.js"></script>
+
+    <!-- Script to initialize the code editors and handle the outputs -->
+    <script>
+        // Initialize Clasico Utilities
+        ; const clasico = Clasico.default;
+        ; (() => {
+            const builtinsWordList = Object.keys(
+                new clasico
+                    .parser
+                    .SentenceParser({ includeBuiltIns: true })
+                    .builtinFunctions()
+            )
+                .map((value) => ({ value, meta: "function" }));
+
+            // Define the list of autocomplete suggestions
+            const wordList = [];
+
+            // Initialize JSON editor
+            const contextEditor = ace.edit("json-editor");
+            contextEditor.setTheme("ace/theme/monokai");
+            contextEditor.getSession().setMode("ace/mode/json");
+            contextEditor.getSession().setUseWrapMode(false);
+            contextEditor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+
+            // Initialize plain text editor
+            const textEditor = ace.edit("text-editor");
+            textEditor.setTheme("ace/theme/monokai");
+            textEditor.getSession().setMode("ace/mode/text");
+            textEditor.getSession().setUseWrapMode(true);
+            textEditor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+
+            textEditor.getSession().setValue(`
+$myVar * 2 should be 84! 
+
+My name is $getattr($other, 'some.variable').
+
+I have a number, it is $myVar.
+
+I don't have $yuo!!! 
+
+I DON'T HAVE $foo!!!
+            `.trim())
+            contextEditor.getSession().setValue(JSON.stringify({
+                myVar: 42,
+                other: {
+                    some: {
+                        variable: "Isla"
+                    },
+                },
+            }, null, 4))
+
+            // Create a new autocomplete object
+            const langTools = ace.require("ace/ext/language_tools");
+            const completer = {
+                getCompletions: (editor, session, pos, prefix, callback) => {
+                    callback(null, wordList.map(({ value, meta }) => {
+                        return { value, score: 1, meta };
+                    }));
+                }
+            };
+            langTools.addCompleter(completer);
+
+            const updateWordList = (...words) => {
+                while (wordList.length > 0) {
+                    wordList.pop();
+                }
+
+                wordList.push(...builtinsWordList);
+                wordList.push(...words);
+            };
+
+            const runParser = () => {
+                removeHighlights(textEditor);
+                const parser = new clasico.parser.SentenceParser({
+                    includeBuiltIns: true,
+                });
+
+                const text = textEditor.getSession().getValue();
+                let context = contextEditor.getSession().getValue();
+                const errors = [];
+                if (context) {
+                    try {
+                        context = JSON.parse(context);
+                    } catch (error) {
+                        context = {};
+                        errors.push({
+                            lineNumber: NaN,
+                            level: "ERROR",
+                            timestamp: new Date(),
+                            message: `Failed to parse context: ${error}`,
+                        });
+                    }
+                } else {
+                    context = {};
+                }
+
+                Object.entries(context).forEach(([key, value]) => {
+                    parser.addVar(key, value);
+                });
+
+                const result = parser.parse(text);
+                handleTextOutput(result.result);
+                handleLogsOutput([...errors, ...result.logs]);
+                updateWordList(...Object.keys(context).map((value) => ({ value, meta: "variable" })))
+            };
+
+            // Function to handle plain text output
+            function handleTextOutput(text) {
+                const outputDiv = document.getElementById("text-output");
+                outputDiv.innerText = text;
+            }
+
+            function formatDate(date) {
+                if (!clasico.check.isDate(date)) {
+                    return date;
+                }
+
+                date = clasico.date.parse(date);
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+                const microseconds = date.getMilliseconds().toString().padStart(3, '0');
+
+                return `${hours}:${minutes}:${seconds}.${microseconds}`;
+            }
+
+            function removeHighlights(editor) {
+                const session = editor.getSession();
+                const markers = session.getMarkers();
+                for (const id in markers) {
+                    if (markers.hasOwnProperty(id)) {
+                        session.removeMarker(id);
+                    }
+                }
+            }
+
+            function highlightLine(editor, lineNumber, className = "highlight-line") {
+                // Get the session object
+                const session = editor.getSession();
+
+                // Get the highlight line range
+                const Range = ace.require('ace/range').Range;
+                const highlightRange = new Range(lineNumber - 1, 0, lineNumber - 1, Infinity);
+
+                // Add the highlight class to the highlight line
+                const highlightId = session.addMarker(highlightRange, className, "fullLine");
+
+                // // Remove the highlight class after 3 seconds
+                // setTimeout(function () {
+                //     session.removeMarker(highlightId);
+                // }, 3000);
+            }
+
+            // Function to handle logs output
+            function handleLogsOutput(logs) {
+                const tbody = document.getElementById("log-body");
+                tbody.innerHTML = ""; // clear existing rows
+
+                logs.forEach((log) => {
+                    const row = tbody.insertRow();
+                    const timeCell = row.insertCell(0);
+                    const levelCell = row.insertCell(1);
+                    const lineCell = row.insertCell(2);
+                    const messageCell = row.insertCell(3);
+
+                    const level = log.level;
+                    const line = !isNaN(log.lineNumber) ? log.lineNumber : "";
+                    levelCell.innerText = level;
+                    timeCell.innerText = formatDate(log.timestamp);
+                    lineCell.innerText = line;
+                    messageCell.innerText = log.message || log.error;
+
+
+                    if (clasico.check.isString(level)) {
+                        // console.log(level, row.classList.add("warn"))
+                        const t = level.trim().toUpperCase();
+                        if (["WARNING", "WARN"].includes(t)) {
+                            row.classList.add("warn");
+                            if (line) {
+                                highlightLine(textEditor, line, "highlight-warn");
+                            }
+                        } else if (["ERR", "ERROR", "CRITICAL"].includes(t)) {
+                            row.classList.add("error");
+                            if (line) {
+                                highlightLine(textEditor, line, "highlight-error");
+                            }
+                        } else if (t === "INFO") {
+                            row.classList.add("info");
+                            if (line) {
+                                highlightLine(textEditor, line, "highlight-info");
+                            }
+                        }
+                    }
+                });
+            }
+
+            textEditor.getSession().on("change", () => {
+                runParser();
+            });
+
+            contextEditor.getSession().on("change", () => {
+                try {
+                    const original = contextEditor.getSession().getValue().trim();
+                    const parsed = JSON.stringify(JSON.parse(original), null, 4).trim();
+
+                    if (original !== parsed) {
+                        contextEditor.getSession().setValue(parsed);
+                    }
+                } catch (ignored) { /* empty */ }
+                runParser();
+            });
+
+            runParser();
+        })();
+
+
+    </script>
 </body>
 
 </html>

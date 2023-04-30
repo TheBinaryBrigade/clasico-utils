@@ -42,14 +42,20 @@ console.log("Output:", output);
 //     "I don't have $yuo!!!\n" +
 //     '\n' +
 //     "I DON'T HAVE $foo!!!\n",
-//   warnings: [
+//   logs: [
 //     {
 //       lineNumber: 8,
+//       level: 'WARN',
+//       timestamp: 2023-04-30T06:07:04.648Z,
 //       message: "Unknown variable '$yuo'. The most similar variable is $you"
 //     },
-//     { lineNumber: 10, message: "Unknown variable '$foo'. " }
-//   ],
-//   errors: []
+//     {
+//       lineNumber: 10,
+//       level: 'WARN',
+//       timestamp: 2023-04-30T06:07:04.649Z,
+//       message: "Unknown variable '$foo'."
+//     }
+//   ]
 // }
 
 const expected = `

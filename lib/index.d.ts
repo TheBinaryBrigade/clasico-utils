@@ -20,25 +20,10 @@ declare const _default: {
     };
     parser: {
         SentenceParser: {
-            new (options?: import("./eval").SentenceParserOptions, ctx?: import("./eval/eval").EvalContext, errors?: {
-                lineNumber: number;
-                message: string;
-                error: Error;
-            }[], warnings?: {
-                lineNumber: number;
-                message: string;
-            }[]): {
+            new (options?: import("./eval").SentenceParserOptions, ctx?: import("./eval/eval").EvalContext, logs?: import("./eval").ParserLogs[]): {
                 options: import("./eval").SentenceParserOptions;
                 ctx: import("./eval/eval").EvalContext;
-                errors: {
-                    lineNumber: number;
-                    message: string;
-                    error: Error;
-                }[];
-                warnings: {
-                    lineNumber: number;
-                    message: string;
-                }[];
+                logs: import("./eval").ParserLogs[];
                 builtinFunctions(): {
                     $if: (condition: boolean, ifTrue: any, ifFalse: any) => any;
                     $abs: (x: any) => number;
@@ -80,19 +65,10 @@ declare const _default: {
                 varExists(name: string): boolean;
                 addVar(name: string, value: any): void;
                 addFunction(name: string, cb: types.AnyFn): void;
-                clearWarnings(): void;
-                clearErrors(): void;
+                clearLogs(): void;
                 parse(sentence: string): {
                     result: string;
-                    warnings: {
-                        lineNumber: number;
-                        message: string;
-                    }[];
-                    errors: {
-                        lineNumber: number;
-                        message: string;
-                        error: Error;
-                    }[];
+                    logs: import("./eval").ParserLogs[];
                 };
             };
         };
