@@ -190,17 +190,32 @@ My name is $getattr($some, 'deep.variable').
 
 I miss $getattr($some, 'other', 'deep', 'variable')
 
+I don't have $yuo!!! 
+
+I DON'T HAVE $foo!!!
+
+> To get around any formatting issues or unexpected behavior I would suggest using the `$concat` function (or `$str`, you can think of `$str` like an echo/print/console.log).
+
+> Input: 
+> 
+> \`$concat("some ", " pair ", " of ", " variables ", $myVar)\`
+>
+> Output: 
+> 
+> $concat("some ", " pair ", " of ", " variables ", $myVar)
+
+Oh no! you are seeing $getattr($some, 'other', 'deep', 'variables')
+You can \`$str\` it! $str($getattr($some, 'other', 'deep', 'variables')).
+Oh, yeah! \`$str\` it all up!
+
 $str("---")
 Look at warnings
 
 Misspelled function: $getatr($some, 'deep.variable').
 
+> To see the built-in functions visit: $str("[BuiltIn Documentation](https://github.com/TheBinaryBrigade/clasico-utils/blob/main/src/eval/README.md#table-of-contens)"). This code editor will have auto-completion.
+
 I have a number, it is $myVar.
-
-I don't have $yuo!!! 
-
-I DON'T HAVE $foo!!!
-
             `.trim())
             contextEditor.getSession().setValue(JSON.stringify({
                 "myVar": 42,
