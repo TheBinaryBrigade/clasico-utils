@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts && npm run lint:fix",
+    "lint": "eslint --env browser,node --parser @typescript-eslint/parser **/*.ts",
     "lint:fix": "tslint --fix --force --quiet --project './tsconfig.json' -c tslint.json 'src/**/*.ts'",
     "test": "jest --silent .*.test.ts",
     "build:eval:doc": "ts-node ./.buildevaldoc.ts",

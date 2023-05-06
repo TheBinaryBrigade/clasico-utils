@@ -10,28 +10,29 @@ const isNumber = (x: unknown): boolean => {
   );
 };
 
-const isString = (x: unknown): boolean => {
+const isString = (x: unknown): x is string => {
   return (
     typeof x === "string"
     || x instanceof String
   );
 };
 
-const isBoolean = (x: unknown): boolean => {
+const isBoolean = (x: unknown): x is boolean => {
   return (
     typeof x === "boolean"
     || x instanceof Boolean
   );
 };
 
-const isFunction = (x: unknown): boolean => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+const isFunction = (x: unknown): x is Function => {
   return (
     typeof x === "function"
     || x instanceof Function
   );
 };
 
-const isObject = (x: unknown): boolean => {
+const isObject = (x: unknown): x is object => {
   if (isNil(x)) {
     return false;
   }
@@ -39,11 +40,11 @@ const isObject = (x: unknown): boolean => {
   return typeof x === "object";
 };
 
-const isNil = (x: unknown): boolean => {
+const isNil = (x: unknown): x is null | undefined => {
   return x === null || x === undefined;
 };
 
-const isArray = (x: unknown): boolean => {
+const isArray = (x: unknown): x is unknown[] => {
   return (
     Array.isArray(x)
     || x instanceof Array
@@ -51,7 +52,7 @@ const isArray = (x: unknown): boolean => {
   );
 };
 
-const isSet = (x: unknown): boolean => {
+const isSet = (x: unknown): x is Set<unknown> => {
   return (
     x instanceof Set
     || Object.prototype.toString.call(x) === "[object Set]"
@@ -59,7 +60,7 @@ const isSet = (x: unknown): boolean => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isIterable = (x: any): boolean => {
+const isIterable = (x: any): x is Iterable<unknown> => {
   // checks for null and undefined
   if (isNil(x)) {
     return false;
@@ -67,15 +68,15 @@ const isIterable = (x: any): boolean => {
   return isFunction(x[Symbol.iterator]);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isNumeric = (x: any): boolean => {
+const isNumeric = (x: unknown): boolean => {
   if (isNumber(x)) {
     return true;
   }
   if (!isString(x)) {
     return false;
   }
-  return !isNaN(x) && !isNaN(parseFloat(x));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return !isNaN(x as any) && !isNaN(parseFloat(x));
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -212,7 +213,7 @@ const isDate = (x: unknown): boolean => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isError = (x: any, errorLike=false): boolean => {
+const isError = (x: any, errorLike=false): x is Error => {
   if (isNil(x)) {
     return false;
   }

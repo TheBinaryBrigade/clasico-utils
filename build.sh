@@ -1,31 +1,34 @@
 set -e -o xtrace
 
+# NPM=bun
+NPM=npm
+
 # Auto fix liniting issues
-npm run lint:fix
+$NPM run lint:fix
 
 # Run examples
-npm run example:eval:usage
-npm run example:utils:hashcode
-npm run example:utils:capitalize
+$NPM run example:eval:usage
+$NPM run example:utils:hashcode
+$NPM run example:utils:capitalize
 
 # Run unit tests
-npm test
+$NPM test  # :o fast!
 
 # Build docs
-npm run build:eval:doc
+$NPM run build:eval:doc
 
 # Build web distribution
-npm run build:web
+$NPM run build:web
 
 # Build node distributions
-npm run build:node10
-npm run build:node12
-npm run build:node14
-npm run build:node16
-npm run build:node18
+$NPM run build:node10
+$NPM run build:node12
+$NPM run build:node14
+$NPM run build:node16
+$NPM run build:node18
 
 # Build npm pacakge
-npm run build:lib
+$NPM run build:lib
 
 shadir() {
     find $1 -type f \( -exec sha512sum {} \; \)
@@ -40,3 +43,9 @@ shadir() {
     && echo "$(shadir *.ts)" \
     && echo "$(shadir *.cjs)" \
 ) > './checksums.txt'
+
+git add dist/*
+git add lib/*
+git add checksums.txt
+
+npm pack
