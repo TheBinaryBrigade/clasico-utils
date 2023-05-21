@@ -1,11 +1,16 @@
 
 import date from "../date";
 
-const isNumber = (x: unknown): boolean => {
+const isNumber = (x: unknown): x is number => {
   return (
     typeof x === "number"
     || x instanceof Number
-    || typeof x === "bigint"
+  );
+};
+
+const isBigInt = (x: unknown): x is bigint => {
+  return (
+    typeof x === "bigint"
     || x instanceof BigInt
   );
 };
@@ -213,7 +218,7 @@ const isDate = (x: unknown): boolean => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isError = (x: any, errorLike=false): x is Error => {
+const isError = (x: any, errorLike = false): x is Error => {
   if (isNil(x)) {
     return false;
   }
@@ -233,6 +238,7 @@ const isError = (x: any, errorLike=false): x is Error => {
 export default {
   isNil,
   isNumber,
+  isBigInt,
   isString,
   isBoolean,
   isFunction,

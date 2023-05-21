@@ -483,6 +483,37 @@ const tests: Tests = {
     ],
     returnTypes: ["boolean"]
   },
+  isBigInt: {
+    examples: [
+      { input: BigInt("123456789012345678901234567890"), output: true },
+      { input: BigInt("123456789012345678901234567890") + BigInt(1), output: true },
+      { input: new Error(), output: false },
+      { input: new _MyCustomError(), output: false },
+      { input: new Date(), output: false },
+      { input: 42, output: false },
+      { input: 42.01, output: false },
+      { input: Math.PI, output: false },
+      { input: "42", output: false },
+      { input: "42e1000", output: false },
+      { input: "padding42", output: false },
+      { input: "42px", output: false },
+      { input: " ", output: false },
+      { input: "", output: false },
+      { input: false, output: false },
+      { input: true, output: false },
+      { input: new Boolean(true), output: false },
+      { input: new Boolean(false), output: false },
+      { input: new Array([1]), output: false },
+      { input: new Set([1]), output: false },
+      { input: [1.42, 2.42, 3.42], output: false },
+      { input: { hello: 42 }, output: false },
+      { input: null, output: false },
+      { input: undefined, output: false },
+      { input: () => { return 42; }, output: false },
+      { input: [1, 2][Symbol.iterator], output: false },
+    ],
+    returnTypes: ["boolean"],
+  },
 };
 
 describe("check", () => {
@@ -517,7 +548,12 @@ describe("check", () => {
     describe(fnName, () => {
       const call = check[fnName as CheckFn];
       examples.forEach(({ input, output }) => {
-        test(`(${JSON.stringify(input)}: ${typeof input})`, () => {
+        test(`(${JSON.stringify(input, (key, value) => {
+          if (typeof value === "bigint") {
+            return value.toString();
+          }
+          return value;
+        })}: ${typeof input})`, () => {
           const result = call(input);
           expect(returnTypes.includes(typeof result)).toBe(true);
           expect(result).toBe(output);

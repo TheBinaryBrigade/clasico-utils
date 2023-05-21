@@ -2,7 +2,8 @@ import * as types from "./@types";
 declare const _default: {
     check: {
         isNil: (x: unknown) => x is null | undefined;
-        isNumber: (x: unknown) => boolean;
+        isNumber: (x: unknown) => x is number;
+        isBigInt: (x: unknown) => x is bigint;
         isString: (x: unknown) => x is string;
         isBoolean: (x: unknown) => x is boolean;
         isFunction: (x: unknown) => x is Function;

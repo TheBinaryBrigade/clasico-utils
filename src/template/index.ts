@@ -246,6 +246,9 @@ class TemplateParser {
         } catch (ignored) {
           const circularReference: any[] = [];
           const jsonString = JSON.stringify(x, (key, value) => {
+            if (typeof value === "bigint") {
+              return value.toString();
+            }
             if (typeof value === "object" && value !== null) {
               if (circularReference.includes(value)) {
                 return "[Circular]";

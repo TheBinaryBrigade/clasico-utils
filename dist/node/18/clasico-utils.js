@@ -97,7 +97,10 @@ var date_default = {
 
 // src/check/index.ts
 var isNumber = (x) => {
-  return typeof x === "number" || x instanceof Number || typeof x === "bigint" || x instanceof BigInt;
+  return typeof x === "number" || x instanceof Number;
+};
+var isBigInt = (x) => {
+  return typeof x === "bigint" || x instanceof BigInt;
 };
 var isString = (x) => {
   return typeof x === "string" || x instanceof String;
@@ -255,6 +258,7 @@ var isError = (x, errorLike = false) => {
 var check_default = {
   isNil,
   isNumber,
+  isBigInt,
   isString,
   isBoolean,
   isFunction,
@@ -1493,6 +1497,9 @@ var TemplateParser = class {
         } catch (ignored) {
           const circularReference = [];
           const jsonString = JSON.stringify(x, (key, value) => {
+            if (typeof value === "bigint") {
+              return value.toString();
+            }
             if (typeof value === "object" && value !== null) {
               if (circularReference.includes(value)) {
                 return "[Circular]";
