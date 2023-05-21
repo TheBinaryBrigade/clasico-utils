@@ -2,6 +2,20 @@ import { describe, expect, test } from "@jest/globals";
 import inflection from "..";
 import utils from "../../utils";
 
+if (test.each === undefined) {
+  const test_each_fill = (arr: [unknown, unknown][]) => {
+    type TestCb = (input: unknown, expected: unknown) => void;
+    return (description: string, cb: TestCb) => {
+      arr.forEach((args) => {
+        test(description, () => {
+          cb(...args);
+        });
+      });
+    };
+  };
+  test.each = test_each_fill as any;
+}
+
 type TestParameters = [string, string][];
 
 const SINGULAR_TO_PLURAL: TestParameters = [
@@ -252,17 +266,17 @@ const STRING_TO_TABLEIZE: TestParameters = [
 ];
 
 describe("inflection", () => {
-  describe("test pluralize plurals", () => {
+  test("test pluralize plurals", () => {
     expect(inflection.pluralize("plurals")).toBe("plurals");
     expect(inflection.pluralize("Plurals")).toBe("Plurals");
   });
 
 
-  describe("pluralize empty string", () => {
+  test("pluralize empty string", () => {
     expect(inflection.pluralize("")).toBe("");
   });
 
-  describe("test unaacountability", () => {
+  test("test unaacountability", () => {
     inflection.UNCOUNTABLES.forEach((x) => {
       const sing = inflection.singularize(x);
       const plur = inflection.pluralize(x);
@@ -272,7 +286,7 @@ describe("inflection", () => {
     });
   });
 
-  describe("test uncountable word is not greedy", () => {
+  test("test uncountable word is not greedy", () => {
     const uncountWord = "ors";
     const countWord = "sponsor";
 
@@ -328,11 +342,12 @@ describe("inflection", () => {
     }
   );
 
-  describe("test camelize with lower downcases the first letter", () => {
+
+  test("test camelize with lower downcases the first letter", () => {
     expect(inflection.camelize("Capital", false)).toBe("capital");
   });
 
-  describe("test camelize with underscores", () => {
+  test("test camelize with underscores", () => {
     expect(inflection.camelize("Camel_Case")).toBe("CamelCase");
   });
 

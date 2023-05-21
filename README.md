@@ -48,7 +48,7 @@ Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 import clasico from "clasico";
 
-const parser = new clasico.parser.SentenceParser({
+const parser = new clasico.template.SentenceParser({
   includeBuiltIns: true,
 });
 
@@ -132,7 +132,7 @@ if (expected !== output.result) {
 
 ```ts
 
-import clasico from "../../src/index";
+import clasico from "clasico";
 
 const assert = (title: string, output: unknown, expected: unknown) => {
   if (expected !== output) {
@@ -188,3 +188,29 @@ assert("underscore", underscore, "some_variable");
 
 
 ```
+
+### Diff Utils
+
+#### Usage
+
+{{DIFF_USAGE_EXAMPLE}}
+
+### Fuzzy Utils
+
+#### Usage
+{{FUZZY_USAGE_EXAMPLE}}
+
+### Bisect Array Class
+
+#### Usage
+{{BISECT_ARRAY_USAGE_EXAMPLE}}
+
+### Misc Utils
+
+#### Usage
+
+{{MISC_USAGE_EXAMPLE}}
+
+## Goals
+
+The goal of this package is to be dependency free (or at least close to that).

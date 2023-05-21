@@ -1,6 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
 
 import parser, { Context } from "../index";
+import { TypeOf } from "../../@types";
 
 const ctx: Context = {
   funcs: {
@@ -108,10 +109,77 @@ const tests: {
 describe("parse sentence edge cases", () => {
   tests.forEach(({ input, output }) => {
     test(input, () => {
-      const result = new parser.SentenceParser({
+      const result = new parser.TemplateParser({
         includeBuiltIns: true,
       }, ctx);
       expect(result.parse(input).result).toBe(output);
+    });
+  });
+});
+
+const LVAL_TEST: {
+  input: string,
+  output?: unknown,
+  typeOf: TypeOf,
+}[] = [
+  {
+    input: JSON.stringify({hello: 42}),
+    output: {hello: 42},
+    typeOf: "object",
+  },
+  {
+    input: "42 / 2",
+    output: 21,
+    typeOf: "number",
+  },
+  {
+    input: "$all(true, false, true)",
+    output: false,
+    typeOf: "boolean",
+  },
+  {
+    input: "true",
+    output: true,
+    typeOf: "boolean",
+  },
+  {
+    input: "42.2",
+    output: 42.2,
+    typeOf: "number",
+  },
+  {
+    input: "$now()",
+    typeOf: "object",
+  },
+  {
+    input: "[1, 2, 3, 4]",
+    output: [1, 2, 3, 4],
+    typeOf: "object",
+  },
+];
+
+const ctx2: Context = {
+  funcs: {
+    ...new parser.TemplateParser().builtinFunctions()
+  },
+  vars: {
+
+  },
+};
+
+describe("lval", () => {
+  LVAL_TEST.forEach(({ input, output, typeOf }) => {
+    test(input, () => {
+      const result = parser.lval(input, ctx2).result;
+      if (output !== undefined) {
+
+        if (typeof result !== "object") {
+          expect(result).toBe(output);
+        } else {
+          expect(JSON.stringify(result)).toBe(JSON.stringify(output));
+        }
+      }
+      expect(typeof result).toBe(typeOf);
     });
   });
 });

@@ -5,7 +5,7 @@ import doc from "../doc";
 import parser, { Context } from "../index";
 
 const $str = new parser
-  .SentenceParser({includeBuiltIns: true})
+  .TemplateParser({includeBuiltIns: true})
   .builtinFunctions()
   .$str;
 
@@ -22,7 +22,7 @@ Object.entries(doc).forEach(([$name, { examples }]) => {
         }
       };
       test(`${text}; ctx=${$str(input.context?.vars)}`, () => {
-        const sparser = new parser.SentenceParser({includeBuiltIns: true}, ctx);
+        const sparser = new parser.TemplateParser({includeBuiltIns: true}, ctx);
         const result = sparser.parse(input.text).result;
         if (typeof output === "function") {
           expect(output(result)).toBe(true);

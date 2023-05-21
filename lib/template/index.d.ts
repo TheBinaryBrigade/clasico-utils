@@ -1,20 +1,24 @@
 import { type EvalContext, type EvalWarningMeta } from "./eval";
 import { AnyFn, type TypeOf } from "../@types";
 export type ParserLogsLevel = "WARN" | "ERROR";
-export type ParserLogs = EvalWarningMeta & {
+export type ParserLog = EvalWarningMeta & {
     level: "WARN" | "ERROR";
     lineNumber: number;
     error?: Error;
 };
+export type ParseTemplateResult = {
+    result: string;
+    logs: ParserLog[];
+};
 export type Context = EvalContext;
-export type SentenceParserOptions = {
+export type TemplateParserOptions = {
     includeBuiltIns: boolean;
 };
-declare class SentenceParser {
-    options: SentenceParserOptions;
+declare class TemplateParser {
+    options: TemplateParserOptions;
     ctx: Context;
-    logs: ParserLogs[];
-    constructor(options?: SentenceParserOptions, ctx?: Context, logs?: ParserLogs[]);
+    logs: ParserLog[];
+    constructor(options?: TemplateParserOptions, ctx?: Context, logs?: ParserLog[]);
     builtinFunctions(): {
         $if: (condition: boolean, ifTrue: any, ifFalse: any) => any;
         $abs: (x: any) => number;
@@ -57,10 +61,7 @@ declare class SentenceParser {
     addVar(name: string, value: any): void;
     addFunction(name: string, cb: AnyFn): void;
     clearLogs(): void;
-    parse(sentence: string): {
-        result: string;
-        logs: ParserLogs[];
-    };
+    parse(sentence: string): ParseTemplateResult;
 }
 declare const ____builtins: () => {
     $if: (condition: boolean, ifTrue: any, ifFalse: any) => any;
@@ -101,6 +102,12 @@ declare const ____builtins: () => {
 export type BuiltInFunction = ReturnType<typeof ____builtins>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 declare const _default: {
-    SentenceParser: typeof SentenceParser;
+    /** @deprecated change `SentenceParser` to `TemplateParser`  */
+    SentenceParser: typeof TemplateParser;
+    TemplateParser: typeof TemplateParser;
+    lval: <T>(sentence: string, ctx?: EvalContext | undefined) => {
+        result: string | number | boolean | Date | T | null | undefined;
+        logs: ParserLog[];
+    };
 };
 export default _default;

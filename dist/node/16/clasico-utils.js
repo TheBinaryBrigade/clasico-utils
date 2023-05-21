@@ -50,21 +50,49 @@ var between = (date, startDate, endDate) => {
   return date >= startDate && date <= endDate;
 };
 var parse = (input) => {
-  try {
-    const inputDate = new Date(input);
-    const isValidDate = !isNaN(inputDate.getTime());
-    if (isValidDate) {
-      return inputDate;
-    }
-  } catch (ignored) {
+  const inputDate = new Date(input);
+  const isValidDate = !isNaN(inputDate.getTime());
+  if (isValidDate) {
+    return inputDate;
   }
   return null;
+};
+var timeSince = (date) => {
+  const seconds = Math.floor((+/* @__PURE__ */ new Date() - +date) / 1e3);
+  let interval = seconds / 31536e3;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "year" : "years"];
+  }
+  interval = seconds / 2592e3;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "month" : "months"];
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "day" : "days"];
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "hour" : "hours"];
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "minute" : "minutes"];
+  }
+  interval = Math.floor(seconds);
+  return [interval, interval === 1 ? "second" : "seconds"];
 };
 var date_default = {
   // subtractSeconds,
   parse,
   isWeekend,
-  between
+  between,
+  timeSince
 };
 
 // src/check/index.ts
@@ -909,7 +937,7 @@ var inflection_default = {
   SINGULARS
 };
 
-// src/eval/eval.ts
+// src/template/eval.ts
 var __SAVE = "$B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B_B";
 var BIN_PREC = {
   "0": "PREC0",
@@ -1278,7 +1306,7 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
   }
 };
 
-// src/eval/index.ts
+// src/template/index.ts
 var fixString = (x) => {
   if (check_default.isString(x)) {
     if (x.startsWith('"') && x.endsWith('"')) {
@@ -1304,11 +1332,11 @@ var wrapCtxFuncs = (mut_ctx) => {
   }
   return mut_ctx;
 };
-var parseSentence = (sentence, _ctx = {}) => {
+var parseTemplate = (sentence, _ctx = {}) => {
   const logs = [];
   const result = sentence.split("\n").map((line, index) => {
     try {
-      const parsed = _parseSentence(line, _ctx);
+      const parsed = _parseTemplate(line, _ctx);
       logs.push(...parsed.warnings.map((wranMeta) => ({
         lineNumber: index + 1,
         level: "WARN",
@@ -1319,7 +1347,7 @@ var parseSentence = (sentence, _ctx = {}) => {
       if (error.message.toLowerCase().startsWith("no primary expression starts with ')'") || error.message.startsWith("Expected ')' but got '")) {
         const modded = line.replace(/(\W)\(([^)]+)\)/g, "$1 <parentheses> $2 </parentheses>");
         try {
-          const parsed = _parseSentence(modded, _ctx);
+          const parsed = _parseTemplate(modded, _ctx);
           logs.push(...parsed.warnings.map((wranMeta) => ({
             lineNumber: index + 1,
             level: "WARN",
@@ -1354,7 +1382,7 @@ var parseSentence = (sentence, _ctx = {}) => {
     logs
   };
 };
-var _parseSentence = (sentence, _ctx = {}) => {
+var _parseTemplate = (sentence, _ctx = {}) => {
   var _a;
   const warnings = [];
   const ctx = wrapCtxFuncs({
@@ -1430,7 +1458,7 @@ var _parseSentence = (sentence, _ctx = {}) => {
     warnings
   };
 };
-var SentenceParser = class {
+var TemplateParser = class {
   constructor(options = {
     includeBuiltIns: true
   }, ctx = {}, logs = []) {
@@ -1705,105 +1733,59 @@ var SentenceParser = class {
     this.logs = [];
   }
   parse(sentence) {
-    const result = parseSentence(sentence, this.ctx || {});
+    const result = parseTemplate(sentence, this.ctx || {});
     this.logs.push(...result.logs);
     return result;
   }
 };
-var ____builtins = new SentenceParser({ includeBuiltIns: false }).builtinFunctions;
-var eval_default = {
-  SentenceParser
+var _lvalParseString = (str) => {
+  if (check_default.isNumeric(str)) {
+    return parseFloat(str);
+  } else if (check_default.isValidBoolean(str)) {
+    return check_default.isTrue(str);
+  } else if (date_default.parse(str) !== null) {
+    return new Date(str);
+  } else if (str === "undefined") {
+    return void 0;
+  } else if (str === "null") {
+    return null;
+  }
+  try {
+    return JSON.parse(str);
+  } catch (err) {
+    return str;
+  }
 };
-
-// src/std/index.ts
-var std_exports = {};
-__export(std_exports, {
-  Option: () => Option,
-  Result: () => Result
-});
-var isError2 = (x) => {
-  return check_default.isError(
-    x,
-    /*error like = */
-    false
-  );
+var lval = (sentence, ctx) => {
+  const r = parseTemplate(sentence, ctx || {});
+  const expr = _lvalParseString(r.result);
+  return {
+    result: expr,
+    logs: r.logs
+  };
 };
-var Option = class {
-};
-var Result = class {
-  constructor(fn, result, error, ran = false) {
-    this.fn = fn;
-    this.result = result;
-    this.error = error;
-    this.ran = ran;
-  }
-  match(callbacks) {
-    const isErr = this.isErr();
-    const isOk = this.isOk();
-    if (isOk && this.result !== void 0) {
-      callbacks.onOk(this.result);
-    } else if (isErr && this.error !== void 0) {
-      callbacks.onError(this.error);
-    } else if (callbacks.debug) {
-      callbacks.debug(this.result, this.error);
-    }
-    return [this.result, this.error];
-  }
-  run(...args) {
-    this.ran = true;
-    try {
-      const result = this.fn(...args);
-      if (isError2(result)) {
-        this.error = result;
-      } else {
-        this.result = result;
-      }
-    } catch (error) {
-      this.error = error;
-    }
-    return this;
-  }
-  isErr() {
-    if (!this.ran) {
-      return null;
-    }
-    const noError = this.error === void 0;
-    const noResult = this.result === void 0;
-    if (noResult && noError) {
-      return null;
-    }
-    if (noResult && !noError) {
-      return true;
-    }
-    return false;
-  }
-  isOk() {
-    if (!this.ran) {
-      return null;
-    }
-    const noError = this.error === void 0;
-    const noResult = this.result === void 0;
-    if (noResult && noError) {
-      return null;
-    }
-    if (noError) {
-      return true;
-    }
-    return false;
-  }
+var ____builtins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
+var template_default = {
+  /** @deprecated change `SentenceParser` to `TemplateParser`  */
+  SentenceParser: TemplateParser,
+  TemplateParser,
+  lval
 };
 
 // src/index.ts
 var src_default = {
   check: check_default,
-  parser: eval_default,
+  /**
+   * @deprecated change `parser` to `template`
+   */
+  parser: template_default,
+  template: template_default,
   inflection: inflection_default,
   utils: utils_default,
   date: date_default,
   fuzzy: fuzzy_default,
   array: array_default,
   diff: diff_default,
-  std: std_exports,
   ...types_exports
 };
 //# sourceMappingURL=clasico-utils.js.map

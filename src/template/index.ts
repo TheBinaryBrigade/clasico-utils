@@ -3,6 +3,7 @@
 import check from "../check";
 import { type EvalContext, type ContextFuncs, type EvalWarningMeta, Lexer, parseExpr, runExpr } from "./eval";
 import { AnyFn, type TypeOf } from "../@types";
+import date from "../date";
 
 const fixString = (x: string) => {
   if (check.isString(x)) {
@@ -36,10 +37,15 @@ const wrapCtxFuncs = (mut_ctx: EvalContext) => {
 };
 
 export type ParserLogsLevel = "WARN" | "ERROR";
-export type ParserLogs = EvalWarningMeta & {
+export type ParserLog = EvalWarningMeta & {
   level: "WARN" | "ERROR",
   lineNumber: number,
   error?: Error,
+};
+
+export type ParseTemplateResult = {
+  result: string,
+  logs: ParserLog[],
 };
 
 /**
@@ -48,16 +54,16 @@ export type ParserLogs = EvalWarningMeta & {
  * @param _ctx context
  * @returns evaludated sentence
  *
- * @deprecated use `class SentenceParser`
+ * @deprecated use `class TemplateParser` or `lval` function
  */
-const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
-  const logs: ParserLogs[] = [];
+const parseTemplate = (sentence: string, _ctx: EvalContext = {}): ParseTemplateResult => {
+  const logs: ParserLog[] = [];
 
   const result = sentence
     .split("\n")
     .map((line, index) => {
       try {
-        const parsed = _parseSentence(line, _ctx);
+        const parsed = _parseTemplate(line, _ctx);
         logs.push(...parsed.warnings.map((wranMeta) => ({
           lineNumber: index + 1,
           level: "WARN" as const,
@@ -71,7 +77,7 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
           const modded = line.replace(/(\W)\(([^)]+)\)/g, "$1 <parentheses> $2 </parentheses>");
 
           try {
-            const parsed = _parseSentence(modded, _ctx);
+            const parsed = _parseTemplate(modded, _ctx);
             logs.push(...parsed.warnings.map((wranMeta) => ({
               lineNumber: index + 1,
               level: "WARN" as const,
@@ -115,7 +121,7 @@ const parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
   };
 };
 
-const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
+const _parseTemplate = (sentence: string, _ctx: EvalContext = {}) => {
   const warnings: EvalWarningMeta[] = [];
   const ctx = wrapCtxFuncs({/*clone*/..._ctx });
   const lex = new Lexer(sentence);
@@ -191,16 +197,16 @@ const _parseSentence = (sentence: string, _ctx: EvalContext = {}) => {
 };
 
 export type Context = EvalContext;
-export type SentenceParserOptions = {
+export type TemplateParserOptions = {
   includeBuiltIns: boolean,
 };
-class SentenceParser {
+class TemplateParser {
   constructor(
-    public options: SentenceParserOptions = {
+    public options: TemplateParserOptions = {
       includeBuiltIns: true,
     },
     public ctx: Context = {},
-    public logs: ParserLogs[] = [],
+    public logs: ParserLog[] = [],
   ) {
 
     if (this.options.includeBuiltIns) {
@@ -528,17 +534,49 @@ class SentenceParser {
     this.logs = [];
   }
 
-  parse(sentence: string) {
-    const result = parseSentence(sentence, this.ctx || {});
+  parse(sentence: string): ParseTemplateResult {
+    const result = parseTemplate(sentence, this.ctx || {});
     this.logs.push(...result.logs);
     return result;
   }
 }
 
-const ____builtins = new SentenceParser({ includeBuiltIns: false }).builtinFunctions;
+const _lvalParseString = <T>(str: string) => {
+  if (check.isNumeric(str)) {
+    return parseFloat(str);
+  } else if (check.isValidBoolean(str)) {
+    return check.isTrue(str);
+  } else if (date.parse(str) !== null) {
+    return new Date(str);
+  } else if (str === "undefined") {
+    return undefined;
+  } else if (str === "null") {
+    return null;
+  }
+
+  try {
+    return JSON.parse(str) as T;
+  } catch(err) {
+    return str;
+  }
+};
+
+const lval = <T>(sentence: string, ctx?: Context) => {
+  const r = parseTemplate(sentence, ctx || {});
+  const expr = _lvalParseString<T>(r.result);
+  return {
+    result: expr,
+    logs: r.logs,
+  };
+};
+
+const ____builtins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
 export type BuiltInFunction = ReturnType<typeof ____builtins>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 
 export default {
-  SentenceParser,
+  /** @deprecated change `SentenceParser` to `TemplateParser`  */
+  SentenceParser: TemplateParser,
+  TemplateParser,
+  lval,
 };

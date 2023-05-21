@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import doc, { BuiltinDoc, BuiltinExample } from "./src/eval/doc";
-import parser from './src/eval';
+import doc, { BuiltinDoc, BuiltinExample } from "./src/template/doc";
+import parser from './src/template';
 
-const $str = new parser.SentenceParser({includeBuiltIns:true}).builtinFunctions().$str;
+const $str = new parser.TemplateParser({ includeBuiltIns: true }).builtinFunctions().$str;
 
 const writeFile = (filename: string, content: string) => {
     fs.writeFile(filename, content, (err) => {
@@ -27,7 +27,7 @@ type WrapCode = {
 
 type WrapCodeFn = (_: WrapCode) => string;
 
-const wrapCode: WrapCodeFn = ({content, lang = "", wrap = "```" }) => {
+const wrapCode: WrapCodeFn = ({ content, lang = "", wrap = "```" }) => {
     const nl = wrap === "```" ? "\n" : "";
     if (!lang) {
         lang = "";
@@ -36,17 +36,17 @@ const wrapCode: WrapCodeFn = ({content, lang = "", wrap = "```" }) => {
 };
 
 const inlineCode = (content: string) => {
-    return wrapCode({content, wrap: '`'});
+    return wrapCode({ content, wrap: '`' });
 };
 
 const blockCode = (content: string, lang?: WrapCodeLang) => {
-    return wrapCode({content, lang, wrap: '```'});
+    return wrapCode({ content, lang, wrap: '```' });
 };
 
 const examplesView = (examples: BuiltinExample[]) => {
 
     return examples
-        .map(({ input: { text, context }, output, notes}, idx) => {
+        .map(({ input: { text, context }, output, notes }, idx) => {
             return [
                 "#### Example No." + (idx + 1).toString(),
                 "\n\n",
@@ -70,7 +70,7 @@ const createCollapsable = (key: string, doc: BuiltinDoc) => {
 
 ${doc.description}
     `.trim();
- 
+
     // EXAMPLES ------------------------------------------------
     const examples = doc.examples ? `
 <details>
@@ -117,8 +117,14 @@ writeFile(evalReadme, [
 
 const usage = readFile("./examples/eval/usage.ts");
 const inflectionUsage = readFile("./examples/inflection/usage.ts");
-const readmet = readFile(readmeTemplateFilename)
+
+let readme = readFile(readmeTemplateFilename)
     .replace("{{EVAL_USAGE_EXAMPLE}}", blockCode(usage, "ts"))
-    .replace("{{INFLECTION_USAGE_EXAMPLE}}", blockCode(inflectionUsage, "ts"))
-    .replace("../../src/index", "clasico");
-writeFile(targetReadme, readmeWarn + "\n\n" + readmet)
+    .replace("{{INFLECTION_USAGE_EXAMPLE}}", blockCode(inflectionUsage, "ts"));
+
+
+while (readme.includes("../../src/index")) {
+    readme = readme.replace("../../src/index", "clasico");
+}
+
+writeFile(targetReadme, readmeWarn + "\n\n" + readme);

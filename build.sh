@@ -12,7 +12,9 @@ $NPM run example:utils:hashcode
 $NPM run example:utils:capitalize
 
 # Run unit tests
-$NPM test  # :o fast!
+$NPM test || exit 1
+
+rm -rf ./lib ./dist
 
 # Build docs
 $NPM run build:eval:doc
@@ -26,6 +28,7 @@ $NPM run build:node12
 $NPM run build:node14
 $NPM run build:node16
 $NPM run build:node18
+$NPM run build:node20
 
 # Build npm pacakge
 $NPM run build:lib

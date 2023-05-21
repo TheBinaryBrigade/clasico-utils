@@ -1,6 +1,6 @@
 import clasico from "../../src/index";
 
-const parser = new clasico.parser.SentenceParser({
+const parser = new clasico.template.SentenceParser({
   includeBuiltIns: true,
 });
 

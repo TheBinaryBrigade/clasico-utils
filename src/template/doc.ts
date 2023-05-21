@@ -1,6 +1,6 @@
 
 
-import parser, { BuiltInFunctionKey, Context } from "./index";
+import template, { BuiltInFunctionKey, Context } from "./index";
 import fuzzy from "../fuzzy";
 
 export type BuiltinExample = {
@@ -1445,7 +1445,7 @@ const docs: BuiltinDocs = {
 
 
 (() => {
-  const builtins = new parser.SentenceParser().builtinFunctions();
+  const builtins = new template.TemplateParser().builtinFunctions();
   const keys = Object.keys(builtins) as BuiltInFunctionKey[];
   keys.forEach((key) => {
     if (!docs[key]) {

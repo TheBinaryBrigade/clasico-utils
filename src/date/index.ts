@@ -15,16 +15,64 @@ const between = (date: Date, startDate: Date, endDate: Date) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parse = (input: any): Date | null => {
-  try {
-    const inputDate = new Date(input);
-    const isValidDate = !isNaN(inputDate.getTime());
+  const inputDate = new Date(input);
+  const isValidDate = !isNaN(inputDate.getTime());
 
-    if (isValidDate) {
-      return inputDate;
-    }
-  } catch (ignored) { /* empty */ }
+  if (isValidDate) {
+    return inputDate;
+  }
 
   return null;
+};
+
+export type TimeUnit =
+  "years"
+  | "year"
+  | "months"
+  | "month"
+  | "days"
+  | "day"
+  | "hours"
+  | "hour"
+  | "minutes"
+  | "minute"
+  | "seconds"
+  | "second";
+
+const timeSince = (date: Date): [number, TimeUnit] => {
+  const seconds = Math.floor((+new Date() - +date) / 1000);
+  let interval = seconds / 31536000;
+
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "year" : "years"];
+  }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "month" : "months"];
+  }
+
+  interval = seconds / 86400;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "day" : "days"];
+  }
+
+  interval = seconds / 3600;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "hour" : "hours"];
+  }
+
+  interval = seconds / 60;
+  if (interval > 1) {
+    interval = Math.floor(interval);
+    return [interval, interval === 1 ? "minute" : "minutes"];
+  }
+
+  interval = Math.floor(seconds);
+  return [interval, interval === 1 ? "second" : "seconds"];
 };
 
 export default {
@@ -32,4 +80,5 @@ export default {
   parse,
   isWeekend,
   between,
+  timeSince,
 };
