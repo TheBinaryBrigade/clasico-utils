@@ -378,7 +378,7 @@ function* zip(...args) {
       return len;
     }
     return acc;
-  }, 0);
+  }, Infinity);
   for (let i = 0; i < min; ++i) {
     yield args.map((arr) => arr[i]);
   }
