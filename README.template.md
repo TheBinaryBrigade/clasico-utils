@@ -32,9 +32,15 @@ const parser = new clasico.parser.SentenceParser({
 </script>
 ```
 
-## APIs
+## APIs-
 
-### Permissive Sentence Parser
+### Zip
+
+#### Usage
+
+{{ZIP_USAGE_EXAMPLE}}
+
+### Template
 
 #### Usage
 
@@ -50,7 +56,7 @@ Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 {{INFLECTION_USAGE_EXAMPLE}}
 
-### Diff Utils
+<!-- ### Diff Utils
 
 #### Usage
 
@@ -70,8 +76,4 @@ Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 #### Usage
 
-{{MISC_USAGE_EXAMPLE}}
-
-## Goals
-
-The goal of this package is to be dependency free (or at least close to that).
+{{MISC_USAGE_EXAMPLE}} -->

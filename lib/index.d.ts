@@ -265,6 +265,7 @@ declare const _default: {
         topSimilar: <T_1 = string>(value: T_1, values: T_1[], key: (obj: T_1) => string, topK?: number, thresh?: number, gramSize?: number) => T_1[];
     };
     array: {
+        zip: typeof import("./array/zip").zip;
         BisectArray: typeof import("./array/sorted").BisectArray;
         ReverseSortedArray: typeof import("./array/sorted").ReverseSortedArray;
         SortedArray: typeof import("./array/sorted").SortedArray;

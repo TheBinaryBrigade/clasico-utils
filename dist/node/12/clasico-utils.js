@@ -370,9 +370,24 @@ var SortedCompareArray = class extends BisectArray {
   }
 };
 
+// src/array/zip.ts
+function* zip(...args) {
+  const min = args.reduce((acc, curr) => {
+    const len = curr.length;
+    if (len < acc) {
+      return len;
+    }
+    return acc;
+  }, 0);
+  for (let i = 0; i < min; ++i) {
+    yield args.map((arr) => arr[i]);
+  }
+}
+
 // src/array/index.ts
 var array_default = {
-  ...sorted_exports
+  ...sorted_exports,
+  zip
 };
 
 // src/diff/index.ts

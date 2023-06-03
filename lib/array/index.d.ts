@@ -1,5 +1,7 @@
 import * as sorted from "./sorted";
+import { zip } from "./zip";
 declare const _default: {
+    zip: typeof zip;
     BisectArray: typeof sorted.BisectArray;
     ReverseSortedArray: typeof sorted.ReverseSortedArray;
     SortedArray: typeof sorted.SortedArray;

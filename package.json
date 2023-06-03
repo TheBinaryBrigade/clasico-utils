@@ -30,7 +30,8 @@
     "example:eval:usage": "ts-node ./examples/eval/usage.ts",
     "example:inflection:usage": "ts-node ./examples/inflection/usage.ts",
     "example:utils:hashcode": "ts-node ./examples/utils/hashCode.ts",
-    "example:utils:capitalize": "ts-node ./examples/utils/capitalize.ts"
+    "example:utils:capitalize": "ts-node ./examples/utils/capitalize.ts",
+    "example:array:zip": "ts-node ./examples/array/zip.ts"
   },
   "author": "Dustin Diaz",
   "license": "MIT",
