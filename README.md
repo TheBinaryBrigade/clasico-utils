@@ -76,7 +76,7 @@ for (const [e1, e2] of clasico.array.zip(arr1, arr2)) {
 
 #### Usage
 
-Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-utils/blob/main/src/eval/README.md#table-of-contens)
+Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-utils/blob/main/src/template/README.md#table-of-contens)
 
 Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
