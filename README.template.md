@@ -40,6 +40,19 @@ const parser = new clasico.parser.SentenceParser({
 
 {{ZIP_USAGE_EXAMPLE}}
 
+### NLP
+
+#### Remove StopWords
+
+{{NLP_REMOVE_STOPWORDS_USAGE_EXAMPLE}}
+
+
+### Inflection Port
+
+#### Usage
+
+{{INFLECTION_USAGE_EXAMPLE}}
+
 ### Template
 
 #### Usage
@@ -49,12 +62,6 @@ Builtin Functions: [Documentation](https://github.com/TheBinaryBrigade/clasico-u
 Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 {{EVAL_USAGE_EXAMPLE}}
-
-### Inflection Port
-
-#### Usage
-
-{{INFLECTION_USAGE_EXAMPLE}}
 
 <!-- ### Diff Utils
 

@@ -13,6 +13,7 @@ if (test.each === undefined) {
       });
     };
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   test.each = test_each_fill as any;
 }
 

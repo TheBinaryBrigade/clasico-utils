@@ -118,10 +118,12 @@ writeFile(evalReadme, [
 const usage = readFile("./examples/eval/usage.ts");
 const inflectionUsage = readFile("./examples/inflection/usage.ts");
 const zipUsage = readFile("./examples/array/zip.ts");
+const removeStopWordsUsage = readFile("./examples/nlp/stopwords.ts");
 
 let readme = readFile(readmeTemplateFilename)
     .replace("{{EVAL_USAGE_EXAMPLE}}", blockCode(usage, "ts"))
     .replace("{{ZIP_USAGE_EXAMPLE}}", blockCode(zipUsage, "ts"))
+    .replace("{{NLP_REMOVE_STOPWORDS_USAGE_EXAMPLE}}", blockCode(removeStopWordsUsage, "ts"))
     .replace("{{INFLECTION_USAGE_EXAMPLE}}", blockCode(inflectionUsage, "ts"));
 
 while (readme.includes("../../src/index")) {

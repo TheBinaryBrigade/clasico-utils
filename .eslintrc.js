@@ -53,7 +53,7 @@ module.exports = {
       "version": "18.2.0", // React version. "detect" automatically picks the version you have installed.
       // You can also use `16.0`, `16.3`, etc, if you want to override the detected value.
       // It will default to "latest" and warn if missing, and to "detect" in the future
-      "flowVersion": "detect" // Flow version
+      // "flowVersion": "detect" // Flow version
     },
     "propWrapperFunctions": [
       // The names of any function used to wrap propTypes, e.g. `forbidExtraProps`. If this isn't set, any propTypes wrapped in a function will be skipped.

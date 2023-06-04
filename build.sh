@@ -1,18 +1,19 @@
-set -e -o xtrace
 
 # NPM=bun
 NPM=npm
 
+set -e -o xtrace
+
 # Auto fix liniting issues
+$NPM run lint
 $NPM run lint:fix
 
 # Run examples
-$NPM run example:eval:usage &
-$NPM run example:utils:hashcode &
-$NPM run example:utils:capitalize &
+$NPM run example:eval:usage
+$NPM run example:utils:hashcode
+$NPM run example:utils:capitalize
 $NPM run example:array:zip
-
-wait
+$NPM run example:nlp:stopwords
 
 # Run unit tests
 $NPM test || exit 1
@@ -23,7 +24,7 @@ rm -rf ./lib ./dist
 $NPM run build:eval:doc &
 
 # Build web distribution
-$NPM run build:web &
+$NPM run build:web
 
 # Build node distributions
 $NPM run build:node10 &
