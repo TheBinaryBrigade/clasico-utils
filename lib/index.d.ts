@@ -280,7 +280,8 @@ declare const _default: {
         compare: (a: string, b: string) => import("./diff").DiffResult;
     };
     nlp: {
-        removeStopWords: (input: string) => string;
+        isStopWord: (word: string, lang?: "english") => boolean;
+        removeStopWords: (input: string, lang?: "english") => string;
     };
 };
 export default _default;

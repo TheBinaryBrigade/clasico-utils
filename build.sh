@@ -58,3 +58,7 @@ git add lib/*
 git add checksums.txt
 
 npm pack
+
+echo ""
+echo "Registry: https://www.npmjs.com/package/clasico"
+echo "SC: https://github.com/TheBinaryBrigade/clasico-utils#readme"
