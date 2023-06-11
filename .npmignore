@@ -1,5 +1,7 @@
 /.gitignore
 /.github
+/.vscode
+/.idea
 /coverage
 /docs
 /node_modules

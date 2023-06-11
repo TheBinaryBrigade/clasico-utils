@@ -14,6 +14,7 @@ $NPM run example:utils:hashcode
 $NPM run example:utils:capitalize
 $NPM run example:array:zip
 $NPM run example:nlp:stopwords
+$NPM run example:nlp:stemmer
 
 # Run unit tests
 $NPM test || exit 1
