@@ -1,10 +1,11 @@
+import { AnyFn } from "../@types";
 declare const _default: {
     isNil: (x: unknown) => x is null | undefined;
     isNumber: (x: unknown) => x is number;
     isBigInt: (x: unknown) => x is bigint;
     isString: (x: unknown) => x is string;
     isBoolean: (x: unknown) => x is boolean;
-    isFunction: (x: unknown) => x is Function;
+    isFunction: (x: unknown) => x is AnyFn;
     isObject: (x: unknown) => x is object;
     isNumeric: (x: unknown) => boolean;
     isValidBoolean: (x: any) => boolean;

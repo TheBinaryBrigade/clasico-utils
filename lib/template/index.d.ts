@@ -28,7 +28,7 @@ declare class TemplateParser {
         $float: (x: any) => number;
         $str: (x: any) => string;
         $format: (fmt: string, ...args: any[]) => string;
-        $int: (x: any) => number;
+        $int: (x: any, radix: any) => number;
         $isnil: (x: any) => boolean;
         $isinstance: (x: any, ...types: TypeOf[]) => boolean;
         $tisstring: (x: any) => boolean;
@@ -63,7 +63,7 @@ declare class TemplateParser {
     clearLogs(): void;
     parse(sentence: string): ParseTemplateResult;
 }
-declare const ____builtins: () => {
+declare const ignoreThisBuiltins: () => {
     $if: (condition: boolean, ifTrue: any, ifFalse: any) => any;
     $abs: (x: any) => number;
     $all: (...args: any[]) => boolean;
@@ -72,7 +72,7 @@ declare const ____builtins: () => {
     $float: (x: any) => number;
     $str: (x: any) => string;
     $format: (fmt: string, ...args: any[]) => string;
-    $int: (x: any) => number;
+    $int: (x: any, radix: any) => number;
     $isnil: (x: any) => boolean;
     $isinstance: (x: any, ...types: TypeOf[]) => boolean;
     $tisstring: (x: any) => boolean;
@@ -99,7 +99,7 @@ declare const ____builtins: () => {
     $upper: (x: any) => string;
     $now: () => Date;
 };
-export type BuiltInFunction = ReturnType<typeof ____builtins>;
+export type BuiltInFunction = ReturnType<typeof ignoreThisBuiltins>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 declare const _default: {
     /** @deprecated change `SentenceParser` to `TemplateParser`  */

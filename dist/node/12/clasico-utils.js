@@ -155,8 +155,8 @@ var isValidBoolean = (x) => {
       0,
       "1",
       "0",
-      new Boolean(true),
-      new Boolean(false),
+      Boolean(true),
+      Boolean(false),
       true,
       false
     ];
@@ -165,7 +165,7 @@ var isValidBoolean = (x) => {
     }
     if (isStr) {
       x = x.trim();
-      const len = Math.max(...alts.map((x2) => x2.toString().length));
+      const len = Math.max(...alts.map((y) => y.toString().length));
       if (x.length <= len && alts.includes(x.toLowerCase())) {
         return true;
       }
@@ -192,7 +192,7 @@ var isTrue = (x) => {
       "true",
       "1",
       1,
-      new Boolean(true)
+      Boolean(true)
     ];
     if (alts.includes(x)) {
       return true;
@@ -206,9 +206,9 @@ var isTrue = (x) => {
       }
     }
     if (isString(x)) {
-      const y = x.trim();
-      const len = Math.max(...alts.map((x2) => x2.toString().length));
-      if (y.length <= len && alts.includes(y.toLowerCase())) {
+      const x2 = x.trim();
+      const len = Math.max(...alts.map((y) => y.toString().length));
+      if (x2.length <= len && alts.includes(x2.toLowerCase())) {
         return true;
       }
     }
@@ -228,7 +228,7 @@ var isDate = (x) => {
   if (isNil(x)) {
     return false;
   }
-  if (isString(x) && typeof x === "string") {
+  if (isString(x)) {
     x = x.trim();
     if (!x) {
       return false;
@@ -250,10 +250,7 @@ var isError = (x, errorLike = false) => {
   if (x instanceof Error) {
     return true;
   }
-  if (errorLike && x && x.stack && x.message) {
-    return true;
-  }
-  return false;
+  return !!(errorLike && x && x.stack && x.message);
 };
 var check_default = {
   isNil,
@@ -607,11 +604,11 @@ var topSimilar = (value, values, key, topK = 5, thresh = 0.35, gramSize = 2) => 
   }
   const keysim = /* @__PURE__ */ new Map();
   const arr = new ReverseSortedArray((x) => {
-    const value2 = key(x);
-    const cachedScore = keysim.get(value2);
-    const score = cachedScore || similarity(str1, value2, gramSize);
+    const v = key(x);
+    const cachedScore = keysim.get(v);
+    const score = cachedScore || similarity(str1, v, gramSize);
     if (cachedScore === void 0) {
-      keysim.set(value2, score);
+      keysim.set(v, score);
     }
     return score;
   });
@@ -713,8 +710,8 @@ var PLURALS = [
   [/(quiz)$/i, "$1zes"],
   [/^(oxen)$/i, "$1"],
   [/^(ox)$/i, "$1en"],
-  [/(m|l)ice$/i, "$1ice"],
-  [/(m|l)ouse$/i, "$1ice"],
+  [/([ml])ice$/i, "$1ice"],
+  [/([ml])ouse$/i, "$1ice"],
   [/(passer)s?by$/i, "$1sby"],
   [/(matr|vert|ind)(?:ix|ex)$/i, "$1ices"],
   [/(x|ch|ss|sh)$/i, "$1es"],
@@ -748,7 +745,7 @@ var SINGULARS = [
   [/(shoe)s$/i, "$1"],
   [/(o)es$/i, "$1"],
   [/(bus)(es)?$/i, "$1"],
-  [/(m|l)ice$/i, "$1ouse"],
+  [/([ml])ice$/i, "$1ouse"],
   [/(x|ch|ss|sh)es$/i, "$1"],
   [/(m)ovies$/i, "$1ovie"],
   [/(s)eries$/i, "$1eries"],
@@ -793,7 +790,7 @@ var _irregular = (singular, plural) => {
   const singularInsert = (index, elem) => {
     insert(SINGULARS, index, elem);
   };
-  if (singular[0].toUpperCase() == plural[0].toUpperCase()) {
+  if (singular[0].toUpperCase() === plural[0].toUpperCase()) {
     pluralInsert(0, [
       `(${singular[0]})${singular.slice(1)}$`,
       "$1" + plural.slice(1)
@@ -833,12 +830,11 @@ var _irregular = (singular, plural) => {
     ]);
   }
 };
-var camelize = (string, uppercaseFirstLetter = true) => {
-  const camelCase = dasherize(string).replace(/-/, " ").replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+var camelize = (str, uppercaseFirstLetter = true) => {
+  const camelCase = dasherize(str).replace(/-/, " ").replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
     return index === 0 ? word.toLowerCase() : word.toUpperCase();
   }).replace(/\s+/g, "");
-  const result = uppercaseFirstLetter ? camelCase.charAt(0).toUpperCase() + camelCase.slice(1) : camelCase;
-  return result;
+  return uppercaseFirstLetter ? camelCase.charAt(0).toUpperCase() + camelCase.slice(1) : camelCase;
 };
 var dasherize = (word) => {
   return word.replace(/_/g, "-");
@@ -854,9 +850,9 @@ var humanize = (word) => {
   });
   return word;
 };
-var ordinal = (number) => {
-  number = typeof number === "number" ? number : parseInt(number);
-  const n = Math.abs(number);
+var ordinal = (num) => {
+  num = typeof num === "number" ? num : parseInt(num, 10);
+  const n = Math.abs(num);
   if ([11, 12, 13].includes(n % 100)) {
     return "th";
   } else {
@@ -872,11 +868,11 @@ var ordinal = (number) => {
     }
   }
 };
-var ordinalize = (number) => {
-  return number.toString() + ordinal(number);
+var ordinalize = (num) => {
+  return num.toString() + ordinal(num);
 };
-var parameterize = (string, separator = "-") => {
-  const cleaned = transliterate(string);
+var parameterize = (str, separator = "-") => {
+  const cleaned = transliterate(str);
   let param = cleaned.replace(/[^\d\w-]+/gmi, separator);
   if (separator !== "") {
     while (param.startsWith(separator)) {
@@ -926,10 +922,10 @@ var tableize = (word) => {
   return pluralize(underscore(word));
 };
 var titleize = (word) => {
-  return humanize(underscore(word)).split(/\s+/).map((word2) => word2.charAt(0).toUpperCase() + word2.slice(1)).join(" ");
+  return humanize(underscore(word)).split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 };
-var transliterate = (string) => {
-  const normalized = string.normalize("NFKD");
+var transliterate = (str) => {
+  const normalized = str.normalize("NFKD");
   return normalized.replace(/[\u0300-\u036f]/g, "").replace(/[^\x00-\x7F]/g, "").trim();
 };
 var underscore = (word) => {
@@ -1062,7 +1058,7 @@ var Lexer = class {
   }
   next() {
     this.src = this.src.trimStart();
-    if (this.src.length == 0) {
+    if (this.src.length === 0) {
       return null;
     }
     const isTokenBreak = (c) => {
@@ -1073,23 +1069,23 @@ var Lexer = class {
     const isSOFStr = isDouble || isSingle;
     const strEnd = this.src.indexOf(isDouble ? '"' : "'", 1);
     if (isSOFStr && strEnd > 0) {
-      const token2 = this.src.slice(0, strEnd + 1);
+      const tok = this.src.slice(0, strEnd + 1);
       this.src = this.src.slice(strEnd + 1);
-      this.hist.push(token2);
-      return token2;
+      this.hist.push(tok);
+      return tok;
     }
     if (isTokenBreak(this.src[0])) {
-      const token2 = this.src[0];
+      const tok = this.src[0];
       this.src = this.src.slice(1);
-      this.hist.push(token2);
-      return token2;
+      this.hist.push(tok);
+      return tok;
     }
     for (let i = 0; i < this.src.length; ++i) {
-      if (isTokenBreak(this.src[i]) || this.src[i] == " ") {
-        const token2 = this.src.slice(0, i);
+      if (isTokenBreak(this.src[i]) || this.src[i] === " ") {
+        const tok = this.src.slice(0, i);
         this.src = this.src.slice(i);
-        this.hist.push(token2);
-        return token2;
+        this.hist.push(tok);
+        return tok;
       }
     }
     const token = this.src;
@@ -1173,7 +1169,7 @@ var parsePrimary = (lexer) => {
         if (nextToken === __SAVE) {
           nextToken = lexer.next();
         }
-        while (nextToken == ",") {
+        while (nextToken === ",") {
           args.push(parseExpr(lexer));
           nextToken = lexer.next();
           if (nextToken === __SAVE) {
@@ -1221,7 +1217,7 @@ var parseExpr = (lexer, prec = BIN_PREC.PREC0) => {
   const lhs = parseExpr(lexer, prec + 1);
   const opToken = lexer.next();
   if (opToken !== null) {
-    if (opToken in BINARY_OPS && BINARY_OPS[opToken].prec == prec) {
+    if (opToken in BINARY_OPS && BINARY_OPS[opToken].prec === prec) {
       const rhs = parseExpr(lexer, prec);
       return {
         "kind": "binary_op",
@@ -1239,12 +1235,12 @@ var parseExpr = (lexer, prec = BIN_PREC.PREC0) => {
 };
 var runExpr = (expr, ctx = {}, warnings = []) => {
   console.assert(check_default.isObject(expr));
-  const warnings_push = (message) => {
+  function warningsPush(message) {
     warnings.push({
       timestamp: /* @__PURE__ */ new Date(),
       message
     });
-  };
+  }
   const recommend = (ctxKey, value) => {
     return fuzzy_default.topSimilar(
       value,
@@ -1265,8 +1261,8 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
     case "symbol": {
       const symbol = expr.payload;
       const value = symbol.value;
-      const number = Number(value);
-      if (isNaN(number)) {
+      const num = Number(value);
+      if (isNaN(num)) {
         if (ctx.vars && value && value in ctx.vars) {
           return ctx.vars[value];
         }
@@ -1275,33 +1271,33 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
           const typeName = singularOrPlural("variable", similarNames.length);
           const areIs = similarNames.length > 1 ? "are" : "is";
           const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-          warnings_push("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
+          warningsPush("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
           if (value in (ctx.funcs || {})) {
-            warnings_push("'" + value + "' is defined as a function.");
+            warningsPush("'" + value + "' is defined as a function.");
           }
         }
         return value;
       } else {
-        return number;
+        return num;
       }
     }
     case "unary_op": {
-      const unary_op = expr.payload;
-      const op = unary_op == null ? void 0 : unary_op.op;
-      const operand = unary_op == null ? void 0 : unary_op.operand;
+      const unaryOp = expr.payload;
+      const op = unaryOp == null ? void 0 : unaryOp.op;
+      const operand = unaryOp == null ? void 0 : unaryOp.operand;
       if (op && op in UNARY_OPS) {
         if (operand === void 0) {
           throw new Error("operand needs to be an object not undefined");
         }
         return UNARY_OPS[op](runExpr(operand, ctx));
       }
-      throw new Error("Unknown unary operator '" + unary_op.op + "'");
+      throw new Error("Unknown unary operator '" + unaryOp.op + "'");
     }
     case "binary_op": {
-      const binary_op = expr.payload;
-      const op = binary_op == null ? void 0 : binary_op.op;
-      const lhs = binary_op == null ? void 0 : binary_op.lhs;
-      const rhs = binary_op == null ? void 0 : binary_op.rhs;
+      const binaryOp = expr.payload;
+      const op = binaryOp == null ? void 0 : binaryOp.op;
+      const lhs = binaryOp == null ? void 0 : binaryOp.lhs;
+      const rhs = binaryOp == null ? void 0 : binaryOp.rhs;
       if (op && op in BINARY_OPS) {
         if (lhs === void 0) {
           throw new Error(`lhs operand needs to be an object not undefined: lhs=${lhs} :: rhs=${rhs}`);
@@ -1329,9 +1325,9 @@ var runExpr = (expr, ctx = {}, warnings = []) => {
         const typeName = singularOrPlural("function", similarNames.length);
         const areIs = similarNames.length > 1 ? "are" : "is";
         const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-        warnings_push("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
+        warningsPush("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
         if (name in (ctx.vars || {})) {
-          warnings_push("'" + name + "' is defined as a variable.");
+          warningsPush("'" + name + "' is defined as a variable.");
         }
       }
       const params = args == null ? void 0 : args.map((x) => {
@@ -1357,8 +1353,8 @@ var fixString = (x) => {
   }
   return x;
 };
-var wrapCtxFuncs = (mut_ctx) => {
-  const _f = mut_ctx == null ? void 0 : mut_ctx.funcs;
+var wrapCtxFuncs = (mutCtx) => {
+  const _f = mutCtx == null ? void 0 : mutCtx.funcs;
   if (_f && check_default.isObject(_f)) {
     const f = { ..._f };
     const updated = {};
@@ -1368,9 +1364,9 @@ var wrapCtxFuncs = (mut_ctx) => {
         return f[k](...args);
       };
     });
-    mut_ctx.funcs = updated;
+    mutCtx.funcs = updated;
   }
-  return mut_ctx;
+  return mutCtx;
 };
 var parseTemplate = (sentence, _ctx = {}) => {
   const logs = [];
@@ -1515,10 +1511,10 @@ var TemplateParser = class {
   builtinFunctions() {
     const $abs = (x) => Math.abs(x);
     const $all = (...args) => {
-      return args.map($bool).every((x) => x === true);
+      return args.map($bool).every((x) => x);
     };
     const $any = (...args) => {
-      return args.map($bool).some((x) => x === true);
+      return args.map($bool).some((x) => x);
     };
     const $bool = (x) => {
       if (check_default.isValidBoolean(x)) {
@@ -1548,7 +1544,7 @@ var TemplateParser = class {
             }
             return value;
           });
-          x = jsonString.replace(/"\[Circular\]"/g, () => {
+          x = jsonString.replace(/"\[Circular]"/g, () => {
             return JSON.stringify("[Circular]");
           });
         }
@@ -1573,7 +1569,7 @@ var TemplateParser = class {
     const $if = (condition, ifTrue, ifFalse) => {
       return $bool(condition) ? ifTrue : ifFalse;
     };
-    const $int = (x) => parseInt(x);
+    const $int = (x, radix) => parseInt(x, radix || 10);
     const $isinstance = (x, ...types) => {
       const xType = $type(x);
       return types.map($str).some((t) => xType === t);
@@ -1807,7 +1803,7 @@ var lval = (sentence, ctx) => {
     logs: r.logs
   };
 };
-var ____builtins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
+var ignoreThisBuiltins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
 var template_default = {
   /** @deprecated change `SentenceParser` to `TemplateParser`  */
   SentenceParser: TemplateParser,

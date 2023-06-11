@@ -6,7 +6,7 @@ declare const _default: {
         isBigInt: (x: unknown) => x is bigint;
         isString: (x: unknown) => x is string;
         isBoolean: (x: unknown) => x is boolean;
-        isFunction: (x: unknown) => x is Function;
+        isFunction: (x: unknown) => x is types.AnyFn;
         isObject: (x: unknown) => x is object;
         isNumeric: (x: unknown) => boolean;
         isValidBoolean: (x: any) => boolean;
@@ -36,7 +36,7 @@ declare const _default: {
                     $float: (x: any) => number;
                     $str: (x: any) => string;
                     $format: (fmt: string, ...args: any[]) => string;
-                    $int: (x: any) => number;
+                    $int: (x: any, radix: any) => number;
                     $isnil: (x: any) => boolean;
                     $isinstance: (x: any, ...types: ("string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function")[]) => boolean;
                     $tisstring: (x: any) => boolean;
@@ -86,7 +86,7 @@ declare const _default: {
                     $float: (x: any) => number;
                     $str: (x: any) => string;
                     $format: (fmt: string, ...args: any[]) => string;
-                    $int: (x: any) => number;
+                    $int: (x: any, radix: any) => number;
                     $isnil: (x: any) => boolean;
                     $isinstance: (x: any, ...types: ("string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function")[]) => boolean;
                     $tisstring: (x: any) => boolean;
@@ -142,7 +142,7 @@ declare const _default: {
                     $float: (x: any) => number;
                     $str: (x: any) => string;
                     $format: (fmt: string, ...args: any[]) => string;
-                    $int: (x: any) => number;
+                    $int: (x: any, radix: any) => number;
                     $isnil: (x: any) => boolean;
                     $isinstance: (x: any, ...types: ("string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function")[]) => boolean;
                     $tisstring: (x: any) => boolean;
@@ -192,7 +192,7 @@ declare const _default: {
                     $float: (x: any) => number;
                     $str: (x: any) => string;
                     $format: (fmt: string, ...args: any[]) => string;
-                    $int: (x: any) => number;
+                    $int: (x: any, radix: any) => number;
                     $isnil: (x: any) => boolean;
                     $isinstance: (x: any, ...types: ("string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function")[]) => boolean;
                     $tisstring: (x: any) => boolean;
@@ -234,17 +234,17 @@ declare const _default: {
         };
     };
     inflection: {
-        camelize: (string: string, uppercaseFirstLetter?: boolean) => string;
+        camelize: (str: string, uppercaseFirstLetter?: boolean) => string;
         dasherize: (word: string) => string;
         humanize: (word: string) => string;
-        ordinal: (number: string | number) => string;
-        ordinalize: (number: string | number) => string;
-        parameterize: (string: string, separator?: string) => string;
+        ordinal: (num: string | number) => string;
+        ordinalize: (num: string | number) => string;
+        parameterize: (str: string, separator?: string) => string;
         pluralize: (word: string) => string;
         singularize: (word: string) => string;
         tableize: (word: string) => string;
         titleize: (word: string) => string;
-        transliterate: (string: string) => string;
+        transliterate: (str: string) => string;
         underscore: (word: string) => string;
         UNCOUNTABLES: Set<string>;
         PLURALS: import("./inflection").RegexReplaceList;
