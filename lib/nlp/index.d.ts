@@ -1,5 +1,5 @@
-export type StopWordLanguages = "english";
 declare const _default: {
+    stemmer: (word: string) => string;
     isStopWord: (word: string, lang?: "english") => boolean;
     removeStopWords: (input: string, lang?: "english") => string;
 };

@@ -635,7 +635,7 @@ var fuzzy_default = {
 };
 
 // src/utils/index.ts
-var hashCode = (str, coerceToString = true) => {
+function hashCode(str, coerceToString = true) {
   if (coerceToString) {
     if (!check_default.isString(str)) {
       if (check_default.isSet(str)) {
@@ -655,7 +655,7 @@ var hashCode = (str, coerceToString = true) => {
             }
             return value;
           });
-          str = jsonString.replace(/"\[Circular\]"/g, () => {
+          str = jsonString.replace(/"\[Circular]"/g, () => {
             return JSON.stringify("[Circular]");
           });
         }
@@ -675,16 +675,37 @@ var hashCode = (str, coerceToString = true) => {
     hash &= hash;
   }
   return hash;
-};
-var capitalize = (str) => {
+}
+function capitalize(str) {
   if (!check_default.isString(str)) {
     return "";
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
-};
+}
+function retry(operation, maxRetries, delay) {
+  return new Promise((resolve, reject) => {
+    let retries = 0;
+    function attempt() {
+      operation().then(resolve).catch((error) => {
+        retries++;
+        if (retries < maxRetries) {
+          setTimeout(attempt, delay);
+        } else {
+          reject(error);
+        }
+      });
+    }
+    attempt();
+  });
+}
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 var utils_default = {
   hashCode,
-  capitalize
+  capitalize,
+  retry,
+  sleep
 };
 
 // src/inflection/index.ts
@@ -1794,9 +1815,9 @@ var template_default = {
   lval
 };
 
-// src/nlp/index.ts
-var StopWords = (() => {
-  const stopwords = {
+// src/nlp/stopWords.ts
+var stopWords = (() => {
+  const STOP_WORDS = {
     english: /* @__PURE__ */ new Set([
       // Source: NLTK(https://www.nltk.org/howto/collocations.html?highlight=stopwords)
       "a",
@@ -1981,7 +2002,7 @@ var StopWords = (() => {
     ])
   };
   function isStopWord(word, lang = "english") {
-    return stopwords[lang].has(word.replace(/[^\w\d']/gi, "").toLowerCase());
+    return STOP_WORDS[lang].has(word.replace(/[^\w\d']/gi, "").toLowerCase());
   }
   function removeStopWords(input, lang = "english") {
     const tokens = input.trim().split(/\s+/g);
@@ -1993,8 +2014,215 @@ var StopWords = (() => {
     removeStopWords
   };
 })();
+var stopWords_default = stopWords;
+
+// src/nlp/stemmer.ts
+function stemmerOuter() {
+  const step2list = {
+    "ational": "ate",
+    "tional": "tion",
+    "enci": "ence",
+    "anci": "ance",
+    "izer": "ize",
+    "bli": "ble",
+    "alli": "al",
+    "entli": "ent",
+    "eli": "e",
+    "ousli": "ous",
+    "ization": "ize",
+    "ation": "ate",
+    "ator": "ate",
+    "alism": "al",
+    "iveness": "ive",
+    "fulness": "ful",
+    "ousness": "ous",
+    "aliti": "al",
+    "iviti": "ive",
+    "biliti": "ble",
+    "logi": "log"
+  };
+  const step3list = {
+    "icate": "ic",
+    "ative": "",
+    "alize": "al",
+    "iciti": "ic",
+    "ical": "ic",
+    "ful": "",
+    "ness": ""
+  };
+  const consonant = "[^aeiou]";
+  const vowel = "[aeiouy]";
+  const consonantSeq = consonant + "[^aeiouy]*";
+  const vowelSeq = vowel + "[aeiou]*";
+  const mgr0 = "^(" + consonantSeq + ")?" + vowelSeq + consonantSeq;
+  const meq1 = "^(" + consonantSeq + ")?" + vowelSeq + consonantSeq + "(" + vowelSeq + ")?$";
+  const mgr1 = "^(" + consonantSeq + ")?" + vowelSeq + consonantSeq + vowelSeq + consonantSeq;
+  const sV = "^(" + consonantSeq + ")?" + vowel;
+  function execIt(prog, word) {
+    return prog.exec(word);
+  }
+  function testIt(prog, word) {
+    return prog.test(word);
+  }
+  function innerStemmer(word) {
+    let stem;
+    let suffix;
+    let re;
+    let re2;
+    let re3;
+    let re4;
+    if (word.length < 3) {
+      return word;
+    }
+    const wordRef = word.slice();
+    const firstChar = word.substring(0, 1);
+    if (firstChar === "y") {
+      word = firstChar.toUpperCase() + word.substring(1);
+    }
+    re = /^(.+?)(ss|i)es?$/;
+    re2 = /^(.+?)([^s])s$/;
+    if (testIt(re, word)) {
+      re3 = /ies$/;
+      if (testIt(re3, word)) {
+        word = word.replace(re, "$1y");
+      } else {
+        word = word.replace(re, "$1$2");
+      }
+    } else if (testIt(re2, word)) {
+      word = word.replace(re2, "$1$2");
+    }
+    re = /^(.+?)eed$/;
+    re2 = /^(.+?)(ed|ing)$/;
+    re3 = /^(.+?)(ly)$/;
+    re4 = /^(.+?)([^s]*s)$/;
+    if (testIt(re, word)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        re = new RegExp(mgr0);
+        if (testIt(re, fp[1])) {
+          re = /.$/;
+          word = word.replace(re, "");
+        }
+      }
+    } else if (testIt(re2, word)) {
+      const fp = execIt(re2, word);
+      if (fp) {
+        stem = fp[1];
+        re2 = new RegExp(sV);
+        if (testIt(re2, stem)) {
+          word = stem;
+          re2 = /(at|bl|iz)$/;
+          re3 = new RegExp("([^aeiouylsz])\\1$");
+          re4 = new RegExp("^" + consonantSeq + vowel + "[^aeiouwxy]$");
+          if (testIt(re2, word)) {
+            word = word + "e";
+          } else if (testIt(re3, word)) {
+            re = /.$/;
+            word = word.replace(re, "");
+          } else if (testIt(re4, word)) {
+            word = word + "e";
+          }
+        }
+      }
+    } else if (testIt(re3, word)) {
+      const fp = execIt(re3, word);
+      if (fp) {
+        stem = fp[1];
+        re = new RegExp(sV);
+        if (testIt(re, stem)) {
+          word = stem;
+        }
+      }
+    }
+    re = /^(.+?)y$/;
+    re2 = /(yed|ies)$/;
+    if (testIt(re, word) && !testIt(re2, wordRef)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        stem = fp[1];
+        re = new RegExp(sV);
+        if (testIt(re, stem)) {
+          word = stem + "i";
+        }
+      }
+    }
+    re = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
+    if (testIt(re, word)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        stem = fp[1];
+        suffix = fp[2];
+        re = new RegExp(mgr0);
+        if (testIt(re, stem)) {
+          word = stem + step2list[suffix];
+        }
+      }
+    }
+    re = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
+    if (testIt(re, word)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        stem = fp[1];
+        suffix = fp[2];
+        re = new RegExp(mgr0);
+        if (testIt(re, stem)) {
+          word = stem + step3list[suffix];
+        }
+      }
+    }
+    re = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
+    re2 = /^(.+?)([st])(ion)$/;
+    if (testIt(re, word)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        stem = fp[1];
+        re = new RegExp(mgr1);
+        if (testIt(re, stem)) {
+          word = stem;
+        }
+      }
+    } else if (testIt(re2, word)) {
+      const fp = execIt(re2, word);
+      if (fp) {
+        stem = fp[1] + fp[2];
+        re2 = new RegExp(mgr1);
+        if (testIt(re2, stem)) {
+          word = stem;
+        }
+      }
+    }
+    re = /^(.+?)e$/;
+    if (testIt(re, word)) {
+      const fp = execIt(re, word);
+      if (fp) {
+        stem = fp[1];
+        re = new RegExp(mgr1);
+        re2 = new RegExp(meq1);
+        re3 = new RegExp("^" + consonantSeq + vowel + "[^aeiouwxy]$");
+        if (testIt(re, stem) || testIt(re2, stem) && !testIt(re3, stem)) {
+          word = stem;
+        }
+      }
+    }
+    re = /ll$/;
+    re2 = new RegExp(mgr1);
+    if (testIt(re, word) && testIt(re2, word)) {
+      re = /.$/;
+      word = word.replace(re, "");
+    }
+    if (firstChar === "y") {
+      word = "y" + word.substring(1);
+    }
+    return word;
+  }
+  return innerStemmer;
+}
+var stemmer_default = stemmerOuter();
+
+// src/nlp/index.ts
 var nlp_default = {
-  ...StopWords
+  ...stopWords_default,
+  stemmer: stemmer_default
 };
 
 // src/index.ts

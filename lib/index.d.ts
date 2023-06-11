@@ -253,6 +253,8 @@ declare const _default: {
     utils: {
         hashCode: (str: any, coerceToString?: boolean) => number | null;
         capitalize: (str: string) => string;
+        retry: <T_1>(operation: () => Promise<T_1>, maxRetries: number, delay: number) => Promise<T_1>;
+        sleep: (ms: number) => Promise<unknown>;
     };
     date: {
         parse: (input: any) => Date | null;
@@ -262,7 +264,7 @@ declare const _default: {
     };
     fuzzy: {
         similarity: (str1: string, str2: string, gramSize?: number) => number;
-        topSimilar: <T_1 = string>(value: T_1, values: T_1[], key: (obj: T_1) => string, topK?: number, thresh?: number, gramSize?: number) => T_1[];
+        topSimilar: <T_2 = string>(value: T_2, values: T_2[], key: (obj: T_2) => string, topK?: number, thresh?: number, gramSize?: number) => T_2[];
     };
     array: {
         zip: typeof import("./array/zip").zip;
@@ -280,6 +282,7 @@ declare const _default: {
         compare: (a: string, b: string) => import("./diff").DiffResult;
     };
     nlp: {
+        stemmer: (word: string) => string;
         isStopWord: (word: string, lang?: "english") => boolean;
         removeStopWords: (input: string, lang?: "english") => string;
     };
