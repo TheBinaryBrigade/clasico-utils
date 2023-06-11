@@ -25,7 +25,7 @@ function hashCode(str: any, coerceToString = true): number | null {
           });
 
           // Replace circular references with actual object reference
-          str = jsonString.replace(/"\[Circular\]"/g, () => {
+          str = jsonString.replace(/"\[Circular]"/g, () => {
             return JSON.stringify("[Circular]");
           });
         }
@@ -44,7 +44,9 @@ function hashCode(str: any, coerceToString = true): number | null {
   let hash = 0;
   for (let i = 0; i < str.length; ++i) {
     const code = str.charCodeAt(i);
+    // tslint:disable-next-line:no-bitwise
     hash = ((hash << 5) - hash) + code;
+    // tslint:disable-next-line:no-bitwise
     hash &= hash;
   }
   return hash;
