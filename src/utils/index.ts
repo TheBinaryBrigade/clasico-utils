@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import check from "../check";
 
-const hashCode = (str: any, coerceToString = true): number | null => {
+function hashCode(str: any, coerceToString = true): number | null {
 
   if (coerceToString) {
     if (!check.isString(str)) {
@@ -48,17 +48,44 @@ const hashCode = (str: any, coerceToString = true): number | null => {
     hash &= hash;
   }
   return hash;
-};
+}
 
-const capitalize = (str: string) => {
+function capitalize (str: string) {
   if (!check.isString(str)) {
     return "";
   }
 
   return str.charAt(0).toUpperCase() + str.slice(1);
-};
+}
+
+function retry<T>(operation: () => Promise<T>, maxRetries: number, delay: number) {
+  return new Promise<T>((resolve, reject) => {
+    let retries = 0;
+
+    function attempt() {
+      operation()
+        .then(resolve)
+        .catch(error => {
+          retries++;
+          if (retries < maxRetries) {
+            setTimeout(attempt, delay);
+          } else {
+            reject(error);
+          }
+        });
+    }
+
+    attempt();
+  });
+}
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export default {
   hashCode,
   capitalize,
+  retry,
+  sleep,
 };
