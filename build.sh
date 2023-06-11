@@ -21,7 +21,7 @@ $NPM test || exit 1
 rm -rf ./lib ./dist
 
 # Build docs
-$NPM run build:eval:doc &
+$NPM run build:eval:doc
 
 # Build web distribution
 $NPM run build:web
@@ -40,17 +40,18 @@ $NPM run build:lib
 wait
 
 sha_dir() {
-    find $1 -type f \( -exec sha512sum {} \; \)
+    find "$1" -type f \( -exec sha512sum {} \; \)
 }
 
+# shellcheck disable=SC2035
 ( \
-    echo "$(sha_dir dist)" \
-    && echo "$(sha_dir lib)" \
-    && echo "$(sha_dir docs)" \
-    && echo "$(sha_dir examples)" \
-    && echo "$(sha_dir src)" \
-    && echo "$(sha_dir *.ts)" \
-    && echo "$(sha_dir *.cjs)" \
+    sha_dir dist \
+    && sha_dir lib \
+    && sha_dir docs \
+    && sha_dir examples \
+    && sha_dir src \
+    && sha_dir *.ts \
+    && sha_dir *.cjs \
 ) > './checksums.txt'
 
 git add dist/*
@@ -58,6 +59,8 @@ git add lib/*
 git add checksums.txt
 
 npm pack
+
+set +x
 
 echo ""
 echo "Registry: https://www.npmjs.com/package/clasico"
