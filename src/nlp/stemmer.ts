@@ -57,44 +57,43 @@ function stemmerOuter() {
   const mgr1 = "^(" + consonantSeq + ")?" + vowelSeq + consonantSeq + vowelSeq + consonantSeq; // [C]VCVC... is m>1
   const sV = "^(" + consonantSeq + ")?" + vowel; // vowel in stem
 
-  const DEBUG_MODE = false;
+  function execIt(prog: RegExp, word: string): RegExpExecArray | null {
+    return prog.exec(word);
+  }
 
-  function execIt(re: RegExp, word: string): RegExpExecArray | null {
-    // TODO: check behavior of exec in web and other envs
-    const result = re.exec(word);
-
-    if (DEBUG_MODE && result === null) {
-      // tslint:disable-next-line:no-console
-      console.warn("[STEMMER] failed to exec string", {string: word, re});
-    }
-
-    return result;
+  function testIt(prog: RegExp, word: string): boolean {
+    return prog.test(word);
   }
 
   function innerStemmer(word: string): string {
-    let stem;
-    let suffix;
-    let re;
-    let re2;
-    let re3;
-    let re4;
+    let stem: string;
+    let suffix: string;
+    let re: RegExp;
+    let re2: RegExp;
+    let re3: RegExp;
+    let re4: RegExp;
 
     if (word.length < 3) {
       return word;
     }
 
+    const wordRef = word.slice();
     const firstChar = word.substring(0, 1);
     if (firstChar === "y") {
       word = firstChar.toUpperCase() + word.substring(1);
     }
 
     // Step 1a
-    re = /^(.+?)(ss|i)es$/;
+    re = /^(.+?)(ss|i)es?$/;
     re2 = /^(.+?)([^s])s$/;
-
-    if (re.test(word)) {
-      word = word.replace(re, "$1$2");
-    } else if (re2.test(word)) {
+    if (testIt(re, word)) {
+      re3 = /ies$/;
+      if (testIt(re3, word)) {
+        word = word.replace(re, "$1y");
+      } else {
+        word = word.replace(re, "$1$2");
+      }
+    } else if (testIt(re2, word)) {
       word = word.replace(re2, "$1$2");
     }
 
@@ -102,51 +101,43 @@ function stemmerOuter() {
     re = /^(.+?)eed$/;
     re2 = /^(.+?)(ed|ing)$/;
     re3 = /^(.+?)(ly)$/;
-    re4 = /^(.+?)(s)$/;
-    if (re.test(word)) {
+    re4 = /^(.+?)([^s]*s)$/;
+
+    if (testIt(re, word)) {
       const fp = execIt(re, word);
       if (fp) {
         re = new RegExp(mgr0);
-        if (re.test(fp[1])) {
+        if (testIt(re, fp[1])) {
           re = /.$/;
           word = word.replace(re, "");
         }
       }
-    } else if (re2.test(word)) {
+    } else if (testIt(re2, word)) {
       const fp = execIt(re2, word);
       if (fp) {
         stem = fp[1];
         re2 = new RegExp(sV);
-        if (re2.test(stem)) {
+        if (testIt(re2, stem)) {
           word = stem;
           re2 = /(at|bl|iz)$/;
           re3 = new RegExp("([^aeiouylsz])\\1$");
           re4 = new RegExp("^" + consonantSeq + vowel + "[^aeiouwxy]$");
-          if (re2.test(word)) {
+          if (testIt(re2, word)) {
             word = word + "e";
-          } else if (re3.test(word)) {
+          } else if (testIt(re3, word)) {
             re = /.$/;
             word = word.replace(re, "");
-          } else if (re4.test(word)) {
+          } else if (testIt(re4, word)) {
             word = word + "e";
           }
         }
       }
-    } else if (re3.test(word)) {
+    } else if (testIt(re3, word)) {
       const fp = execIt(re3, word);
       if (fp) {
         stem = fp[1];
         re = new RegExp(sV);
-        if (re.test(stem)) {
-          word = stem;
-        }
-      }
-    } else if (re4.test(word)) {
-      const fp = execIt(re4, word);
-      if (fp) {
-        stem = fp[1];
-        re = new RegExp(sV);
-        if (re.test(stem)) {
+        if (testIt(re, stem)) {
           word = stem;
         }
       }
@@ -154,12 +145,13 @@ function stemmerOuter() {
 
     // Step 1c
     re = /^(.+?)y$/;
-    if (re.test(word)) {
+    re2 = /(yed|ies)$/;
+    if (testIt(re, word) && !testIt(re2, wordRef)) {
       const fp = execIt(re, word);
       if (fp) {
         stem = fp[1];
         re = new RegExp(sV);
-        if (re.test(stem)) {
+        if (testIt(re, stem)) {
           word = stem + "i";
         }
       }
@@ -167,28 +159,28 @@ function stemmerOuter() {
 
     // Step 2
     re = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
-    if (re.test(word)) {
+    if (testIt(re, word)) {
       const fp = execIt(re, word);
       if (fp) {
         stem = fp[1];
-        suffix = fp[2] as keyof Step2List; // SAFETY: suffix will be checked to be in obj
+        suffix = fp[2];
         re = new RegExp(mgr0);
-        if (re.test(stem) && suffix in step2list) {
-          word = stem + step2list[suffix];
+        if (testIt(re, stem)) {
+          word = stem + step2list[suffix as keyof Step2List];
         }
       }
     }
 
     // Step 3
     re = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
-    if (re.test(word)) {
+    if (testIt(re, word)) {
       const fp = execIt(re, word);
       if (fp) {
         stem = fp[1];
-        suffix = fp[2] as keyof Step3List; // SAFETY: suffix will be checked to be in obj
+        suffix = fp[2];
         re = new RegExp(mgr0);
-        if (re.test(stem) && suffix in step3list) {
-          word = stem + step3list[suffix];
+        if (testIt(re, stem)) {
+          word = stem + step3list[suffix as keyof Step3List];
         }
       }
     }
@@ -196,21 +188,21 @@ function stemmerOuter() {
     // Step 4
     re = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
     re2 = /^(.+?)([st])(ion)$/;
-    if (re.test(word)) {
+    if (testIt(re, word)) {
       const fp = execIt(re, word);
       if (fp) {
         stem = fp[1];
         re = new RegExp(mgr1);
-        if (re.test(stem)) {
+        if (testIt(re, stem)) {
           word = stem;
         }
       }
-    } else if (re2.test(word)) {
+    } else if (testIt(re2, word)) {
       const fp = execIt(re2, word);
       if (fp) {
         stem = fp[1] + fp[2];
         re2 = new RegExp(mgr1);
-        if (re2.test(stem)) {
+        if (testIt(re2, stem)) {
           word = stem;
         }
       }
@@ -218,14 +210,14 @@ function stemmerOuter() {
 
     // Step 5
     re = /^(.+?)e$/;
-    if (re.test(word)) {
+    if (testIt(re, word)) {
       const fp = execIt(re, word);
       if (fp) {
         stem = fp[1];
         re = new RegExp(mgr1);
         re2 = new RegExp(meq1);
         re3 = new RegExp("^" + consonantSeq + vowel + "[^aeiouwxy]$");
-        if (re.test(stem) || (re2.test(stem) && !(re3.test(stem)))) {
+        if (testIt(re, stem) || (testIt(re2, stem) && !testIt(re3, stem))) {
           word = stem;
         }
       }
@@ -233,15 +225,14 @@ function stemmerOuter() {
 
     re = /ll$/;
     re2 = new RegExp(mgr1);
-    if (re.test(word) && re2.test(word)) {
+    if (testIt(re, word) && testIt(re2, word)) {
       re = /.$/;
       word = word.replace(re, "");
     }
 
-    // and turn initial Y back to y
-
+    // Turn initial Y back to y
     if (firstChar === "y") {
-      word = firstChar.toLowerCase() + word.substring(1);
+      word = "y" + word.substring(1);
     }
 
     return word;
