@@ -2,7 +2,7 @@ import { describe, expect, test } from "@jest/globals";
 import check from "..";
 import { TypeOf } from "../../@types";
 
-class _MyCustomError extends Error { }
+class MyCustomError extends Error { }
 
 type CheckFn = keyof typeof check;
 type Tests = {
@@ -20,7 +20,7 @@ const tests: Tests = {
   isNumber: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: true },
       { input: 42.01, output: true },
@@ -33,8 +33,8 @@ const tests: Tests = {
       { input: "", output: false },
       { input: false, output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -49,7 +49,7 @@ const tests: Tests = {
   isString: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -62,8 +62,8 @@ const tests: Tests = {
       { input: "", output: true },
       { input: false, output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -78,7 +78,7 @@ const tests: Tests = {
   isBoolean: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -91,8 +91,8 @@ const tests: Tests = {
       { input: "", output: false },
       { input: false, output: true },
       { input: true, output: true },
-      { input: new Boolean(true), output: true },
-      { input: new Boolean(false), output: true },
+      { input: Boolean(true), output: true },
+      { input: Boolean(false), output: true },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -107,7 +107,7 @@ const tests: Tests = {
   isFunction: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -119,8 +119,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -135,7 +135,7 @@ const tests: Tests = {
   isObject: {
     examples: [
       { input: new Error(), output: true },
-      { input: new _MyCustomError(), output: true },
+      { input: new MyCustomError(), output: true },
       { input: new Date(), output: true },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -147,8 +147,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: true },
-      { input: new Boolean(false), output: true },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: true },
       { input: new Set([1]), output: true },
       { input: [1.42, 2.42, 3.42], output: true },
@@ -163,7 +163,7 @@ const tests: Tests = {
   isNumeric: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: true },
       { input: 42.01, output: true },
@@ -176,8 +176,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -192,7 +192,7 @@ const tests: Tests = {
   isValidBoolean: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -209,8 +209,8 @@ const tests: Tests = {
       { input: "true", output: true },
       { input: false, output: true },
       { input: true, output: true },
-      { input: new Boolean(true), output: true },
-      { input: new Boolean(false), output: true },
+      { input: Boolean(true), output: true },
+      { input: Boolean(false), output: true },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -225,7 +225,7 @@ const tests: Tests = {
   isTrue: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -246,12 +246,12 @@ const tests: Tests = {
       { input: "true", output: true },
       { input: "  FALSE", output: false },
       { input: "  TRUE", output: true },
-      { input: new String("  FALSE"), output: false },
-      { input: new String("  TRUE"), output: true },
-      { input: new String("true"), output: true },
-      { input: new String("false"), output: false },
-      { input: new Boolean(true), output: true },
-      { input: new Boolean(false), output: false },
+      { input: String("  FALSE"), output: false },
+      { input: String("  TRUE"), output: true },
+      { input: String("true"), output: true },
+      { input: String("false"), output: false },
+      { input: Boolean(true), output: true },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -266,7 +266,7 @@ const tests: Tests = {
   isFalse: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -283,8 +283,8 @@ const tests: Tests = {
       { input: "true", output: false },
       { input: false, output: true },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: true },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: true },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -299,7 +299,7 @@ const tests: Tests = {
   isArray: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -311,8 +311,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: true },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: true },
@@ -327,7 +327,7 @@ const tests: Tests = {
   isSet: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -339,8 +339,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: true },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -355,7 +355,7 @@ const tests: Tests = {
   isIterable: {
     examples: [
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -367,8 +367,8 @@ const tests: Tests = {
       { input: " ", output: true },
       { input: "", output: true },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: true },
       { input: new Set([1]), output: true },
       { input: [1.42, 2.42, 3.42], output: true },
@@ -400,8 +400,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -416,7 +416,7 @@ const tests: Tests = {
   isError: {
     examples: [
       { input: new Error(), output: true },
-      { input: new _MyCustomError(), output: true },
+      { input: new MyCustomError(), output: true },
       { input: 1641004800000, output: false },
       { input: "2022-01-01", output: false },
       { input: "1995-12-17T03:24:00", output: false },
@@ -435,8 +435,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -453,7 +453,7 @@ const tests: Tests = {
       { input: null, output: true },
       { input: undefined, output: true },
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: 1641004800000, output: false },
       { input: "2022-01-01", output: false },
       { input: "1995-12-17T03:24:00", output: false },
@@ -472,8 +472,8 @@ const tests: Tests = {
       { input: " ", output: false },
       { input: "", output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -488,7 +488,7 @@ const tests: Tests = {
       { input: BigInt("123456789012345678901234567890"), output: true },
       { input: BigInt("123456789012345678901234567890") + BigInt(1), output: true },
       { input: new Error(), output: false },
-      { input: new _MyCustomError(), output: false },
+      { input: new MyCustomError(), output: false },
       { input: new Date(), output: false },
       { input: 42, output: false },
       { input: 42.01, output: false },
@@ -501,8 +501,8 @@ const tests: Tests = {
       { input: "", output: false },
       { input: false, output: false },
       { input: true, output: false },
-      { input: new Boolean(true), output: false },
-      { input: new Boolean(false), output: false },
+      { input: Boolean(true), output: false },
+      { input: Boolean(false), output: false },
       { input: new Array([1]), output: false },
       { input: new Set([1]), output: false },
       { input: [1.42, 2.42, 3.42], output: false },
@@ -520,7 +520,7 @@ describe("check", () => {
   describe("isError", () => {
     const examples = [
       [new Error(), true],
-      [new _MyCustomError(), true],
+      [new MyCustomError(), true],
       [{ stack: ["some stack"], message: "some error message" }, true],
       [{ stack: ["some stack"], messages: ["some error message"] }, false],
       [{}, false],

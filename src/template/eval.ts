@@ -127,7 +127,7 @@ export class Lexer {
 
   next(): string | null {
     this.src = this.src.trimStart();
-    if (this.src.length == 0) {
+    if (this.src.length === 0) {
       return null;
     }
     const isTokenBreak = (c: string) => {
@@ -143,24 +143,24 @@ export class Lexer {
     const isSOFStr = isDouble || isSingle;
     const strEnd = this.src.indexOf(isDouble ? "\"" : "'", 1);
     if (isSOFStr && strEnd > 0) {
-      const token = this.src.slice(0, strEnd + 1);
+      const tok = this.src.slice(0, strEnd + 1);
       this.src = this.src.slice(strEnd + 1);
-      this.hist.push(token);
-      return token;
+      this.hist.push(tok);
+      return tok;
     }
 
     if (isTokenBreak(this.src[0])) {
-      const token = this.src[0];
+      const tok = this.src[0];
       this.src = this.src.slice(1);
-      this.hist.push(token);
-      return token;
+      this.hist.push(tok);
+      return tok;
     }
     for (let i = 0; i < this.src.length; ++i) {
-      if (isTokenBreak(this.src[i]) || this.src[i] == " ") {
-        const token = this.src.slice(0, i);
+      if (isTokenBreak(this.src[i]) || this.src[i] === " ") {
+        const tok = this.src.slice(0, i);
         this.src = this.src.slice(i);
-        this.hist.push(token);
-        return token;
+        this.hist.push(tok);
+        return tok;
       }
     }
     const token = this.src;
@@ -254,7 +254,7 @@ export const parsePrimary = (lexer: Lexer): Expression => {
         if (nextToken === __SAVE) {
           nextToken = lexer.next();
         }
-        while (nextToken == ",") {
+        while (nextToken === ",") {
           args.push(parseExpr(lexer));
           nextToken = lexer.next();
           if (nextToken === __SAVE) {
@@ -304,7 +304,7 @@ export const parseExpr = (lexer: Lexer, prec: number = BIN_PREC.PREC0): Expressi
   const lhs = parseExpr(lexer, prec + 1);
   const opToken = lexer.next();
   if (opToken !== null) {
-    if (opToken in BINARY_OPS && BINARY_OPS[opToken as BinaryOpsKeys].prec == prec) {
+    if (opToken in BINARY_OPS && BINARY_OPS[opToken as BinaryOpsKeys].prec === prec) {
       const rhs = parseExpr(lexer, prec);
       return {
         "kind": "binary_op",
@@ -341,14 +341,15 @@ export type EvalWarningMeta = {
 
 
 export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: EvalWarningMeta[] = []): any => {
+  // tslint:disable-next-line:no-console
   console.assert(check.isObject(expr));
 
-  const warnings_push = (message: string) => {
+  function warningsPush(message: string): void {
     warnings.push({
       timestamp: new Date(),
       message,
     });
-  };
+  }
 
   const recommend = (ctxKey: keyof EvalContext, value: string): string[] => {
     return fuzzy.topSimilar(
@@ -373,8 +374,8 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: EvalW
   case "symbol": {
     const symbol = expr.payload;
     const value = symbol.value;
-    const number = Number(value);
-    if (isNaN(number)) {
+    const num = Number(value);
+    if (isNaN(num)) {
       if (ctx.vars && value && value in ctx.vars) {
         return ctx.vars[value];
       }
@@ -383,34 +384,34 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: EvalW
         const typeName = singularOrPlural("variable", similarNames.length);
         const areIs = similarNames.length > 1 ? "are" : "is";
         const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-        warnings_push("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
+        warningsPush("Unknown variable '" + value + "'." + (similarNames.length > 0 ? recommendations : ""));
 
         if (value in (ctx.funcs || {})) {
-          warnings_push("'" + value + "' is defined as a function.");
+          warningsPush("'" + value + "' is defined as a function.");
         }
       }
       return value;
     } else {
-      return number;
+      return num;
     }
   }
   case "unary_op": {
-    const unary_op = expr.payload;
-    const op = unary_op?.op;
-    const operand = unary_op?.operand;
+    const unaryOp = expr.payload;
+    const op = unaryOp?.op;
+    const operand = unaryOp?.operand;
     if (op && op in UNARY_OPS) {
       if (operand === undefined) {
         throw new Error("operand needs to be an object not undefined");
       }
       return UNARY_OPS[op as UnaryOpsKeys](runExpr(operand, ctx));
     }
-    throw new Error("Unknown unary operator '" + unary_op.op + "'");
+    throw new Error("Unknown unary operator '" + unaryOp.op + "'");
   }
   case "binary_op": {
-    const binary_op = expr.payload;
-    const op = binary_op?.op;
-    const lhs = binary_op?.lhs;
-    const rhs = binary_op?.rhs;
+    const binaryOp = expr.payload;
+    const op = binaryOp?.op;
+    const lhs = binaryOp?.lhs;
+    const rhs = binaryOp?.rhs;
     if (op && op in BINARY_OPS) {
       if (lhs === undefined) {
         throw new Error("lhs operand needs to be an object not undefined: " + `lhs=${lhs} :: rhs=${rhs}`);
@@ -441,10 +442,10 @@ export const runExpr = (expr: Expression, ctx: EvalContext = {}, warnings: EvalW
       const typeName = singularOrPlural("function", similarNames.length);
       const areIs = similarNames.length > 1 ? "are" : "is";
       const recommendations = ` The most similar ${typeName} ${areIs} ${similarNames.join(", ")}`;
-      warnings_push("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
+      warningsPush("Unknown function '" + name + "'." + (similarNames.length > 0 ? recommendations : ""));
 
       if (name in (ctx.vars || {})) {
-        warnings_push("'" + name + "' is defined as a variable.");
+        warningsPush("'" + name + "' is defined as a variable.");
       }
     }
     const params = args

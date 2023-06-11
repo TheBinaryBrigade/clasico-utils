@@ -3,7 +3,7 @@ import inflection from "..";
 import utils from "../../utils";
 
 if (test.each === undefined) {
-  const test_each_fill = (arr: [unknown, unknown][]) => {
+  const testEachPolyfill = (arr: [unknown, unknown][]) => {
     type TestCb = (input: unknown, expected: unknown) => void;
     return (description: string, cb: TestCb) => {
       arr.forEach((args) => {
@@ -14,7 +14,7 @@ if (test.each === undefined) {
     };
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  test.each = test_each_fill as any;
+  test.each = testEachPolyfill as any;
 }
 
 type TestParameters = [string, string][];
@@ -364,40 +364,40 @@ describe("inflection", () => {
   describe("parameterize", () => {
     test.each(STRING_TO_PARAMETERIZED)(
       "parameterized string of %p should be equal to %p",
-      (some_string, parameterized_string) => {
-        expect(inflection.parameterize(some_string)).toBe(parameterized_string);
+      (someString, parameterizedString) => {
+        expect(inflection.parameterize(someString)).toBe(parameterizedString);
       }
     );
 
     test.each(STRING_TO_PARAMETERIZED_AND_NORMALIZED)(
       "parameterized and normalized string of %p should be equal to %p",
-      (some_string, parameterized_string) => {
-        expect(inflection.parameterize(some_string)).toBe(parameterized_string);
+      (someString, parameterizedString) => {
+        expect(inflection.parameterize(someString)).toBe(parameterizedString);
       }
     );
 
     test.each(STRING_TO_PARAMETERIZE_WITH_UNDERSCORE)(
       "parameterized string of %p with '_' separator should be equal to %p",
-      (some_string, parameterized_string) => {
-        expect(inflection.parameterize(some_string, "_")).toBe(parameterized_string);
+      (someString, parameterizedString) => {
+        expect(inflection.parameterize(someString, "_")).toBe(parameterizedString);
       }
     );
 
     test.each(STRING_TO_PARAMETERIZED)(
       "parameterized string of %p with '__sep__' separator should be equal to %p",
-      (some_string, parameterized_string) => {
-        let ps = parameterized_string;
+      (someString, parameterizedString) => {
+        let ps = parameterizedString;
         while (ps.includes("-")) {
           ps = ps.replace("-", "__sep__");
         }
-        expect(inflection.parameterize(some_string, "__sep__")).toBe(ps);
+        expect(inflection.parameterize(someString, "__sep__")).toBe(ps);
       }
     );
 
     test.each(STRING_TO_PARAMETERIZE_WITH_NO_SEPARATOR)(
       "parameterized string of %p with no separator should be equal to %p",
-      (some_string, parameterized_string) => {
-        expect(inflection.parameterize(some_string, "")).toBe(parameterized_string);
+      (someString, parameterizedString) => {
+        expect(inflection.parameterize(someString, "")).toBe(parameterizedString);
       }
     );
   });
@@ -414,8 +414,8 @@ describe("inflection", () => {
   describe("ordinal", () => {
     test.each(ORDINAL_NUMBERS)(
       "ordinalized number %p should be equal to %p",
-      (number, ordinalized) => {
-        expect(number + inflection.ordinal(number)).toBe(ordinalized);
+      (num, ordinalized) => {
+        expect(num + inflection.ordinal(num)).toBe(ordinalized);
       }
     );
   });
@@ -423,8 +423,8 @@ describe("inflection", () => {
   describe("ordinalize", () => {
     test.each(ORDINAL_NUMBERS)(
       "ordinalized number %p should be equal to %p",
-      (number, ordinalized) => {
-        expect(inflection.ordinalize(number)).toBe(ordinalized);
+      (num, ordinalized) => {
+        expect(inflection.ordinalize(num)).toBe(ordinalized);
       }
     );
   });

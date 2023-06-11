@@ -1449,15 +1449,18 @@ const docs: BuiltinDocs = {
   const keys = Object.keys(builtins) as BuiltInFunctionKey[];
   keys.forEach((key) => {
     if (!docs[key]) {
+      // tslint:disable-next-line:no-console
       console.warn(`WARN: ${key} in docs doesn't have any examples.`);
     } else {
       if (!docs[key].examples) {
+        // tslint:disable-next-line:no-console
         console.warn(`WARN: ${key} in docs doesn't have any examples.`);
       }
 
       docs[key].examples.forEach((example, index) => {
         if (!example.input.text.includes(key)) {
-          console.warn(`WARN: Example in ${key} doesn't contains itself (mssing ${key} in example #${index})`);
+          // tslint:disable-next-line:no-console
+          console.warn(`WARN: Example in ${key} doesn't contains itself (missing ${key} in example #${index})`);
         }
       });
     }

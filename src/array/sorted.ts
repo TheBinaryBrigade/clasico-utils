@@ -1,3 +1,5 @@
+/* tslint:disable:max-classes-per-file */
+
 import check from "../check";
 
 export type BisectArrayOptions<T> = {

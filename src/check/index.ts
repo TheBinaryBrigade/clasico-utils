@@ -1,5 +1,5 @@
-
 import date from "../date";
+import {AnyFn} from "../@types";
 
 const isNumber = (x: unknown): x is number => {
   return (
@@ -29,8 +29,7 @@ const isBoolean = (x: unknown): x is boolean => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const isFunction = (x: unknown): x is Function => {
+const isFunction = (x: unknown): x is AnyFn => {
   return (
     typeof x === "function"
     || x instanceof Function
@@ -100,8 +99,8 @@ const isValidBoolean = (x: any): boolean => {
       0,
       "1",
       "0",
-      new Boolean(true),
-      new Boolean(false),
+      Boolean(true),
+      Boolean(false),
       true,
       false,
     ];
@@ -112,7 +111,7 @@ const isValidBoolean = (x: any): boolean => {
 
     if (isStr) {
       x = x.trim();
-      const len = Math.max(...alts.map((x) => x.toString().length));
+      const len = Math.max(...alts.map((y) => y.toString().length));
       if (x.length <= len && alts.includes(x.toLowerCase())) {
         return true;
       }
@@ -151,7 +150,7 @@ const isTrue = (x: unknown): boolean => {
       "true",
       "1",
       1,
-      new Boolean(true),
+      Boolean(true),
     ];
 
     if (alts.includes(x)) {
@@ -169,9 +168,9 @@ const isTrue = (x: unknown): boolean => {
     }
 
     if (isString(x)) {
-      const y = (x as string).trim();
-      const len = Math.max(...alts.map((x) => x.toString().length));
-      if (y.length <= len && alts.includes(y.toLowerCase())) {
+      const x2 = (x as string).trim();
+      const len = Math.max(...alts.map((y) => y.toString().length));
+      if (x2.length <= len && alts.includes(x2.toLowerCase())) {
         return true;
       }
     }
@@ -197,7 +196,7 @@ const isDate = (x: unknown): boolean => {
     return false;
   }
 
-  if (isString(x) && typeof x === "string") {
+  if (isString(x)) {
     x = x.trim();
 
     if (!x) {
@@ -227,11 +226,7 @@ const isError = (x: any, errorLike = false): x is Error => {
     return true;
   }
 
-  if (errorLike && x && x.stack && x.message) {
-    return true;
-  }
-
-  return false;
+  return !!(errorLike && x && x.stack && x.message);
 };
 
 // @exports

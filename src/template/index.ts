@@ -17,8 +17,8 @@ const fixString = (x: string) => {
   return x;
 };
 
-const wrapCtxFuncs = (mut_ctx: EvalContext) => {
-  const _f = mut_ctx?.funcs;
+const wrapCtxFuncs = (mutCtx: EvalContext) => {
+  const _f = mutCtx?.funcs;
   if (_f && check.isObject(_f)) {
     const f = { ..._f };
     const updated: ContextFuncs = {};
@@ -31,9 +31,9 @@ const wrapCtxFuncs = (mut_ctx: EvalContext) => {
         };
       });
 
-    mut_ctx.funcs = updated;
+    mutCtx.funcs = updated;
   }
-  return mut_ctx;
+  return mutCtx;
 };
 
 export type ParserLogsLevel = "WARN" | "ERROR";
@@ -220,10 +220,10 @@ class TemplateParser {
   builtinFunctions() {
     const $abs = (x: any): number => Math.abs(x);
     const $all = (...args: any[]): boolean => {
-      return args.map($bool).every((x) => x === true);
+      return args.map($bool).every((x) => x);
     };
     const $any = (...args: any[]): boolean => {
-      return args.map($bool).some((x) => x === true);
+      return args.map($bool).some((x) => x);
     };
 
     const $bool = (x: any): boolean => {
@@ -259,7 +259,7 @@ class TemplateParser {
           });
 
           // Replace circular references with actual object reference
-          x = jsonString.replace(/"\[Circular\]"/g, () => {
+          x = jsonString.replace(/"\[Circular]"/g, () => {
             return JSON.stringify("[Circular]");
           });
         }
@@ -290,7 +290,7 @@ class TemplateParser {
       return $bool(condition) ? ifTrue : ifFalse;
     };
 
-    const $int = (x: any): number => parseInt(x);
+    const $int = (x: any, radix: any): number => parseInt(x, radix || 10);
     const $isinstance = (x: any, ...types: TypeOf[]): boolean => {
       const xType = $type(x);
       return types.map($str).some((t) => xType === t);
@@ -573,8 +573,8 @@ const lval = <T>(sentence: string, ctx?: Context) => {
   };
 };
 
-const ____builtins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
-export type BuiltInFunction = ReturnType<typeof ____builtins>;
+const ignoreThisBuiltins = new TemplateParser({ includeBuiltIns: false }).builtinFunctions;
+export type BuiltInFunction = ReturnType<typeof ignoreThisBuiltins>;
 export type BuiltInFunctionKey = keyof BuiltInFunction;
 
 export default {

@@ -129,7 +129,7 @@ function patienceDiff(aLines: string[], bLines: string[], diffPlusFlag?: boolean
     // and determines the Longest Common Subsequence (LCS).
     //
     // Returns an ordered array of objects containing the array indexes of the
-    // matching lines for a LCS.
+    // matching lines for an LCS.
     //
 
     function longestCommonSubsequence(abMap: Map<string, any>) {
