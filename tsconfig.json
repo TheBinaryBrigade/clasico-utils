@@ -14,7 +14,7 @@
     "docs/**/*",
     "lib/**/*",
     "examples/**/*",
-    "balbel.config.*s",
+    "babel.config.*s",
     ".build*.ts",
     "jest.config.*s"
   ]

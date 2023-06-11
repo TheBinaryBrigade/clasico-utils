@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const assert = (title: string, output: unknown, expected: unknown) => {

@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const parser = new clasico.template.SentenceParser({
@@ -12,17 +14,17 @@ parser.addFunction("myFunc", (a: number, b: number) => {
 // Add variables
 parser.addVar("myVar", 42);
 parser.addVar("you", "someone");
-parser.addVar("other", { "some": { "variable": "Isla" } });
+parser.addVar("other", {"some": {"variable": "Isla"}});
 
 // Example Input
 const input = `
-$myVar + $myFunc(21, $myVar / 2) should be 84! 
+$myVar + $myFunc(21, $myVar / 2) should be 84!
 
 My name is $getattr($other, 'some.variable').
 
 I have a number, it is $myVar.
 
-I don't have $yuo!!! 
+I don't have $yuo!!!
 
 I DON'T HAVE $foo!!!
 `;

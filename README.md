@@ -42,12 +42,14 @@ const parser = new clasico.parser.SentenceParser({
 
 ```ts
 
+/* tslint:disable:no-console */
+
 import clasico from "clasico";
 
 const arr1 = [1, 2, 3, 4];
 const arr2 = ["a", "b", "c"];
 
-const expected = [
+const expectedOutput = [
   [1, "a"],
   [2, "b"],
   [3, "c"],
@@ -55,26 +57,28 @@ const expected = [
 
 let idx = 0;
 
-for (const [e1, e2] of clasico.array.zip(arr1, arr2)) {   // USAGE 1: Correct
-  if (e1 !== expected[idx][0]) {
-    console.error(`${e1} did not match ${arr1[idx]}`);
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+for (const [output1, output2] of clasico.array.zip(arr1, arr2)) {   // USAGE 1: Correct
+  const [expected1, expected2] = expectedOutput[idx];
+  if (output1 !== expected1 || output2 !== expected2) {
+    console.error("Failed to zip arrays", {idx});
+    console.error("Got", [output1, output2]);
+    console.error("Expected", [expected1, expected2]);
     process.exit(1);
   }
-  
-  if (e2 !== expected[idx][1]) {
-    console.error(`${e2} did not match ${arr2[idx]}`);
-    process.exit(2);
-  }
-  
+
   ++idx;
 }
 
-const zipped = [...clasico.array.zip(arr1, arr2)];   // USAGE 2: Incorrect (but if needed)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const zipped: [number, string][] = [...clasico.array.zip(arr1, arr2)];   // USAGE 2: Incorrect (but if needed)
 
-if (JSON.stringify(zipped) !== JSON.stringify(expected)) {
+if (JSON.stringify(zipped) !== JSON.stringify(expectedOutput)) {
   console.error("Failed to zip arrays");
   console.error("Got", zipped);
-  console.error("Expected", expected);
+  console.error("Expected", expectedOutput);
   process.exit(3);
 }
 
@@ -86,6 +90,8 @@ if (JSON.stringify(zipped) !== JSON.stringify(expected)) {
 #### Remove StopWords
 
 ```ts
+
+/* tslint:disable:no-console */
 
 import clasico from "clasico";
 
@@ -104,12 +110,17 @@ if (output !== expected) {
 
 ```
 
+#### Stemmer
+
+{{NLP_REMOVE_STOPWORDS_USAGE_EXAMPLE}}
 
 ### Inflection Port
 
 #### Usage
 
 ```ts
+
+/* tslint:disable:no-console */
 
 import clasico from "clasico";
 
@@ -178,6 +189,8 @@ Try it out: [Playground](https://thebinarybrigade.github.io/clasico-utils/)
 
 ```ts
 
+/* tslint:disable:no-console */
+
 import clasico from "clasico";
 
 const parser = new clasico.template.SentenceParser({
@@ -192,17 +205,17 @@ parser.addFunction("myFunc", (a: number, b: number) => {
 // Add variables
 parser.addVar("myVar", 42);
 parser.addVar("you", "someone");
-parser.addVar("other", { "some": { "variable": "Isla" } });
+parser.addVar("other", {"some": {"variable": "Isla"}});
 
 // Example Input
 const input = `
-$myVar + $myFunc(21, $myVar / 2) should be 84! 
+$myVar + $myFunc(21, $myVar / 2) should be 84!
 
 My name is $getattr($other, 'some.variable').
 
 I have a number, it is $myVar.
 
-I don't have $yuo!!! 
+I don't have $yuo!!!
 
 I DON'T HAVE $foo!!!
 `;
@@ -255,6 +268,7 @@ if (expected !== output.result) {
   console.log(JSON.stringify(expected), "\n", JSON.stringify(output.result));
   process.exit(1);
 }
+
 
 ```
 

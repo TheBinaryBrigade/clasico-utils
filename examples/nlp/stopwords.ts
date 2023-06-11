@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const input = "Don't forget to bring your ID, and don't be late!";

@@ -1,9 +1,11 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const arr1 = [1, 2, 3, 4];
 const arr2 = ["a", "b", "c"];
 
-const expected = [
+const expectedOutput = [
   [1, "a"],
   [2, "b"],
   [3, "c"],
@@ -11,25 +13,27 @@ const expected = [
 
 let idx = 0;
 
-for (const [e1, e2] of clasico.array.zip(arr1, arr2)) {   // USAGE 1: Correct
-  if (e1 !== expected[idx][0]) {
-    console.error(`${e1} did not match ${arr1[idx]}`);
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+for (const [output1, output2] of clasico.array.zip(arr1, arr2)) {   // USAGE 1: Correct
+  const [expected1, expected2] = expectedOutput[idx];
+  if (output1 !== expected1 || output2 !== expected2) {
+    console.error("Failed to zip arrays", {idx});
+    console.error("Got", [output1, output2]);
+    console.error("Expected", [expected1, expected2]);
     process.exit(1);
   }
-  
-  if (e2 !== expected[idx][1]) {
-    console.error(`${e2} did not match ${arr2[idx]}`);
-    process.exit(2);
-  }
-  
+
   ++idx;
 }
 
-const zipped = [...clasico.array.zip(arr1, arr2)];   // USAGE 2: Incorrect (but if needed)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const zipped: [number, string][] = [...clasico.array.zip(arr1, arr2)];   // USAGE 2: Incorrect (but if needed)
 
-if (JSON.stringify(zipped) !== JSON.stringify(expected)) {
+if (JSON.stringify(zipped) !== JSON.stringify(expectedOutput)) {
   console.error("Failed to zip arrays");
   console.error("Got", zipped);
-  console.error("Expected", expected);
+  console.error("Expected", expectedOutput);
   process.exit(3);
 }

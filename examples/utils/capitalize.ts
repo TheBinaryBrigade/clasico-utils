@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const expect = (a: unknown, b: unknown) => {

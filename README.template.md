@@ -46,6 +46,9 @@ const parser = new clasico.parser.SentenceParser({
 
 {{NLP_REMOVE_STOPWORDS_USAGE_EXAMPLE}}
 
+#### Stemmer
+
+{{NLP_REMOVE_STOPWORDS_USAGE_EXAMPLE}}
 
 ### Inflection Port
 

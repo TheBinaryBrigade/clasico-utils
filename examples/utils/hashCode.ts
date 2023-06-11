@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import clasico from "../../src/index";
 
 const expect = (a: unknown, b: unknown) => {
@@ -13,12 +15,12 @@ const hello = clasico.utils.hashCode("hello");
 console.log("hello", hello);
 expect(typeof hello, /* to be */ "number");
 
-// by default it'll stringify the input
+// by default, it'll stringify the input
 const ok = clasico.utils.hashCode({ hello: 42 });
 console.log("{hello: 42}", ok);
 expect(typeof ok, /* to be */ "number");
 
 // pass false to only hash strings
-const failure = clasico.utils.hashCode({ hello: 42 }, false);
+const failure = clasico.utils.hashCode({ hello: 42 }, /* coerceToString */false);
 console.log("failure", failure);
 expect(failure, /* to be */ null);

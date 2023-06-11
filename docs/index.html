@@ -61,7 +61,7 @@
         }
 
         .container {
-            flex: 1,
+            flex: 1;
         }
 
         .left {
@@ -184,24 +184,24 @@
             });
 
             textEditor.getSession().setValue(`
-$myVar * 2 should be 84! 
+$myVar * 2 should be 84!
 
 My name is $getattr($some, 'deep.variable').
 
 I miss $getattr($some, 'other', 'deep', 'variable')
 
-I don't have $yuo!!! 
+I don't have $yuo!!!
 
 I DON'T HAVE $foo!!!
 
 > To get around any formatting issues or unexpected behavior I would suggest using the \`$concat\` function (or \`$str\`, you can think of \`$str\` like an echo/print/console.log).
 
-> Input: 
-> 
+> Input:
+>
 > \`$concat("some ", " pair ", " of ", " variables ", $myVar)\`
 >
-> Output: 
-> 
+> Output:
+>
 > $concat("some ", " pair ", " of ", " variables ", $myVar)
 
 Oh no! you are seeing $getattr($some, 'other', 'deep', 'variables')
