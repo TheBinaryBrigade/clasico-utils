@@ -4,7 +4,7 @@ NPM=npm
 
 set -e -o xtrace
 
-# Auto fix liniting issues
+# Auto fix linting issues
 $NPM run lint
 $NPM run lint:fix
 
@@ -34,23 +34,23 @@ $NPM run build:node16 &
 $NPM run build:node18 &
 $NPM run build:node20 &
 
-# Build npm pacakge
+# Build npm package
 $NPM run build:lib
 
 wait
 
-shadir() {
+sha_dir() {
     find $1 -type f \( -exec sha512sum {} \; \)
 }
 
 ( \
-    echo "$(shadir dist)" \
-    && echo "$(shadir lib)" \
-    && echo "$(shadir docs)" \
-    && echo "$(shadir examples)" \
-    && echo "$(shadir src)" \
-    && echo "$(shadir *.ts)" \
-    && echo "$(shadir *.cjs)" \
+    echo "$(sha_dir dist)" \
+    && echo "$(sha_dir lib)" \
+    && echo "$(sha_dir docs)" \
+    && echo "$(sha_dir examples)" \
+    && echo "$(sha_dir src)" \
+    && echo "$(sha_dir *.ts)" \
+    && echo "$(sha_dir *.cjs)" \
 ) > './checksums.txt'
 
 git add dist/*

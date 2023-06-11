@@ -1,7 +1,7 @@
 {
   "name": "clasico",
   "version": "0.1.8",
-  "description": "Introducing the ultimate nightmare disguised as your standerd npm package - our collection of 'utilities'! Guaranteed to make your code messier, more confusing, and harder to debug than ever before. Don't waste your time writing clean and concise code when you can have our utils folder add an extra layer of chaos to your project! Try it out today and watch your development team pull their hair out in frustration!",
+  "description": "Introducing the ultimate nightmare disguised as your standard npm package - our collection of 'utilities'! Guaranteed to make your code messier, more confusing, and harder to debug than ever before. Don't waste your time writing clean and concise code when you can have our utils folder add an extra layer of chaos to your project! Try it out today and watch your development team pull their hair out in frustration!",
   "keywords": [
     "bisect-array",
     "type-check",
