@@ -381,9 +381,93 @@ function* zip(...args) {
   }
 }
 
+// src/array/remove.duplicates.ts
+function removeDuplicates(iter, key) {
+  const set = /* @__PURE__ */ new Set();
+  const result = [];
+  for (const item of iter) {
+    const value = key ? key(item) : item;
+    if (!set.has(value)) {
+      result.push(item);
+    }
+    set.add(value);
+  }
+  return result;
+}
+function* walkBackString(str, offset = 0) {
+  for (let i = str.length - offset; i > 0; --i) {
+    yield str.substring(0, i);
+  }
+}
+function* noDuplicates(iter, key) {
+  const seen = /* @__PURE__ */ new Set();
+  for (const elem of iter) {
+    const hashable = key ? key(elem) : elem;
+    if (seen.has(hashable)) {
+      continue;
+    }
+    seen.add(hashable);
+    yield elem;
+  }
+}
+function filterMap(iter, condition) {
+  const result = [];
+  let index = 0;
+  for (const elem of iter) {
+    if (condition(elem, index, iter)) {
+      result.push(elem);
+    }
+    ++index;
+  }
+  return result;
+}
+function findAllCommonPrefixes(stringsA) {
+  if (stringsA.length <= 1) {
+    return stringsA;
+  }
+  const prefixes = /* @__PURE__ */ new Set();
+  const matched = /* @__PURE__ */ new Set();
+  const seen = [];
+  for (const parent of noDuplicates(stringsA)) {
+    if (seen.length !== 2) {
+      seen.push(parent);
+    }
+    const before = prefixes.size;
+    for (const substr of walkBackString(parent, 0)) {
+      for (const child of stringsA) {
+        if (!matched.has(child) && parent !== child && child.startsWith(substr)) {
+          matched.add(child);
+          prefixes.add(substr);
+          break;
+        }
+      }
+      if (before !== prefixes.size) {
+        break;
+      }
+    }
+  }
+  if (seen.length === 1) {
+    return seen;
+  }
+  return filterMap(prefixes, (value, index1, array) => {
+    let index2 = 0;
+    for (const val of array) {
+      if (index1 !== index2 && value.startsWith(val)) {
+        return false;
+      }
+      ++index2;
+    }
+    return true;
+  });
+}
+
 // src/array/index.ts
 var array_default = {
   ...sorted_exports,
+  noDuplicates,
+  walkBackString,
+  findAllCommonPrefixes,
+  removeDuplicates,
   zip
 };
 
@@ -657,7 +741,7 @@ function hashCode(str, coerceToString = true) {
           });
         }
       }
-      if (!check_default.isString(str) && str.toString) {
+      if (!check_default.isString(str) && str?.toString) {
         str = str.toString();
       }
     }
@@ -679,12 +763,12 @@ function capitalize(str) {
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function retry(operation, maxRetries, delay) {
+async function retry(operation, maxRetries, delay) {
   return new Promise((resolve, reject) => {
     let retries = 0;
     function attempt() {
       operation().then(resolve).catch((error) => {
-        retries++;
+        retries += 1;
         if (retries < maxRetries) {
           setTimeout(attempt, delay);
         } else {
@@ -698,8 +782,19 @@ function retry(operation, maxRetries, delay) {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+var isPrime = (() => {
+  const LITERAL_ONE = "1";
+  const EMPTY_STR = "";
+  const PROG = /^1?$|^(11+?)\1+$/;
+  function isPrimeInner(num) {
+    const ones = EMPTY_STR.padEnd(num, LITERAL_ONE);
+    return !PROG.test(ones);
+  }
+  return isPrimeInner;
+})();
 var utils_default = {
   hashCode,
+  isPrime,
   capitalize,
   retry,
   sleep

@@ -252,6 +252,7 @@ declare const _default: {
     };
     utils: {
         hashCode: (str: any, coerceToString?: boolean) => number | null;
+        isPrime: (num: number) => boolean;
         capitalize: (str: string) => string;
         retry: <T_1>(operation: () => Promise<T_1>, maxRetries: number, delay: number) => Promise<T_1>;
         sleep: (ms: number) => Promise<unknown>;
@@ -267,6 +268,10 @@ declare const _default: {
         topSimilar: <T_2 = string>(value: T_2, values: T_2[], key: (obj: T_2) => string, topK?: number, thresh?: number, gramSize?: number) => T_2[];
     };
     array: {
+        noDuplicates: typeof import("./array/remove.duplicates").noDuplicates;
+        walkBackString: typeof import("./array/remove.duplicates").walkBackString;
+        findAllCommonPrefixes: typeof import("./array/remove.duplicates").findAllCommonPrefixes;
+        removeDuplicates: typeof import("./array/remove.duplicates").removeDuplicates;
         zip: typeof import("./array/zip").zip;
         BisectArray: typeof import("./array/sorted").BisectArray;
         ReverseSortedArray: typeof import("./array/sorted").ReverseSortedArray;

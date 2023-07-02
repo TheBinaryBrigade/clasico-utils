@@ -4,6 +4,7 @@ declare function retry<T>(operation: () => Promise<T>, maxRetries: number, delay
 declare function sleep(ms: number): Promise<unknown>;
 declare const _default: {
     hashCode: typeof hashCode;
+    isPrime: (num: number) => boolean;
     capitalize: typeof capitalize;
     retry: typeof retry;
     sleep: typeof sleep;

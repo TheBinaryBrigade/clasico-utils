@@ -31,7 +31,7 @@ function hashCode(str: any, coerceToString = true): number | null {
         }
       }
 
-      if (!check.isString(str) && str.toString) {
+      if (!check.isString(str) && str?.toString) {
         str = str.toString();
       }
     }
@@ -52,7 +52,7 @@ function hashCode(str: any, coerceToString = true): number | null {
   return hash;
 }
 
-function capitalize (str: string) {
+function capitalize(str: string) {
   if (!check.isString(str)) {
     return "";
   }
@@ -60,7 +60,7 @@ function capitalize (str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function retry<T>(operation: () => Promise<T>, maxRetries: number, delay: number) {
+async function retry<T>(operation: () => Promise<T>, maxRetries: number, delay: number) {
   return new Promise<T>((resolve, reject) => {
     let retries = 0;
 
@@ -68,7 +68,7 @@ function retry<T>(operation: () => Promise<T>, maxRetries: number, delay: number
       operation()
         .then(resolve)
         .catch(error => {
-          retries++;
+          retries += 1;
           if (retries < maxRetries) {
             setTimeout(attempt, delay);
           } else {
@@ -85,8 +85,22 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const isPrime: (num: number) => boolean = (() => {
+  const LITERAL_ONE = "1";
+  const EMPTY_STR = "";
+  const PROG = /^1?$|^(11+?)\1+$/;
+
+  function isPrimeInner(num: number): boolean {
+    const ones = EMPTY_STR.padEnd(num, LITERAL_ONE);
+    return !PROG.test(ones);
+  }
+
+  return isPrimeInner;
+})();
+
 export default {
   hashCode,
+  isPrime,
   capitalize,
   retry,
   sleep,

@@ -1,6 +1,11 @@
 import * as sorted from "./sorted";
 import { zip } from "./zip";
+import { removeDuplicates, noDuplicates, walkBackString, findAllCommonPrefixes } from "./remove.duplicates";
 declare const _default: {
+    noDuplicates: typeof noDuplicates;
+    walkBackString: typeof walkBackString;
+    findAllCommonPrefixes: typeof findAllCommonPrefixes;
+    removeDuplicates: typeof removeDuplicates;
     zip: typeof zip;
     BisectArray: typeof sorted.BisectArray;
     ReverseSortedArray: typeof sorted.ReverseSortedArray;

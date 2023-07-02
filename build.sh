@@ -32,13 +32,14 @@ $NPM run build:node10 &
 $NPM run build:node12 &
 $NPM run build:node14 &
 $NPM run build:node16 &
-$NPM run build:node18 &
-$NPM run build:node20 &
+$NPM run build:node18
+
+wait
+
+$NPM run build:node20
 
 # Build npm package
 $NPM run build:lib
-
-wait
 
 sha_dir() {
     find "$1" -type f \( -exec sha512sum {} \; \)
