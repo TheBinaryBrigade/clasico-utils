@@ -15,6 +15,12 @@ export function* zip<T extends ArrayLike<unknown>[]>(...args: T): Generator<Flat
   }
 }
 
+export function* chunkArray<T extends unknown[]>(array: T, chunkSize: number): Generator<FlattenTuple<FlattenArray<T>>> {
+  for (let i = 0; i < array.length; i += chunkSize) {
+    yield array.slice(i, i + chunkSize) as FlattenTuple<T>;
+  }
+}
+
 export type RangeProps = {
   start?: number,
   stop: number,

@@ -1,5 +1,6 @@
-import { describe, expect, test } from "@jest/globals";
-import { zip } from "../zip";
+import {describe, expect, test} from "@jest/globals";
+import {zip, chunkArray} from "../zip";
+// import array from "../index";
 
 describe("zip", () => {
   test("two equal-length arrays, ensuring the zipped output contains corresponding pairs in the correct order.", () => {
@@ -42,5 +43,20 @@ describe("zip", () => {
 
     const zipped = [...zip(arr1, arr2, arr3)];
     expect(JSON.stringify(zipped)).toBe(JSON.stringify(expected));
+  });
+
+  test("chunky array", () => {
+    const arr1 = [1, 2, 3, 4];
+    const arr2 = [1, 2, 3];
+    const sz = 2;
+
+    const expected1 = [[1, 2], [3, 4]];
+    const expected2 = [[1, 2], [3]];
+
+    const out1 = [...chunkArray(arr1, sz)];
+    const out2 = [...chunkArray(arr2, sz)];
+
+    expect(JSON.stringify(out1)).toBe(JSON.stringify(expected1));
+    expect(JSON.stringify(out2)).toBe(JSON.stringify(expected2));
   });
 });

@@ -1,7 +1,8 @@
 import * as sorted from "./sorted";
-import { zip } from "./zip";
+import { zip, chunkArray } from "./zip";
 import { removeDuplicates, noDuplicates, walkBackString, findAllCommonPrefixes } from "./remove.duplicates";
 declare const _default: {
+    chunkArray: typeof chunkArray;
     noDuplicates: typeof noDuplicates;
     walkBackString: typeof walkBackString;
     findAllCommonPrefixes: typeof findAllCommonPrefixes;

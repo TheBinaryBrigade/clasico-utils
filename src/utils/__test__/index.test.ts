@@ -4,6 +4,15 @@ import utils from "..";
 import { TypeOf } from "../../@types";
 
 describe("utils", () => {
+  // describe("uuid", () => {
+  //   expect(typeof utils.uuid()).toBe("string");
+  //   expect(utils.uuid()).not.toBe(utils.uuid());
+  //   expect(utils.uuid().includes("-")).toBe(true);
+  //
+  //   expect(typeof utils.uuid({hex:true})).toBe("string");
+  //   expect(utils.uuid({hex:true})).not.toBe(utils.uuid({hex:true}));
+  //   expect(utils.uuid({hex:true}).includes("-")).toBe(false);
+  // });
   describe("hashCode", () => {
     test("should return a number", () => {
       expect(typeof utils.hashCode("hello")).toBe("number");

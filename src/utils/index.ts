@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import check from "../check";
+// import * as crypto from "crypto";
 
 function hashCode(str: any, coerceToString = true): number | null {
 
@@ -41,15 +42,15 @@ function hashCode(str: any, coerceToString = true): number | null {
     return null;
   }
 
-  let hash = 0;
+  let hsh = 0;
   for (let i = 0; i < str.length; ++i) {
     const code = str.charCodeAt(i);
     // tslint:disable-next-line:no-bitwise
-    hash = ((hash << 5) - hash) + code;
+    hsh = ((hsh << 5) - hsh) + code;
     // tslint:disable-next-line:no-bitwise
-    hash &= hash;
+    hsh &= hsh;
   }
-  return hash;
+  return hsh;
 }
 
 function capitalize(str: string) {
@@ -98,10 +99,59 @@ const isPrime: (num: number) => boolean = (() => {
   return isPrimeInner;
 })();
 
+// const uuid = (params?: { hex?: boolean }) => {
+//   const r = crypto.randomUUID();
+//   return params?.hex === true ? r.replace(/-/g, "") : r;
+// };
+//
+// const randomString = (size = 64) => {
+//   return crypto.randomBytes(size).toString("hex");
+// };
+//
+// export type HashAlgorithm = {
+//   node: string,
+//   web: crypto.webcrypto.AlgorithmIdentifier,
+// }
+//
+// const Algorithms: { [name: string]: HashAlgorithm } = {
+//   SHA_1: {
+//     node: "sha1",
+//     web: "SHA-1",
+//   },
+//   SHA_256: {
+//     node: "sha256",
+//     web: "SHA-256",
+//   },
+//   SHA_512: {
+//     node: "sha512",
+//     web: "SHA-512",
+//   },
+// };
+
+// const hash = async (message: string, salt: string, alg: HashAlgorithm = Algorithms.SHA_256) => {
+//   if (!crypto.subtle?.digest) {
+//     return crypto
+//       .createHash(alg.node)
+//       .update(message)
+//       .update(salt)
+//       .digest()
+//       .toString("hex");
+//   }
+//
+//   const encoder = new TextEncoder();
+//   const data = encoder.encode(message);
+//   const hashBuffer = await crypto.subtle.digest(alg.web, data);
+//   const hashArray = Array.from(new Uint8Array(hashBuffer));
+//   return hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+// };
+
 export default {
   hashCode,
   isPrime,
   capitalize,
   retry,
   sleep,
+  // uuid,
+  // randomString,
+  // hash,
 };
